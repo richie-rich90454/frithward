@@ -1,4 +1,4 @@
 server:
-  http_listen_port: 3100
+    http_listen_port: 3100
 storage:
-  write_ahead_logs: true
+    write_ahead_logs: true
