@@ -1,0 +1,14 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+processors:
+  batch:
+exporters:
+  prometheus:
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus]
