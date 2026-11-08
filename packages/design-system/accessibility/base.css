@@ -1,0 +1,17 @@
+:focus-visible {
+    outline: 2px solid var(--fw-color-accent);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition-duration: 0ms !important;
+        animation-duration: 0ms !important;
+    }
+}
+
+@media (prefers-contrast: more) {
+    :root {
+        --fw-color-border-strong: currentColor;
+    }
+}
