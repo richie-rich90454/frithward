@@ -1,0 +1,16 @@
+.fw-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.fw-table th,
+.fw-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--fw-color-border);
+    text-align: left;
+}
+
+.fw-table td.numeric {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
