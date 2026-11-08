@@ -4,7 +4,12 @@ import { ScamPolicy } from "../domain/ScamPolicy.js";
 // Complexity: O(n * p) over n characters and p patterns; single pass over input.
 export class AnalyzeMessageUseCase {
     private readonly policy: ScamPolicy;
-    private readonly patterns: readonly { id: string; label: string; pattern: RegExp; detail: string }[];
+    private readonly patterns: readonly {
+        id: string;
+        label: string;
+        pattern: RegExp;
+        detail: string;
+    }[];
 
     public constructor(policy?: ScamPolicy) {
         this.policy = policy ?? new ScamPolicy();
@@ -13,26 +18,26 @@ export class AnalyzeMessageUseCase {
                 id: "urgency",
                 label: "Urgency pressure",
                 pattern: /\b(urgent|immediately|act now|expires soon)\b/i,
-                detail: "The message pressures you to act quickly."
+                detail: "The message pressures you to act quickly.",
             },
             {
                 id: "payment",
                 label: "Payment request",
                 pattern: /\b(pay|payment|invoice|wire transfer|gift card|bank transfer)\b/i,
-                detail: "The message asks for a payment."
+                detail: "The message asks for a payment.",
             },
             {
                 id: "credential",
                 label: "Credential request",
                 pattern: /\b(password|verify your account|log in|sign in)\b/i,
-                detail: "The message asks for credentials."
+                detail: "The message asks for credentials.",
             },
             {
                 id: "secrecy",
                 label: "Secrecy request",
                 pattern: /\b(do not tell|keep secret|confidential)\b/i,
-                detail: "The message asks you to keep it secret."
-            }
+                detail: "The message asks you to keep it secret.",
+            },
         ];
     }
 
@@ -44,7 +49,10 @@ export class AnalyzeMessageUseCase {
                 id: entry.id,
                 label: entry.label,
                 detail: entry.detail,
-                severity: entry.id === "credential" || entry.id === "payment" ? ("high" as const) : ("medium" as const)
+                severity:
+                    entry.id === "credential" || entry.id === "payment"
+                        ? ("high" as const)
+                        : ("medium" as const),
             }));
         return new ScamAnalysis(indicators);
     }
