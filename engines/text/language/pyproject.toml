@@ -1,0 +1,6 @@
+[project]
+name = "text-language"
+version = "0.0.1"
+description = "Text language engine."
+requires-python = ">=3.12"
+dependencies = ["pydantic"]
