@@ -2,10 +2,10 @@
 - name: Deploy Frithward
   hosts: frithward
   vars:
-    docker_compose_file: /opt/frithward/infrastructure/docker/docker-compose.yml
+      docker_compose_file: /opt/frithward/infrastructure/docker/docker-compose.yml
   tasks:
-    - name: Pull images
-      community.docker.docker_compose_v2:
-        project_src: /opt/frithward
-        files: infrastructure/docker/docker-compose.yml
-        state: present
+      - name: Pull images
+        community.docker.docker_compose_v2:
+            project_src: /opt/frithward
+            files: infrastructure/docker/docker-compose.yml
+            state: present
