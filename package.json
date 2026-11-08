@@ -20,5 +20,11 @@
         "check:boundaries": "node scripts/check-boundaries.mjs",
         "check": "pnpm run format:check && pnpm run lint && pnpm run check:boundaries && pnpm run typecheck && pnpm run test"
     },
-    "devDependencies": {}
+    "devDependencies": {
+        "axe-core": "^4.14.0",
+        "oxfmt": "^0.77.0",
+        "oxlint": "^1.92.0",
+        "playwright": "^1.65.0",
+        "vitest": "^5.1.0"
+    }
 }
