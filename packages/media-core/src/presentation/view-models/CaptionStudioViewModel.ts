@@ -20,16 +20,22 @@ export interface CaptionStudioViewModel {
 export class CaptionStudioViewModel {
     public static fromProject(
         project: CaptionProject,
-        selectedSegmentId: string | null
+        selectedSegmentId: string | null,
     ): CaptionStudioViewModel {
         const segments = project.listSegments().map((segment) => ({
             id: segment.id,
             startMs: segment.startMs,
             endMs: segment.endMs,
             text: segment.text,
-            speakerId: segment.speakerId
+            speakerId: segment.speakerId,
         }));
-        return { projectId: project.id, title: project.title, language: project.language, segments, selectedSegmentId };
+        return {
+            projectId: project.id,
+            title: project.title,
+            language: project.language,
+            segments,
+            selectedSegmentId,
+        };
     }
 
     public static createSegment(
@@ -37,7 +43,7 @@ export class CaptionStudioViewModel {
         startMs: number,
         endMs: number,
         text: string,
-        speakerId: string | null
+        speakerId: string | null,
     ): CaptionStudioViewModelSegment {
         void new SubtitleSegment({ id, startMs, endMs, text, speakerId });
         return { id, startMs, endMs, text, speakerId };
