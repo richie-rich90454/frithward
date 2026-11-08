@@ -6,8 +6,8 @@ export function createAuth(databaseUrl: string) {
     if (databaseUrl.trim().length === 0) throw new Error("Database URL is required.");
     return betterAuth({
         database: drizzleAdapter(schema, {
-            provider: "pg"
+            provider: "pg",
         }),
-        secret: process.env.BETTER_AUTH_SECRET ?? "frithward-local-dev-secret"
+        secret: process.env.BETTER_AUTH_SECRET ?? "frithward-local-dev-secret",
     });
 }
