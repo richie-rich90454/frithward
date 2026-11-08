@@ -9,15 +9,26 @@ export interface CaptionStudioViewModelSegment {
     speakerId: string | null;
 }
 
-export interface CaptionStudioViewModel {
-    projectId: string;
-    title: string;
-    language: string;
-    segments: readonly CaptionStudioViewModelSegment[];
-    selectedSegmentId: string | null;
-}
-
 export class CaptionStudioViewModel {
+    public readonly projectId: string;
+    public readonly title: string;
+    public readonly language: string;
+    public readonly segments: readonly CaptionStudioViewModelSegment[];
+    public readonly selectedSegmentId: string | null;
+
+    private constructor(input: {
+        projectId: string;
+        title: string;
+        language: string;
+        segments: readonly CaptionStudioViewModelSegment[];
+        selectedSegmentId: string | null;
+    }) {
+        this.projectId = input.projectId;
+        this.title = input.title;
+        this.language = input.language;
+        this.segments = input.segments;
+        this.selectedSegmentId = input.selectedSegmentId;
+    }
     public static fromProject(
         project: CaptionProject,
         selectedSegmentId: string | null,
@@ -29,13 +40,13 @@ export class CaptionStudioViewModel {
             text: segment.text,
             speakerId: segment.speakerId,
         }));
-        return {
+        return new CaptionStudioViewModel({
             projectId: project.id,
             title: project.title,
             language: project.language,
             segments,
             selectedSegmentId,
-        };
+        });
     }
 
     public static createSegment(
