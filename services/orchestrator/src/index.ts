@@ -6,5 +6,5 @@ app.get("/health", (context) => context.json({ status: "ok", service: "orchestra
 
 serve({
     fetch: app.fetch,
-    port: Number(process.env.PORT ?? 3001)
+    port: Number(process.env.PORT ?? 3001),
 });
