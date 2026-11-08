@@ -14,14 +14,16 @@
         "lint": "oxlint .",
         "format": "oxfmt -c oxfmt.json .",
         "format:check": "oxfmt --check -c oxfmt.json .",
-        "typecheck": "tsc --noEmit",
+        "typecheck": "tsc -b",
         "test": "vitest run",
         "test:e2e": "playwright test",
         "check:boundaries": "node scripts/check-boundaries.mjs",
         "check": "pnpm run format:check && pnpm run lint && pnpm run check:boundaries && pnpm run typecheck && pnpm run test"
     },
     "devDependencies": {
+        "@playwright/test": "^1.65.0",
         "axe-core": "^4.14.0",
+        "drizzle-orm": "^0.45.4",
         "oxfmt": "^0.77.0",
         "oxlint": "^1.92.0",
         "playwright": "^1.65.0",
