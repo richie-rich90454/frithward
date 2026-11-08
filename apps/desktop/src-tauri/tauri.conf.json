@@ -1,0 +1,8 @@
+{
+    "productName": "Frithward",
+    "version": "0.1.0",
+    "identifier": "org.frithward.app",
+    "build": {
+        "frontendDist": "../dist"
+    }
+}
