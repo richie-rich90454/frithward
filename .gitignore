@@ -7,4 +7,6 @@ target/
 .venv/
 .env
 test-results/
+.wxt/
+**/gen/
 *.log
