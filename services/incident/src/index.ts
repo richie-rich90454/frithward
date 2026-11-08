@@ -6,5 +6,5 @@ app.get("/health", (context) => context.json({ status: "ok", service: "incident"
 
 serve({
     fetch: app.fetch,
-    port: Number(process.env.PORT ?? 3005)
+    port: Number(process.env.PORT ?? 3005),
 });
