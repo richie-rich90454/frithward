@@ -1,0 +1,25 @@
+.fw-shell {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 32px;
+    display: grid;
+    gap: 24px;
+}
+
+.fw-shell header {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.fw-shell nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.fw-shell main {
+    border-top: 1px solid var(--fw-color-border);
+    padding-top: 24px;
+}
