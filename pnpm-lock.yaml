@@ -336,7 +336,11 @@ importers:
 
   packages/model-registry: {}
 
-  packages/privacy-core: {}
+  packages/privacy-core:
+    dependencies:
+      '@frithward/contracts':
+        specifier: workspace:*
+        version: link:../contracts
 
   packages/provenance-core: {}
 
