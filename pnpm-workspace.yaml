@@ -4,3 +4,5 @@ packages:
     - services/*
     - tools/*
     - engines/*
+allowBuilds:
+    esbuild: true
