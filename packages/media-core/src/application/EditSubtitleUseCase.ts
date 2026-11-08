@@ -1,5 +1,5 @@
 import { CaptionProject } from "../domain/CaptionProject.js";
-import { CaptionRepository } from "../ports/CaptionRepository.js";
+import type { CaptionRepository } from "../ports/CaptionRepository.js";
 
 export class EditSubtitleUseCase {
     private readonly repository: CaptionRepository;
