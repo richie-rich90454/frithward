@@ -1,0 +1,6 @@
+[project]
+name = "audio-protection"
+version = "0.0.1"
+description = "Audio voice protection research engine."
+requires-python = ">=3.12"
+dependencies = ["pydantic"]
