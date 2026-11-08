@@ -1,0 +1,10 @@
+FROM node:26-alpine
+WORKDIR /app
+COPY package.json pnpm-workspace.yaml ./
+COPY services/api/package.json services/api/package.json
+COPY packages/contracts/package.json packages/contracts/package.json
+COPY packages/security-core/package.json packages/security-core/package.json
+RUN corepack enable && pnpm install --frozen-lockfile
+COPY . .
+EXPOSE 3000
+CMD ["pnpm", "--filter", "@frithward/api", "run", "start"]
