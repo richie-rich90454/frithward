@@ -1,0 +1,62 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "categories": {
+        "correctness": "error",
+        "suspicious": "error"
+    },
+    "plugins": ["typescript", "jsx", "import"],
+    "rules": {
+        "typescript/no-explicit-any": "error",
+        "typescript/no-unsafe-assignment": "error",
+        "typescript/no-unsafe-member-access": "error",
+        "typescript/no-unsafe-call": "error",
+        "typescript/no-unsafe-return": "error",
+        "typescript/no-unsafe-argument": "error",
+        "typescript/no-floating-promises": "error",
+        "typescript/no-misused-promises": "error",
+        "typescript/no-non-null-assertion": "error",
+        "typescript/no-unnecessary-type-assertion": "error",
+        "typescript/ban-ts-comment": "error",
+        "no-unused-vars": "error",
+        "no-unused-imports": "error",
+        "no-eval": "error",
+        "no-implied-eval": "error",
+        "no-empty": "error",
+        "import/no-cycle": "error",
+        "import/no-relative-packages": "error"
+    },
+    "overrides": [
+        {
+            "files": ["packages/**/src/domain/**/*.ts", "packages/**/src/application/**/*.ts"],
+            "rules": {
+                "import/no-restricted-paths": [
+                    "error",
+                    {
+                        "zones": [
+                            {
+                                "target": "./packages/**/src/domain/**",
+                                "from": "./**/src/infrastructure/**",
+                                "message": "Domain logic must not import infrastructure adapters."
+                            },
+                            {
+                                "target": "./packages/**/src/domain/**",
+                                "from": "./**/src/presentation/**",
+                                "message": "Domain logic must not import presentation code."
+                            },
+                            {
+                                "target": "./packages/**/src/application/**",
+                                "from": "./**/src/infrastructure/**",
+                                "message": "Application logic must depend on ports, not concrete adapters."
+                            },
+                            {
+                                "target": "./packages/**/src/presentation/**",
+                                "from": "./**/src/infrastructure/**",
+                                "message": "Presentation controllers must not import infrastructure adapters directly."
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}
