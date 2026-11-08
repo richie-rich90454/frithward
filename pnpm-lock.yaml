@@ -268,7 +268,11 @@ importers:
 
   packages/design-system: {}
 
-  packages/execution-router: {}
+  packages/execution-router:
+    dependencies:
+      '@frithward/runtime':
+        specifier: workspace:*
+        version: link:../runtime
 
   packages/media-core:
     dependencies:
@@ -290,7 +294,11 @@ importers:
 
   packages/sdk: {}
 
-  packages/security-core: {}
+  packages/security-core:
+    dependencies:
+      '@frithward/contracts':
+        specifier: workspace:*
+        version: link:../contracts
 
   packages/storage: {}
 
