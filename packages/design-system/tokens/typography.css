@@ -1,0 +1,18 @@
+:root {
+    --fw-type-display: 48px;
+    --fw-type-page: 36px;
+    --fw-type-section: 28px;
+    --fw-type-subsection: 22px;
+    --fw-type-component: 18px;
+    --fw-type-body-lg: 17px;
+    --fw-type-body: 15px;
+    --fw-type-body-sm: 14px;
+    --fw-type-label: 13px;
+    --fw-type-meta: 12px;
+    --fw-leading-display: 56px;
+    --fw-leading-page: 44px;
+    --fw-leading-section: 36px;
+    --fw-leading-subsection: 30px;
+    --fw-leading-component: 26px;
+    --fw-leading-body: 24px;
+}
