@@ -14,11 +14,11 @@ export class ScamAnalysis {
         this.nextSteps = [
             "Contact the person through a known channel to confirm the request.",
             "Do not send money, codes, or credentials.",
-            "Keep the original message as evidence."
+            "Keep the original message as evidence.",
         ];
         this.limitations = [
             "Text patterns alone cannot prove intent.",
-            "Related URLs, images, and callers were not checked."
+            "Related URLs, images, and callers were not checked.",
         ];
     }
 }
