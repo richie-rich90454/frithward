@@ -1,0 +1,22 @@
+{
+    "name": "@frithward/api",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "start": "tsx src/index.ts"
+    },
+    "dependencies": {
+        "@frithward/contracts": "workspace:*",
+        "@frithward/security-core": "workspace:*",
+        "hono": "latest",
+        "@hono/node-server": "latest",
+        "@hono/zod-openapi": "latest",
+        "zod": "latest",
+        "tsx": "latest"
+    },
+    "devDependencies": {
+        "typescript": "latest"
+    }
+}
