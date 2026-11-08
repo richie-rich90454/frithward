@@ -1,0 +1,6 @@
+[project]
+name = "document-extraction"
+version = "0.0.1"
+description = "Document field extraction engine."
+requires-python = ">=3.12"
+dependencies = ["pydantic"]
