@@ -1,0 +1,34 @@
+{
+    "name": "@frithward/web",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@frithward/contracts": "workspace:*",
+        "@frithward/media-core": "workspace:*",
+        "@frithward/privacy-core": "workspace:*",
+        "@frithward/provenance-core": "workspace:*",
+        "@frithward/security-core": "workspace:*",
+        "@frithward/design-system": "workspace:*",
+        "@frithward/runtime": "workspace:*",
+        "@frithward/model-registry": "workspace:*",
+        "@frithward/model-manager": "workspace:*",
+        "@frithward/media-metadata": "workspace:*",
+        "@tanstack/solid-query": "latest",
+        "@solidjs/router": "latest",
+        "kobalte": "latest",
+        "lucide-solid": "latest",
+        "solid-js": "latest",
+        "vite-plugin-solid": "latest",
+        "zod": "latest"
+    },
+    "devDependencies": {
+        "vite": "latest",
+        "typescript": "latest"
+    }
+}
