@@ -7,6 +7,9 @@ export class WritingWorkshopTool {
     }
 
     public wordCount(): number {
-        return this.paragraphs.join(" ").split(/\s+/).filter((word) => word.length > 0).length;
+        return this.paragraphs
+            .join(" ")
+            .split(/\s+/)
+            .filter((word) => word.length > 0).length;
     }
 }
