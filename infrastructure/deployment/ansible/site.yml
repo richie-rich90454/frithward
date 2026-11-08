@@ -2,13 +2,13 @@
 - name: Deploy Frithward
   hosts: frithward
   vars:
-    app_dir: /opt/frithward
+      app_dir: /opt/frithward
   tasks:
-    - name: Install dependencies
-      ansible.builtin.command: pnpm install --frozen-lockfile
-      args:
-        chdir: "{{ app_dir }}"
-    - name: Build static assets
-      ansible.builtin.command: pnpm --filter @frithward/web run build
-      args:
-        chdir: "{{ app_dir }}"
+      - name: Install dependencies
+        ansible.builtin.command: pnpm install --frozen-lockfile
+        args:
+            chdir: "{{ app_dir }}"
+      - name: Build static assets
+        ansible.builtin.command: pnpm --filter @frithward/web run build
+        args:
+            chdir: "{{ app_dir }}"
