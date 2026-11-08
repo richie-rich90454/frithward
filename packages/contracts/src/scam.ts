@@ -8,7 +8,7 @@ export const ScamIndicator = z.object({
     id: z.string(),
     label: z.string(),
     detail: z.string(),
-    severity: z.enum(["low", "medium", "high"])
+    severity: z.enum(["low", "medium", "high"]),
 });
 
 export type ScamIndicator = z.infer<typeof ScamIndicator>;
@@ -20,13 +20,13 @@ export const ScamAnalysisResult = z.object({
     summary: z.string(),
     nextSteps: z.array(z.string()),
     limitations: z.array(z.string()),
-    createdAt: z.string()
+    createdAt: z.string(),
 });
 
 export type ScamAnalysisResult = z.infer<typeof ScamAnalysisResult>;
 
 export const AnalyzeMessageRequest = z.object({
-    text: z.string().min(1).max(20000)
+    text: z.string().min(1).max(20000),
 });
 
 export type AnalyzeMessageRequest = z.infer<typeof AnalyzeMessageRequest>;
