@@ -1,0 +1,28 @@
+.app-shell {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 32px;
+    display: grid;
+    gap: 24px;
+}
+
+.app-shell nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.app-shell nav button {
+    min-height: 44px;
+    border: 1px solid var(--fw-border-strong);
+    background: transparent;
+    color: var(--fw-text);
+    padding: 0 16px;
+    font-weight: 600;
+}
+
+.app-shell nav button[aria-current="page"] {
+    background: var(--fw-accent);
+    color: #ffffff;
+    border-color: var(--fw-accent);
+}
