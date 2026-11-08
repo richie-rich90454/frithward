@@ -1,0 +1,6 @@
+[project]
+name = "provenance-engine"
+version = "0.0.1"
+description = "Provenance verification engine."
+requires-python = ">=3.12"
+dependencies = ["pydantic"]
