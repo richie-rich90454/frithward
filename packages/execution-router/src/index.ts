@@ -1,1 +1,1 @@
-export * from "../runtime/src/index.js";
+export * from "@frithward/runtime";
