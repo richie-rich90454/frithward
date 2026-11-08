@@ -6,9 +6,9 @@ const connectionString =
 export async function runWorker(): Promise<void> {
     const runner = await run(
         {
-            connectionString: connectionString
+            connectionString: connectionString,
         },
-        {}
+        {},
     );
     await runner.stop();
 }
