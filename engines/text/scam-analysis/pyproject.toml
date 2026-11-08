@@ -1,1 +1,6 @@
-{"name":"text-scam-analysis","private":true,"version":"0.0.1","type":"module","description":"Experimental text scam analysis engine.","dependencies":["pydantic"]}
+[project]
+name = "text-scam-analysis"
+version = "0.0.1"
+description = "Experimental text scam analysis engine."
+requires-python = ">=3.12"
+dependencies = ["pydantic"]
