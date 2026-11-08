@@ -1,0 +1,18 @@
+.fw-field {
+    display: grid;
+    gap: 4px;
+}
+
+.fw-field input {
+    border-radius: 5px;
+    border: 1px solid var(--fw-color-border-strong);
+    min-height: 44px;
+    padding: 0 12px;
+    background: var(--fw-color-canvas);
+    color: var(--fw-color-text);
+}
+
+.fw-field hint {
+    color: var(--fw-color-text-secondary);
+    font-size: 12px;
+}
