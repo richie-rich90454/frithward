@@ -2,8 +2,7 @@
 
 ## Assets
 
-User media, identity information, device processing capacity, stored projects,
-and evidence exports.
+User media, identity information, device processing capacity, stored projects, and evidence exports.
 
 ## Boundaries
 
@@ -13,11 +12,8 @@ and evidence exports.
 
 ## Threats
 
-Media exfiltration through hidden uploads, impersonation via synthetic media,
-phishing and scams, metadata leakage, insecure credential handling, and supply
-chain compromise through dependencies and model artifacts.
+Media exfiltration through hidden uploads, impersonation via synthetic media, phishing and scams, metadata leakage, insecure credential handling, and supply chain compromise through dependencies and model artifacts.
 
 ## Controls
 
-Local-first execution, explicit execution location, dependency pinning,
-SBOM generation, secret scanning, and minimal network surface.
+Local-first execution, explicit execution location, dependency pinning, SBOM generation, secret scanning, and minimal network surface.
