@@ -4,6 +4,11 @@
     "private": true,
     "type": "module",
     "exports": {
-        ".": "./index.css"
+        ".": "./index.css",
+        "./tokens/*": "./tokens/*",
+        "./components/*": "./components/*",
+        "./layouts/*": "./layouts/*",
+        "./accessibility/*": "./accessibility/*",
+        "./icons/*": "./icons/*"
     }
 }
