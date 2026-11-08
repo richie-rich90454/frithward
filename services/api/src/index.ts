@@ -1,11 +1,14 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { createScamModule } from "./modules/scam-analysis/composition/createScamAnalysisModule.js";
+import { createAuthModule } from "./modules/auth/composition/createAuthModule.js";
 
 const app = new Hono();
 const scams = createScamModule();
+const auth = createAuthModule();
 
 app.route("/api/scam", scams.routes);
+app.route("/api/auth", auth.routes);
 app.get("/health", (context) => context.json({ status: "ok" }));
 
 serve({

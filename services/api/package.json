@@ -10,11 +10,13 @@
     "dependencies": {
         "@frithward/contracts": "workspace:*",
         "@frithward/security-core": "workspace:*",
-        "hono": "latest",
         "@hono/node-server": "latest",
         "@hono/zod-openapi": "latest",
-        "zod": "latest",
-        "tsx": "latest"
+        "better-auth": "^1.7.18",
+        "graphile-worker": "^0.18.0",
+        "hono": "latest",
+        "tsx": "latest",
+        "zod": "latest"
     },
     "devDependencies": {
         "typescript": "latest"
