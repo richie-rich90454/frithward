@@ -6,5 +6,5 @@ app.get("/health", (context) => context.json({ status: "ok", service: "community
 
 serve({
     fetch: app.fetch,
-    port: Number(process.env.PORT ?? 3004)
+    port: Number(process.env.PORT ?? 3004),
 });
