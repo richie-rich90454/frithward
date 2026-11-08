@@ -1,0 +1,1 @@
+{"name":"text-scam-analysis","private":true,"version":"0.0.1","type":"module","description":"Experimental text scam analysis engine.","dependencies":["pydantic"]}
