@@ -3,5 +3,6 @@ dist/
 build/
 coverage/
 target/
+.venv/
 .env
 *.log
