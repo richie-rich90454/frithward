@@ -17,7 +17,9 @@ describe("GarageObjectStorage", () => {
 describe("AnalyzeJobHandler", () => {
     it("accepts text payloads", async () => {
         const handler = new AnalyzeJobHandler();
-        await expect(handler.handle({ jobId: "j1", payload: { text: "hello" } })).resolves.toBeUndefined();
+        await expect(
+            handler.handle({ jobId: "j1", payload: { text: "hello" } }),
+        ).resolves.toBeUndefined();
     });
 
     it("rejects empty payloads", async () => {
