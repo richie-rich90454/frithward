@@ -1,0 +1,7 @@
+(frithward.local) {
+    reverse_proxy /api/* http://api:3000
+    handle {
+        root * /srv
+        file_server
+    }
+}
