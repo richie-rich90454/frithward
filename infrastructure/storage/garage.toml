@@ -1,0 +1,5 @@
+garage:
+  region: frithward
+  metadata_dir: /var/lib/garage/meta
+  data_dir: /var/lib/garage/data
+  replication_mode: "none"
