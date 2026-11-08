@@ -1,0 +1,25 @@
+.fw-button {
+    border-radius: 5px;
+    min-height: 44px;
+    padding: 0 24px;
+    font-weight: 600;
+}
+
+.fw-button-primary {
+    background: var(--fw-color-accent);
+    color: #ffffff;
+    border: 1px solid var(--fw-color-accent);
+}
+
+.fw-button-secondary {
+    background: transparent;
+    color: var(--fw-color-text);
+    border: 1px solid var(--fw-color-border-strong);
+}
+
+.fw-button-tertiary {
+    background: transparent;
+    color: var(--fw-color-text);
+    border: 1px solid transparent;
+    text-decoration: underline;
+}
