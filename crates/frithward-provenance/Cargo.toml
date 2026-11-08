@@ -1,0 +1,8 @@
+[package]
+name = "frithward-provenance"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "frithward_provenance"
+path = "src/lib.rs"
