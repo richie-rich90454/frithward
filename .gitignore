@@ -6,4 +6,5 @@ coverage/
 target/
 .venv/
 .env
+test-results/
 *.log
