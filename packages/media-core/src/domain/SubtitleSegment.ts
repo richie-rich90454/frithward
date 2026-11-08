@@ -14,14 +14,19 @@ export class SubtitleSegment {
         text: string;
         speakerId?: string | null;
     }) {
-        if (input.id.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Segment id required.");
+        if (input.id.trim().length === 0)
+            throw new AppError("VALIDATION_FAILED", "Segment id required.");
         if (!Number.isInteger(input.startMs) || input.startMs < 0) {
-            throw new AppError("VALIDATION_FAILED", "Segment start must be a non-negative integer.");
+            throw new AppError(
+                "VALIDATION_FAILED",
+                "Segment start must be a non-negative integer.",
+            );
         }
         if (!Number.isInteger(input.endMs) || input.endMs <= input.startMs) {
             throw new AppError("VALIDATION_FAILED", "Segment end must exceed start.");
         }
-        if (input.text.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Segment text required.");
+        if (input.text.trim().length === 0)
+            throw new AppError("VALIDATION_FAILED", "Segment text required.");
         this.id = input.id;
         this.startMs = input.startMs;
         this.endMs = input.endMs;
@@ -35,7 +40,10 @@ export class SubtitleSegment {
 
     public retime(startMs: number, endMs: number): void {
         if (!Number.isInteger(startMs) || startMs < 0) {
-            throw new AppError("VALIDATION_FAILED", "Segment start must be a non-negative integer.");
+            throw new AppError(
+                "VALIDATION_FAILED",
+                "Segment start must be a non-negative integer.",
+            );
         }
         if (!Number.isInteger(endMs) || endMs <= startMs) {
             throw new AppError("VALIDATION_FAILED", "Segment end must exceed start.");
@@ -45,7 +53,8 @@ export class SubtitleSegment {
     }
 
     public setText(text: string): void {
-        if (text.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Segment text required.");
+        if (text.trim().length === 0)
+            throw new AppError("VALIDATION_FAILED", "Segment text required.");
         this.text = text;
     }
 
