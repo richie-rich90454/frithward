@@ -11,7 +11,7 @@ export const MediaAsset = z.object({
     sizeBytes: z.number().int().nonnegative(),
     mimeType: z.string(),
     sha256: z.string(),
-    createdAt: z.string()
+    createdAt: z.string(),
 });
 
 export type MediaAsset = z.infer<typeof MediaAsset>;
@@ -21,7 +21,7 @@ export const CaptionSegmentDto = z.object({
     startMs: z.number().int().nonnegative(),
     endMs: z.number().int().positive(),
     text: z.string(),
-    speakerId: z.string().nullable()
+    speakerId: z.string().nullable(),
 });
 
 export type CaptionSegmentDto = z.infer<typeof CaptionSegmentDto>;
@@ -30,7 +30,7 @@ export const CaptionProjectDto = z.object({
     id: z.string(),
     title: z.string(),
     language: z.string(),
-    segments: z.array(CaptionSegmentDto)
+    segments: z.array(CaptionSegmentDto),
 });
 
 export type CaptionProjectDto = z.infer<typeof CaptionProjectDto>;
