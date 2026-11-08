@@ -1,0 +1,11 @@
+.fw-dialog {
+    border-radius: 5px;
+    border: 1px solid var(--fw-color-border-strong);
+    background: var(--fw-color-canvas);
+    color: var(--fw-color-text);
+    padding: 16px;
+}
+
+.fw-dialog h2 {
+    margin-top: 0;
+}
