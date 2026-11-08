@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { GarageObjectStorage } from "../modules/storage/GarageObjectStorage.js";
-import { AnalyzeJobHandler } from "../jobs/AnalyzeJobHandler.js";
+import { GarageObjectStorage } from "./modules/storage/GarageObjectStorage.js";
+import { AnalyzeJobHandler } from "./jobs/AnalyzeJobHandler.js";
 
 describe("GarageObjectStorage", () => {
     it("builds object urls", () => {
