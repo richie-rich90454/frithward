@@ -41,7 +41,7 @@ export class CaptionStudioController {
             await this.editor.execute({
                 project: this.project,
                 segmentId: input.segmentId,
-                text: input.text
+                text: input.text,
             });
             this.selectedSegmentId = input.segmentId;
             this.error = null;
