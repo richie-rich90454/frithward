@@ -16,8 +16,15 @@ Requires Node.js 26 LTS and pnpm.
 
 ```powershell
 pnpm install
-pnpm run dev
+pnpm run start
 pnpm run check
+```
+
+Serve separately with plain Node:
+
+```powershell
+pnpm run start:web
+pnpm run start:api
 ```
 
 ## Repository layout

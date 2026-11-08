@@ -1,7 +1,7 @@
 (frithward.local) {
-    reverse_proxy /api/* http://api:3000
+    reverse_proxy /api/* http://127.0.0.1:3000
     handle {
-        root * /srv
+        root * /opt/frithward/apps/web/dist
         file_server
     }
 }
