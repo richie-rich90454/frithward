@@ -1,1 +1,13 @@
-{"name":"frithward-docs","private":true,"type":"module","scripts":{"dev":"vitepress dev","build":"vitepress build"},"devDependencies":{"vitepress":"latest","vue":"latest"}}
+{
+    "name": "frithward-docs",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vitepress dev",
+        "build": "vitepress build"
+    },
+    "devDependencies": {
+        "vitepress": "latest",
+        "vue": "latest"
+    }
+}
