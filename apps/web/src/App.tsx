@@ -9,7 +9,7 @@ const NAVIGATION = [
     { id: "verify", label: "Verify" },
     { id: "respond", label: "Respond" },
     { id: "learn", label: "Learn" },
-    { id: "community", label: "Community" }
+    { id: "community", label: "Community" },
 ] as const;
 
 export function App() {
@@ -39,7 +39,10 @@ export function App() {
                 <Show when={section() === "home"}>
                     <section>
                         <h1>Home</h1>
-                        <p>Generates captions, edits media, checks suspicious content, and protects personal information locally.</p>
+                        <p>
+                            Generates captions, edits media, checks suspicious content, and protects
+                            personal information locally.
+                        </p>
                     </section>
                 </Show>
                 <Show when={section() === "make"}>
