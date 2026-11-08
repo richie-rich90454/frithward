@@ -1,0 +1,10 @@
+/** @type {import('css').CustomMedia} --fw-narrow; */
+:root {
+    --fw-layout-header: 60px;
+    --fw-layout-sidebar: 232px;
+    --fw-layout-inspector: 304px;
+    --fw-layout-max: 1440px;
+    --fw-layout-gap: 24px;
+    --fw-layout-pad: 32px;
+    --fw-touch-min: 44px;
+}
