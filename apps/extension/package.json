@@ -9,6 +9,7 @@
     },
     "dependencies": {
         "wxt": "latest",
-        "solid-js": "latest"
+        "solid-js": "latest",
+        "vite-plugin-solid": "latest"
     }
 }
