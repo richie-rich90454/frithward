@@ -1,15 +1,14 @@
-import { makeWorker } from "graphile-worker";
+import { run } from "graphile-worker";
 
 const connectionString =
     process.env.DATABASE_URL ?? "postgres://frithward:frithward@localhost:5432/frithward";
 
 export async function runWorker(): Promise<void> {
-    const worker = await makeWorker(
-        { connectionString },
-        [],
+    const runner = await run(
         {
-            queues: ["frithward"]
-        }
+            connectionString: connectionString
+        },
+        {}
     );
-    await worker.release();
+    await runner.stop();
 }
