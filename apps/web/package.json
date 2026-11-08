@@ -21,7 +21,7 @@
         "@frithward/media-metadata": "workspace:*",
         "@tanstack/solid-query": "latest",
         "@solidjs/router": "latest",
-        "kobalte": "latest",
+        "@kobalte/core": "latest",
         "lucide-solid": "latest",
         "solid-js": "latest",
         "vite-plugin-solid": "latest",
