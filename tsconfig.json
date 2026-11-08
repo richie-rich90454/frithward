@@ -1,8 +1,10 @@
 {
     "extends": "./tsconfig.base.json",
     "files": [],
-    "include": ["infrastructure/database/**/*.ts"],
     "references": [
+        {
+            "path": "./infrastructure/database"
+        },
         {
             "path": "./packages/contracts"
         },
