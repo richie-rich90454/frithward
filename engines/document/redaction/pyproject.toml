@@ -1,0 +1,6 @@
+[project]
+name = "document-redaction"
+version = "0.0.1"
+description = "Document redaction engine."
+requires-python = ">=3.12"
+dependencies = ["pydantic"]
