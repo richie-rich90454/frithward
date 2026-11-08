@@ -1,4 +1,4 @@
-import { PrivacyFinding } from "../domain/PrivacyFinding.js";
+import type { PrivacyFinding } from "../domain/PrivacyFinding.js";
 import { PrivacyPolicy } from "../domain/PrivacyPolicy.js";
 
 export class InspectPrivacyUseCase {
