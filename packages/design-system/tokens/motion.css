@@ -1,0 +1,8 @@
+:root {
+    --fw-motion-hover: 120ms;
+    --fw-motion-button: 120ms;
+    --fw-motion-focus: 120ms;
+    --fw-motion-panel: 180ms;
+    --fw-motion-dialog: 200ms;
+    --fw-motion-page: 150ms;
+}
