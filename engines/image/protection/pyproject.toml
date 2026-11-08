@@ -1,0 +1,6 @@
+[project]
+name = "image-protection"
+version = "0.0.1"
+description = "Image protection research engine."
+requires-python = ">=3.12"
+dependencies = ["pydantic"]
