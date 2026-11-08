@@ -6,5 +6,9 @@ export interface RecognizedUtterance {
 }
 
 export interface SpeechRecognitionPort {
-    recognize(input: { audio: ArrayBuffer; language: string; signal: AbortSignal }): Promise<readonly RecognizedUtterance[]>;
+    recognize(input: {
+        audio: ArrayBuffer;
+        language: string;
+        signal: AbortSignal;
+    }): Promise<readonly RecognizedUtterance[]>;
 }
