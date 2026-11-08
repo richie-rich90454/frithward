@@ -1,6 +1,6 @@
 import { AppError } from "@frithward/contracts";
 import { CaptionProject } from "../domain/CaptionProject.js";
-import { SubtitleSegment } from "../domain/CaptionProject.js";
+import { SubtitleSegment } from "../domain/SubtitleSegment.js";
 import { SpeechRecognitionPort } from "../ports/SpeechRecognitionPort.js";
 
 export class GenerateCaptionsUseCase {
