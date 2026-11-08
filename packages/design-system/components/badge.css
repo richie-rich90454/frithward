@@ -1,0 +1,7 @@
+.fw-badge {
+    border: 1px solid var(--fw-color-border-strong);
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 500;
+}
