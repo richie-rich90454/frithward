@@ -8,4 +8,4 @@ name = "frithward"
 path = "src/main.rs"
 
 [dependencies]
-clap = "4"
+clap = { version = "4", features = ["derive"] }
