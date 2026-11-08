@@ -9,10 +9,18 @@ export class CaptionProject {
     private readonly segments: SubtitleSegment[];
     private readonly policy: CaptionPolicy;
 
-    public constructor(input: { id: string; title: string; language: string; policy?: CaptionPolicy }) {
-        if (input.id.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Project id required.");
-        if (input.title.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Project title required.");
-        if (input.language.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Project language required.");
+    public constructor(input: {
+        id: string;
+        title: string;
+        language: string;
+        policy?: CaptionPolicy;
+    }) {
+        if (input.id.trim().length === 0)
+            throw new AppError("VALIDATION_FAILED", "Project id required.");
+        if (input.title.trim().length === 0)
+            throw new AppError("VALIDATION_FAILED", "Project title required.");
+        if (input.language.trim().length === 0)
+            throw new AppError("VALIDATION_FAILED", "Project language required.");
         this.id = input.id;
         this.title = input.title;
         this.language = input.language;
