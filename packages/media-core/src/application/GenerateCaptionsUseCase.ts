@@ -7,7 +7,10 @@ export class GenerateCaptionsUseCase {
     private readonly recognizer: SpeechRecognitionPort;
     private readonly repository: { save(project: CaptionProject): Promise<void> };
 
-    public constructor(recognizer: SpeechRecognitionPort, repository: { save(project: CaptionProject): Promise<void> }) {
+    public constructor(
+        recognizer: SpeechRecognitionPort,
+        repository: { save(project: CaptionProject): Promise<void> },
+    ) {
         this.recognizer = recognizer;
         this.repository = repository;
     }
@@ -21,19 +24,20 @@ export class GenerateCaptionsUseCase {
         const utterances = await this.recognizer.recognize({
             audio: input.audio,
             language: input.project.language,
-            signal: input.signal
+            signal: input.signal,
         });
         let index = input.project.segmentCount;
         for (const utterance of utterances) {
-            if (input.signal.aborted) throw new AppError("CANCELLED", "Caption generation cancelled.");
+            if (input.signal.aborted)
+                throw new AppError("CANCELLED", "Caption generation cancelled.");
             input.project.addSegment(
                 new SubtitleSegment({
                     id: `${input.project.id}-seg-${index}`,
                     startMs: utterance.startMs,
                     endMs: utterance.endMs,
                     text: utterance.text,
-                    speakerId: utterance.speakerId
-                })
+                    speakerId: utterance.speakerId,
+                }),
             );
             index += 1;
         }
