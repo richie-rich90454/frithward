@@ -1,7 +1,7 @@
 apis:
-  - apiVersion: v1
-    kind: Prometheus
-    metadata:
-      name: frithward
-    spec:
-      serviceMonitorSelector: {}
+    - apiVersion: v1
+      kind: Prometheus
+      metadata:
+          name: frithward
+      spec:
+          serviceMonitorSelector: {}
