@@ -12,10 +12,8 @@
 
 Use conventional commits in American English, one file per commit.
 
-Examples: `feat: add caption export service`, `fix: handle cancelled transcription`,
-`docs: clarify model policy`, `refactor: extract caption policy`.
+Examples: `feat: add caption export service`, `fix: handle cancelled transcription`, `docs: clarify model policy`, `refactor: extract caption policy`.
 
 ## Dependencies
 
-Resolve with `pnpm add <package>@latest`. Commit the lockfile. Do not float
-production versions.
+Resolve with `pnpm add <package>@latest`. Commit the lockfile. Do not float production versions.
