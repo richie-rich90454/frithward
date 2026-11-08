@@ -1,0 +1,17 @@
+import "@frithward/design-system/tokens/color.css";
+import "@frithward/design-system/tokens/spacing.css";
+import "@frithward/design-system/tokens/typography.css";
+import "@frithward/design-system/tokens/geometry.css";
+import "@frithward/design-system/tokens/motion.css";
+import "@frithward/design-system/tokens/elevation.css";
+import "@frithward/design-system/tokens/borders.css";
+import "@frithward/design-system/components/button.css";
+import "@frithward/design-system/components/input.css";
+import "@frithward/design-system/components/table.css";
+import "@frithward/design-system/components/dialog.css";
+import "@frithward/design-system/components/alert.css";
+import "@frithward/design-system/components/badge.css";
+import "@frithward/design-system/layouts/application-shell.css";
+import "@frithward/design-system/layouts/workspace.css";
+import "@frithward/design-system/accessibility/base.css";
+import "@frithward/design-system/icons/base.css";
