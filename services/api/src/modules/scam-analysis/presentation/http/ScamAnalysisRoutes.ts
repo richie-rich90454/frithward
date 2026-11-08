@@ -7,7 +7,10 @@ export class ScamAnalysisRoutes extends Hono {
         this.post("/message", async (context) => {
             const body = (await context.req.json()) as { text?: string };
             if (typeof body.text !== "string") {
-                return context.json({ code: "VALIDATION_FAILED", message: "Message text required." }, 400);
+                return context.json(
+                    { code: "VALIDATION_FAILED", message: "Message text required." },
+                    400,
+                );
             }
             const result = this.useCase.execute(body.text);
             return context.json({
@@ -15,7 +18,7 @@ export class ScamAnalysisRoutes extends Hono {
                 summary: result.summary,
                 nextSteps: result.nextSteps,
                 limitations: result.limitations,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
             });
         });
     }
