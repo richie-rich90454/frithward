@@ -1,4 +1,4 @@
-import { ProvenanceRecord } from "../domain/ProvenanceRecord.js";
+import type { ProvenanceRecord } from "../domain/ProvenanceRecord.js";
 
 export class VerifyProvenanceUseCase {
     public describe(record: ProvenanceRecord): string {
