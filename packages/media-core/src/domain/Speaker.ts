@@ -6,7 +6,8 @@ export class Speaker {
 
     public constructor(id: string, name: string) {
         if (id.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Speaker id required.");
-        if (name.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Speaker name required.");
+        if (name.trim().length === 0)
+            throw new AppError("VALIDATION_FAILED", "Speaker name required.");
         this.id = id;
         this.name = name;
     }
