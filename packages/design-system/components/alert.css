@@ -1,0 +1,15 @@
+.fw-alert {
+    border: 1px solid var(--fw-color-border-strong);
+    border-radius: 5px;
+    padding: 12px 16px;
+}
+
+.fw-alert-danger {
+    border-color: var(--fw-color-danger);
+    color: var(--fw-color-danger);
+}
+
+.fw-alert-success {
+    border-color: var(--fw-color-success);
+    color: var(--fw-color-success);
+}
