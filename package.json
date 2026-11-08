@@ -12,8 +12,8 @@
     "scripts": {
         "build": "pnpm -r run build",
         "lint": "oxlint .",
-        "format": "oxfmt .",
-        "format:check": "oxfmt --check .",
+        "format": "oxfmt -c oxfmt.json .",
+        "format:check": "oxfmt --check -c oxfmt.json .",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
         "test:e2e": "playwright test",
