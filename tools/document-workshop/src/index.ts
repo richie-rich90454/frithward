@@ -2,7 +2,8 @@ export class DocumentWorkshopTool {
     private readonly pages = new Set<number>();
 
     public addPage(pageNumber: number): void {
-        if (!Number.isInteger(pageNumber) || pageNumber < 1) throw new Error("Page number must be a positive integer.");
+        if (!Number.isInteger(pageNumber) || pageNumber < 1)
+            throw new Error("Page number must be a positive integer.");
         this.pages.add(pageNumber);
     }
 
