@@ -1,0 +1,13 @@
+{
+    "extends": "./tsconfig.base.json",
+    "references": [
+        { "path": "./packages/contracts" },
+        { "path": "./packages/media-core" },
+        { "path": "./packages/privacy-core" },
+        { "path": "./packages/provenance-core" },
+        { "path": "./packages/security-core" },
+        { "path": "./packages/model-registry" },
+        { "path": "./apps/web" },
+        { "path": "./services/api" }
+    ]
+}
