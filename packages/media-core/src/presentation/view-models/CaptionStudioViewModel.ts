@@ -1,5 +1,5 @@
-import { CaptionProject } from "../domain/CaptionProject.js";
-import { SubtitleSegment } from "../domain/SubtitleSegment.js";
+import { CaptionProject } from "../../domain/CaptionProject.js";
+import { SubtitleSegment } from "../../domain/SubtitleSegment.js";
 
 export interface CaptionStudioViewModelSegment {
     id: string;
