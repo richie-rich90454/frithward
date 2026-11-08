@@ -1,0 +1,6 @@
+[project]
+name = "video-redaction"
+version = "0.0.1"
+description = "Video redaction engine."
+requires-python = ">=3.12"
+dependencies = ["pydantic"]
