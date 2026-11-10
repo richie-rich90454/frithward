@@ -1,8 +1,6 @@
 # Provenance engine
 
-Content provenance inspection. The engine validates an asset id and reports
-whether a manifest is present. It does not verify signatures, hashes,
-timestamps, or transformation history.
+Content provenance inspection. The engine validates an asset id and reports whether a manifest is present. It does not verify signatures, hashes, timestamps, or transformation history.
 
 ## Intended use
 
@@ -29,8 +27,7 @@ timestamps, or transformation history.
 
 ## Metrics
 
-Signature verification success rate, manifest coverage, and validation failure
-categories. Only measured results may be published.
+Signature verification success rate, manifest coverage, and validation failure categories. Only measured results may be published.
 
 ## Model candidates and datasets
 
@@ -40,5 +37,4 @@ None. Provenance validation is cryptographic and rule-based.
 
 - Manifest presence is not authenticity.
 - Signature validation is separate and not implemented here.
-- A missing manifest means provenance is unavailable, not that the asset is
-  manipulated.
+- A missing manifest means provenance is unavailable, not that the asset is manipulated.
