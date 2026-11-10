@@ -1,7 +1,6 @@
 # Translation tool
 
-Glossary-backed translation helper. `TranslationTool` looks up exact text in a
-caller-supplied glossary and returns the original text when there is no entry.
+Glossary-backed translation helper. `TranslationTool` looks up exact text in a caller-supplied glossary and returns the original text when there is no entry.
 
 ## Usage
 
@@ -22,7 +21,6 @@ tool.translate("goodbye"); // "goodbye"
 
 ## Limitations
 
-- Exact-match glossary only. No neural translation, language detection, or
-  context handling.
+- Exact-match glossary only. No neural translation, language detection, or context handling.
 - Unknown text is returned unchanged, which callers must surface honestly.
 - Document the language limits of any downstream model separately.
