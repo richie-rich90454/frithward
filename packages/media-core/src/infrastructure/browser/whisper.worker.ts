@@ -71,6 +71,7 @@ async function fetchArrayBuffer(url: string): Promise<ArrayBuffer> {
     return response.arrayBuffer();
 }
 
+// Complexity: O(lines) with a single regex pass per line.
 function parseUtterances(lines: readonly string[]): readonly WhisperUtterance[] {
     const utterances: WhisperUtterance[] = [];
     const pattern =
