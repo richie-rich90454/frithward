@@ -22,3 +22,9 @@ def test_applies_gain():
     engine = load_engine()
     result = engine.enhance(engine.EnhancementRequest(audio_id="a1", gain_db=2.0))
     assert result.gain_db == 2.0
+
+
+def test_rejects_whitespace_id():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.enhance(engine.EnhancementRequest(audio_id="   "))
