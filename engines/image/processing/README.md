@@ -1,7 +1,6 @@
 # Image processing engine
 
-Resize and crop operations. The engine validates bounds and returns dimensions.
-The scaffold echoes the requested bounds without decoding the image.
+Resize and crop operations. The engine validates bounds and returns dimensions. The scaffold echoes the requested bounds without decoding the image.
 
 ## Intended use
 
@@ -26,8 +25,7 @@ The scaffold echoes the requested bounds without decoding the image.
 
 ## Metrics
 
-Output dimensions, processing time, peak memory, and visual quality for
-downstream tasks.
+Output dimensions, processing time, peak memory, and visual quality for downstream tasks.
 
 ## Model candidates and datasets
 
