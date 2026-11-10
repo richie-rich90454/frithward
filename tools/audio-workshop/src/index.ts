@@ -1,3 +1,5 @@
+export * from "@frithward/media-analysis";
+
 export interface AudioEdit {
     id: string;
     startMs: number;
