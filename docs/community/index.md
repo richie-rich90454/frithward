@@ -1,9 +1,6 @@
 # Community
 
-Frithward Commons welcomes developers, researchers, educators, parents, older
-adults, translators, journalists, and accessibility advocates. The project is
-built in the open, and contributions are reviewed against the engineering
-standards and the safety policies.
+Frithward Commons welcomes developers, researchers, educators, parents, older adults, translators, journalists, and accessibility advocates. The project is built in the open, and contributions are reviewed against the engineering standards and the safety policies.
 
 ## Contribution tracks
 
@@ -16,8 +13,7 @@ standards and the safety policies.
 
 ## How to contribute
 
-1. Read [CONTRIBUTING.md](../../CONTRIBUTING.md) and
-   [the engineering standards](../engineering/standards.md).
+1. Read [CONTRIBUTING.md](../../CONTRIBUTING.md) and [the engineering standards](../engineering/standards.md).
 2. Open an issue describing the problem before large changes.
 3. Implement the complete change, including callers, exports, and tests.
 4. Run `pnpm run check` and, for engine work, the engine's pytest suite.
@@ -37,8 +33,7 @@ standards and the safety policies.
 - Never publish victims' private information.
 - Never publish non-consensual identity datasets.
 - Do not build tools whose primary purpose is impersonating real individuals.
-- Detection results must be presented as evidence with limitations, not as
-  verdicts.
+- Detection results must be presented as evidence with limitations, not as verdicts.
 - Consequential decisions require human review.
 - Report vulnerabilities privately; do not open public issues for them.
 
@@ -52,19 +47,12 @@ standards and the safety policies.
 
 ## Research contributions
 
-Research contributions must include a model card or dataset note, document
-licenses and consent, and report measured results with their harness and
-hardware. Missing measurements are reported as "not measured". See
-[the research summary](../research/summary.md).
+Research contributions must include a model card or dataset note, document licenses and consent, and report measured results with their harness and hardware. Missing measurements are reported as "not measured". See [the research summary](../research/summary.md).
 
 ## Community behavior
 
-Be patient and assume good faith. Older adults and people under scam pressure
-are primary users, so tone matters. Do not mock, blame, or accuse. Keep
-discussion focused on the work and the safety outcome.
+Be patient and assume good faith. Older adults and people under scam pressure are primary users, so tone matters. Do not mock, blame, or accuse. Keep discussion focused on the work and the safety outcome.
 
 ## Licensing
 
-Code is Apache-2.0. Model weights, datasets, and documentation retain their
-stated licenses. By contributing, you agree that your contribution is
-licensed under the project's license for its track.
+Code is Apache-2.0. Model weights, datasets, and documentation retain their stated licenses. By contributing, you agree that your contribution is licensed under the project's license for its track.
