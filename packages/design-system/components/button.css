@@ -1,25 +1,43 @@
 .fw-button {
-    border-radius: 5px;
-    min-height: 44px;
-    padding: 0 24px;
-    font-weight: 600;
+    border-radius: var(--fw-radius);
+    min-height: var(--fw-touch-min);
+    padding: 0 var(--fw-space-6);
+    font-weight: var(--fw-weight-semibold);
+    transition:
+        background var(--fw-motion-button) var(--fw-easing-standard),
+        border-color var(--fw-motion-button) var(--fw-easing-standard),
+        color var(--fw-motion-button) var(--fw-easing-standard);
 }
 
 .fw-button-primary {
     background: var(--fw-color-accent);
-    color: #ffffff;
-    border: 1px solid var(--fw-color-accent);
+    color: var(--fw-color-accent-contrast);
+    border: var(--fw-border-width) solid var(--fw-color-accent);
+}
+
+.fw-button-primary:hover {
+    background: var(--fw-color-accent-surface);
+    color: var(--fw-color-accent);
 }
 
 .fw-button-secondary {
     background: transparent;
     color: var(--fw-color-text);
-    border: 1px solid var(--fw-color-border-strong);
+    border: var(--fw-border-width) solid var(--fw-color-border-strong);
+}
+
+.fw-button-secondary:hover {
+    border-color: var(--fw-color-accent);
+    color: var(--fw-color-accent);
 }
 
 .fw-button-tertiary {
     background: transparent;
     color: var(--fw-color-text);
-    border: 1px solid transparent;
+    border: var(--fw-border-width) solid transparent;
     text-decoration: underline;
+}
+
+.fw-button-tertiary:hover {
+    color: var(--fw-color-accent);
 }
