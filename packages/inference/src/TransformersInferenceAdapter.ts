@@ -35,6 +35,7 @@ export class TransformersInferenceAdapter {
     }
 
     public async extract(request: FeatureExtractionRequest): Promise<FeatureExtractionResult> {
+        // Complexity: O(tokens); inference runs in the calling thread.
         if (!this.extractor) throw new Error("Transformers inference adapter is not started.");
         if (request.signal?.aborted) throw new DOMException("Aborted", "AbortError");
         const output = await this.extractor._call(request.text, {
