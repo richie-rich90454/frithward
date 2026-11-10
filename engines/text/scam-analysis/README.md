@@ -1,8 +1,6 @@
 # Text scam analysis engine
 
-Experimental text analysis for suspicious messages. The engine validates the
-payload and returns indicators. The scaffold flags the word `password` as a
-credential request.
+Experimental text analysis for suspicious messages. The engine validates the payload and returns indicators. The scaffold flags the word `password` as a credential request.
 
 ## Intended use
 
@@ -29,13 +27,11 @@ credential request.
 
 ## Metrics
 
-Precision and recall on reviewed examples, false-positive rate, and the
-accuracy of the guidance. Report the language and example source.
+Precision and recall on reviewed examples, false-positive rate, and the accuracy of the guidance. Report the language and example source.
 
 ## Model candidates and datasets
 
-Pattern libraries with reviewed examples. No victim data. See
-`research/scam-detection` and the dataset policy.
+Pattern libraries with reviewed examples. No victim data. See `research/scam-detection` and the dataset policy.
 
 ## Limitations
 
