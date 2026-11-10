@@ -1,7 +1,6 @@
 # Frithward design system
 
-CSS tokens, primitives, and layouts for Frithward interfaces. The package is
-private and consumed through the `@frithward/design-system` workspace alias.
+CSS tokens, primitives, and layouts for Frithward interfaces. The package is private and consumed through the `@frithward/design-system` workspace alias.
 
 ## Import
 
@@ -21,9 +20,7 @@ import "@frithward/design-system/accessibility/base.css";
 import "@frithward/design-system/icons/base.css";
 ```
 
-The package exports `.`, `./tokens/*`, `./components/*`, `./layouts/*`,
-`./accessibility/*`, and `./icons/*`. Every file is plain CSS with no build
-step.
+The package exports `.`, `./tokens/*`, `./components/*`, `./layouts/*`, `./accessibility/*`, and `./icons/*`. Every file is plain CSS with no build step.
 
 ## Token categories
 
@@ -65,8 +62,7 @@ step.
 
 ## Theming
 
-Light values are the defaults in `:root`. Add `data-theme="dark"` to `<html>`
-to switch every semantic token:
+Light values are the defaults in `:root`. Add `data-theme="dark"` to `<html>` to switch every semantic token:
 
 ```html
 <html data-theme="dark">
@@ -80,16 +76,11 @@ Do not override individual component colors; add or change a token instead.
 - `prefers-reduced-motion` disables transitions and animations globally.
 - `prefers-contrast: more` promotes the strong border color to `currentColor`.
 - Interactive targets are at least 44px (`--fw-touch-min`).
-- Use semantic colors for status, never color alone. Pair `.fw-alert-danger`
-  with text, for example.
+- Use semantic colors for status, never color alone. Pair `.fw-alert-danger` with text, for example.
 
 ## Rules
 
-1. Components reference tokens only. No literal colors, spacing, radii, or
-   shadows in `components/` and `layouts/`.
+1. Components reference tokens only. No literal colors, spacing, radii, or shadows in `components/` and `layouts/`.
 2. A value that repeats across components becomes a token.
-3. Media queries cannot read custom properties, so the workspace breakpoint
-   stays a literal value with an explanatory comment.
-4. `tokens/color.css` also defines legacy `--fw-*` aliases (`--fw-text`,
-   `--fw-accent`, `--fw-border-strong`, and friends) so older stylesheets keep
-   resolving. New code uses `--fw-color-*`.
+3. Media queries cannot read custom properties, so the workspace breakpoint stays a literal value with an explanatory comment.
+4. `tokens/color.css` also defines legacy `--fw-*` aliases (`--fw-text`, `--fw-accent`, `--fw-border-strong`, and friends) so older stylesheets keep resolving. New code uses `--fw-color-*`.
