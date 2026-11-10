@@ -1,0 +1,20 @@
+.fw-select {
+    appearance: none;
+    border-radius: var(--fw-radius);
+    border: var(--fw-border-width) solid var(--fw-color-border-strong);
+    min-height: var(--fw-component-input-height);
+    padding: 0 var(--fw-space-3);
+    background: var(--fw-color-canvas);
+    color: var(--fw-color-text);
+    font-size: var(--fw-type-body);
+    line-height: var(--fw-leading-body);
+}
+
+.fw-select:focus-visible {
+    border-color: var(--fw-color-accent);
+}
+
+.fw-select:disabled {
+    color: var(--fw-color-text-secondary);
+    cursor: not-allowed;
+}
