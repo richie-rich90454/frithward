@@ -13,7 +13,9 @@ export function CommunityView() {
                     <HeartHandshake class="fw-icon" />
                     <div>
                         <h2>Community support</h2>
-                        <p>People helping each other recognize and respond to suspicious content.</p>
+                        <p>
+                            People helping each other recognize and respond to suspicious content.
+                        </p>
                     </div>
                 </li>
                 <li>
