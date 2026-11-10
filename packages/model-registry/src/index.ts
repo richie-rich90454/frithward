@@ -1,4 +1,4 @@
-export interface ModelCard {
+export interface ModelEntry {
     id: string;
     stage: "experimental" | "candidate" | "stable" | "deprecated";
     license: string;
@@ -7,17 +7,21 @@ export interface ModelCard {
 }
 
 export class ModelRegistry {
-    private readonly models = new Map<string, ModelCard>();
+    private readonly models = new Map<string, ModelEntry>();
 
-    public register(card: ModelCard): void {
+    public register(card: ModelEntry): void {
         this.models.set(card.id, card);
     }
 
-    public get(id: string): ModelCard | undefined {
+    public get(id: string): ModelEntry | undefined {
         return this.models.get(id);
     }
 
-    public listStable(): readonly ModelCard[] {
+    public listStable(): readonly ModelEntry[] {
         return [...this.models.values()].filter((card) => card.stage === "stable");
+    }
+
+    public listAll(): readonly ModelEntry[] {
+        return [...this.models.values()];
     }
 }
