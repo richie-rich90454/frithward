@@ -22,3 +22,9 @@ def test_echoes_regions():
     engine = load_engine()
     result = engine.redact(engine.RedactionRequest(video_id="v1", regions=["r1"]))
     assert result.redacted_regions == ["r1"]
+
+
+def test_rejects_whitespace_id():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.redact(engine.RedactionRequest(video_id="   "))
