@@ -1,0 +1,26 @@
+.fw-file-picker {
+    display: grid;
+    place-items: center;
+    gap: var(--fw-space-2);
+    min-height: var(--fw-component-input-height);
+    padding: var(--fw-space-4);
+    border: var(--fw-border-selected) dashed var(--fw-color-border-strong);
+    border-radius: var(--fw-radius);
+    background: var(--fw-color-canvas);
+    color: var(--fw-color-text-secondary);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--fw-motion-focus) var(--fw-easing-standard);
+}
+
+.fw-file-picker:hover {
+    border-color: var(--fw-color-accent);
+}
+
+.fw-file-picker:focus-within {
+    border-color: var(--fw-color-accent);
+}
+
+.fw-file-picker span {
+    font-size: var(--fw-type-body-sm);
+}
