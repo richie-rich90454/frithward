@@ -1,12 +1,13 @@
 .fw-table {
     border-collapse: collapse;
     width: 100%;
+    font-size: var(--fw-type-body-sm);
 }
 
 .fw-table th,
 .fw-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--fw-color-border);
+    padding: var(--fw-space-3) var(--fw-space-4);
+    border-bottom: var(--fw-border-width) solid var(--fw-color-border);
     text-align: left;
 }
 
