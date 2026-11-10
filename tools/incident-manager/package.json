@@ -5,5 +5,11 @@
     "type": "module",
     "exports": {
         ".": "./src/index.ts"
+    },
+    "dependencies": {
+        "@frithward/contracts": "workspace:*",
+        "@frithward/privacy-core": "workspace:*",
+        "@frithward/provenance-core": "workspace:*",
+        "@frithward/security-core": "workspace:*"
     }
 }
