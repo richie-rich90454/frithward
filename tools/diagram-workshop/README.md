@@ -1,7 +1,6 @@
 # Diagram workshop
 
-Node registry for diagram tools. `DiagramWorkshopTool` tracks node identifiers
-and returns them in sorted order.
+Node registry for diagram tools. `DiagramWorkshopTool` tracks node identifiers and returns them in sorted order.
 
 ## Usage
 
@@ -16,10 +15,10 @@ tool.listNodes(); // ["decision", "start"]
 
 ## API
 
-| Method | Input | Output |
-| --- | --- | --- |
+| Method        | Input             | Output                              |
+| ------------- | ----------------- | ----------------------------------- |
 | `addNode(id)` | Non-empty node id | Adds the id; duplicates are ignored |
-| `listNodes()` | None | Sorted, deduplicated id list |
+| `listNodes()` | None              | Sorted, deduplicated id list        |
 
 ## Limitations
 
