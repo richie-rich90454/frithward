@@ -4,4 +4,7 @@
     --fw-component-button-tertiary: "tertiary";
     --fw-component-input-height: 44px;
     --fw-component-dialog-radius: 5px;
+    --fw-component-control-size: 20px;
+    --fw-component-icon-size: 20px;
+    --fw-component-progress-height: 8px;
 }
