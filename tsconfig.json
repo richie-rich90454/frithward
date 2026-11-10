@@ -12,6 +12,9 @@
             "path": "./packages/media-core"
         },
         {
+            "path": "./packages/inference"
+        },
+        {
             "path": "./packages/privacy-core"
         },
         {
