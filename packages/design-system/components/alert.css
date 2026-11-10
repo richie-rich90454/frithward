@@ -1,15 +1,23 @@
 .fw-alert {
-    border: 1px solid var(--fw-color-border-strong);
-    border-radius: 5px;
-    padding: 12px 16px;
-}
-
-.fw-alert-danger {
-    border-color: var(--fw-color-danger);
-    color: var(--fw-color-danger);
+    border: var(--fw-border-width) solid var(--fw-color-border-strong);
+    border-radius: var(--fw-radius);
+    padding: var(--fw-space-3) var(--fw-space-4);
 }
 
 .fw-alert-success {
     border-color: var(--fw-color-success);
+    background: var(--fw-color-success-surface);
     color: var(--fw-color-success);
+}
+
+.fw-alert-warning {
+    border-color: var(--fw-color-warning);
+    background: var(--fw-color-warning-surface);
+    color: var(--fw-color-warning);
+}
+
+.fw-alert-danger {
+    border-color: var(--fw-color-danger);
+    background: var(--fw-color-danger-surface);
+    color: var(--fw-color-danger);
 }
