@@ -6,3 +6,6 @@ packages:
     - engines/*
 allowBuilds:
     esbuild: true
+    onnxruntime-node: false
+    protobufjs: false
+    tesseract.js: false
