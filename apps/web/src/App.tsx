@@ -1,92 +1,74 @@
-import { For, Show, createSignal } from "solid-js";
+import { A, Route } from "@solidjs/router";
+import { For } from "solid-js";
+import {
+    BadgeCheck,
+    Clapperboard,
+    GraduationCap,
+    Home,
+    LifeBuoy,
+    ShieldAlert,
+    ShieldCheck,
+    Users,
+} from "lucide-solid";
 import "./app.css";
+import { HomeView } from "./features/home/presentation/pages/HomeView";
+import { MediaWorkshopPage } from "./features/media/presentation/pages/MediaWorkshopView";
+import { ShareCheckPage } from "./features/protect/presentation/pages/ShareCheckView";
+import { ScamCheckPage } from "./features/check/presentation/pages/ScamCheckView";
+import { ProvenanceCheckPage } from "./features/verify/presentation/pages/ProvenanceCheckView";
+import { IncidentTimelinePage } from "./features/respond/presentation/pages/IncidentTimelineView";
+import { LearnView } from "./features/learn/presentation/pages/LearnView";
+import { CommunityView } from "./features/community/presentation/pages/CommunityView";
+import { DeveloperToolsView } from "./features/developer-tools/presentation/pages/DeveloperToolsView";
+import { CaptionStudioPage } from "./features/captions/presentation/pages/CaptionStudioView";
 
 const NAVIGATION = [
-    { id: "home", label: "Home" },
-    { id: "make", label: "Make" },
-    { id: "protect", label: "Protect" },
-    { id: "check", label: "Check" },
-    { id: "verify", label: "Verify" },
-    { id: "respond", label: "Respond" },
-    { id: "learn", label: "Learn" },
-    { id: "community", label: "Community" },
+    { path: "/", label: "Home", icon: Home },
+    { path: "/make", label: "Make", icon: Clapperboard },
+    { path: "/protect", label: "Protect", icon: ShieldCheck },
+    { path: "/check", label: "Check", icon: ShieldAlert },
+    { path: "/verify", label: "Verify", icon: BadgeCheck },
+    { path: "/respond", label: "Respond", icon: LifeBuoy },
+    { path: "/learn", label: "Learn", icon: GraduationCap },
+    { path: "/community", label: "Community", icon: Users },
 ] as const;
 
 export function App() {
-    const [section, setSection] = createSignal<string>("home");
     return (
         <div class="app-shell">
             <header>
-                <p>
-                    <strong>Frithward</strong>
-                </p>
-                <p>Keep people safe. Keep media honest.</p>
+                <div>
+                    <p>
+                        <strong>Frithward</strong>
+                    </p>
+                    <p>Keep people safe. Keep media honest.</p>
+                </div>
+                <nav aria-label="Primary">
+                    <For each={NAVIGATION}>
+                        {(item) => (
+                            <A
+                                href={item.path}
+                                end={item.path === "/"}
+                                activeClass="is-active"
+                            >
+                                <item.icon class="fw-icon" />
+                                {item.label}
+                            </A>
+                        )}
+                    </For>
+                </nav>
             </header>
-            <nav aria-label="Primary">
-                <For each={NAVIGATION}>
-                    {(item) => (
-                        <button
-                            type="button"
-                            aria-current={section() === item.id ? "page" : undefined}
-                            onClick={() => setSection(item.id)}
-                        >
-                            {item.label}
-                        </button>
-                    )}
-                </For>
-            </nav>
             <main>
-                <Show when={section() === "home"}>
-                    <section>
-                        <h1>Home</h1>
-                        <p>
-                            Generates captions, edits media, checks suspicious content, and protects
-                            personal information locally.
-                        </p>
-                    </section>
-                </Show>
-                <Show when={section() === "make"}>
-                    <section>
-                        <h1>Make</h1>
-                        <p>Caption studio, audio, video, image, and document workshops.</p>
-                    </section>
-                </Show>
-                <Show when={section() === "protect"}>
-                    <section>
-                        <h1>Protect</h1>
-                        <p>Privacy inspection and share check.</p>
-                    </section>
-                </Show>
-                <Show when={section() === "check"}>
-                    <section>
-                        <h1>Check</h1>
-                        <p>Scam check and media analysis.</p>
-                    </section>
-                </Show>
-                <Show when={section() === "verify"}>
-                    <section>
-                        <h1>Verify</h1>
-                        <p>Provenance verification.</p>
-                    </section>
-                </Show>
-                <Show when={section() === "respond"}>
-                    <section>
-                        <h1>Respond</h1>
-                        <p>Evidence timeline and incident reports.</p>
-                    </section>
-                </Show>
-                <Show when={section() === "learn"}>
-                    <section>
-                        <h1>Learn</h1>
-                        <p>Short lessons and media literacy resources.</p>
-                    </section>
-                </Show>
-                <Show when={section() === "community"}>
-                    <section>
-                        <h1>Community</h1>
-                        <p>Frithward Commons resources and partnerships.</p>
-                    </section>
-                </Show>
+                <Route path="/" component={HomeView} />
+                <Route path="/make" component={MediaWorkshopPage} />
+                <Route path="/protect" component={ShareCheckPage} />
+                <Route path="/check" component={ScamCheckPage} />
+                <Route path="/verify" component={ProvenanceCheckPage} />
+                <Route path="/respond" component={IncidentTimelinePage} />
+                <Route path="/learn" component={LearnView} />
+                <Route path="/community" component={CommunityView} />
+                <Route path="/tools" component={DeveloperToolsView} />
+                <Route path="/tools/captions" component={CaptionStudioPage} />
             </main>
         </div>
     );
