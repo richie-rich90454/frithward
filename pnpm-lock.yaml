@@ -390,6 +390,33 @@ importers:
         specifier: workspace:*
         version: link:../runtime
 
+  packages/inference:
+    dependencies:
+      '@ffmpeg/ffmpeg':
+        specifier: latest
+        version: 0.12.15
+      '@huggingface/transformers':
+        specifier: latest
+        version: 4.3.2(@types/node@26.6.6)
+      '@mediapipe/tasks-vision':
+        specifier: latest
+        version: 1.2.2
+      '@mlc-ai/web-llm':
+        specifier: latest
+        version: 0.2.87
+      comlink:
+        specifier: latest
+        version: 4.4.2
+      mediabunny:
+        specifier: latest
+        version: 1.65.2
+      onnxruntime-web:
+        specifier: latest
+        version: 1.31.1
+      tesseract.js:
+        specifier: latest
+        version: 7.0.0
+
   packages/media-analysis:
     dependencies:
       '@frithward/contracts':
@@ -404,6 +431,18 @@ importers:
       '@frithward/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@frithward/inference':
+        specifier: workspace:*
+        version: link:../inference
+      comlink:
+        specifier: latest
+        version: 4.4.2
+      dexie:
+        specifier: latest
+        version: 4.4.7
+      whisper.cpp:
+        specifier: latest
+        version: 1.0.3
 
   packages/media-metadata: {}
 
@@ -444,6 +483,15 @@ importers:
       '@frithward/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@frithward/media-core':
+        specifier: workspace:*
+        version: link:../../packages/media-core
+      '@frithward/privacy-core':
+        specifier: workspace:*
+        version: link:../../packages/privacy-core
+      '@frithward/provenance-core':
+        specifier: workspace:*
+        version: link:../../packages/provenance-core
       '@frithward/security-core':
         specifier: workspace:*
         version: link:../../packages/security-core
@@ -475,6 +523,12 @@ importers:
 
   services/community:
     dependencies:
+      '@frithward/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@frithward/privacy-core':
+        specifier: workspace:*
+        version: link:../../packages/privacy-core
       '@hono/node-server':
         specifier: latest
         version: 2.1.6(hono@4.13.17)
@@ -484,9 +538,15 @@ importers:
       tsx:
         specifier: latest
         version: 4.23.15
+      zod:
+        specifier: latest
+        version: 4.6.7
 
   services/incident:
     dependencies:
+      '@frithward/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@hono/node-server':
         specifier: latest
         version: 2.1.6(hono@4.13.17)
@@ -496,9 +556,18 @@ importers:
       tsx:
         specifier: latest
         version: 4.23.15
+      zod:
+        specifier: latest
+        version: 4.6.7
 
   services/inference-worker:
     dependencies:
+      '@frithward/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@frithward/security-core':
+        specifier: workspace:*
+        version: link:../../packages/security-core
       '@hono/node-server':
         specifier: latest
         version: 2.1.6(hono@4.13.17)
@@ -508,9 +577,18 @@ importers:
       tsx:
         specifier: latest
         version: 4.23.15
+      zod:
+        specifier: latest
+        version: 4.6.7
 
   services/media-worker:
     dependencies:
+      '@frithward/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@frithward/media-core':
+        specifier: workspace:*
+        version: link:../../packages/media-core
       '@hono/node-server':
         specifier: latest
         version: 2.1.6(hono@4.13.17)
@@ -520,9 +598,15 @@ importers:
       tsx:
         specifier: latest
         version: 4.23.15
+      zod:
+        specifier: latest
+        version: 4.6.7
 
   services/orchestrator:
     dependencies:
+      '@frithward/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@hono/node-server':
         specifier: latest
         version: 2.1.6(hono@4.13.17)
@@ -532,6 +616,9 @@ importers:
       tsx:
         specifier: latest
         version: 4.23.15
+      zod:
+        specifier: latest
+        version: 4.6.7
 
   tools/accessibility-workshop: {}
 
@@ -5081,6 +5168,9 @@ packages:
     resolution: {integrity: sha512-wk4Mf4pR5mRP7eYuuTBCIQ9d0ud2Fv2jRLQpfgnRjbOxAFHmjKFValgTpitVKzJJS8ajnYQV2Du1SZ8j6b/EUQ==}
     engines: {node: '>= 0.4'}
 
+  whisper.cpp@1.0.3:
+    resolution: {integrity: sha512-8qn56TEI64Q+fS1ElpUgmdJ1RUL0wSVY+gC5HBEAXx4CqlSTIBEX+4kYNjfe9B7ird302eIZ80n9V6K9mEPm8A==}
+
   why-is-node-running@3.2.1:
     resolution: {integrity: sha512-Tb2FUhB4vUsGQlfSquQLYkApkuPAFQXGFzxWKHHumVz2dK+X1RUm/HnID4+TfIGYJ1kTcwOaCk/buYCEJr6YjQ==}
     engines: {node: '>=20.11'}
@@ -9428,6 +9518,8 @@ snapshots:
       get-proto: 1.0.1
       gopd: 1.2.0
       has-tostringtag: 1.0.2
+
+  whisper.cpp@1.0.3: {}
 
   why-is-node-running@3.2.1: {}
 
