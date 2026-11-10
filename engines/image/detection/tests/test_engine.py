@@ -22,3 +22,9 @@ def test_documents_limitations():
     engine = load_engine()
     result = engine.detect(engine.DetectionRequest(image_id="i1"))
     assert result.limitations
+
+
+def test_rejects_whitespace_id():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.detect(engine.DetectionRequest(image_id="   "))
