@@ -1,8 +1,6 @@
 # Video redaction engine
 
-Temporal face and license-plate redaction with per-frame regions. The engine
-validates the video id and returns the requested regions. The scaffold does not
-apply pixel changes.
+Temporal face and license-plate redaction with per-frame regions. The engine validates the video id and returns the requested regions. The scaffold does not apply pixel changes.
 
 ## Intended use
 
@@ -28,13 +26,11 @@ apply pixel changes.
 
 ## Metrics
 
-Redaction recall (sensitive regions covered), false-positive rate, and
-per-frame latency.
+Redaction recall (sensitive regions covered), false-positive rate, and per-frame latency.
 
 ## Model candidates and datasets
 
-No fixed candidate. Detection models require licensed, consented data. See the
-dataset policy.
+No fixed candidate. Detection models require licensed, consented data. See the dataset policy.
 
 ## Limitations
 
