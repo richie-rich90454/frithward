@@ -5,4 +5,5 @@
     --fw-motion-panel: 180ms;
     --fw-motion-dialog: 200ms;
     --fw-motion-page: 150ms;
+    --fw-easing-standard: cubic-bezier(0.2, 0, 0, 1);
 }
