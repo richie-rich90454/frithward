@@ -1,7 +1,6 @@
 # Writing workshop
 
-Paragraph and word-count helper. `WritingWorkshopTool` stores paragraphs and
-counts whitespace-separated words.
+Paragraph and word-count helper. `WritingWorkshopTool` stores paragraphs and counts whitespace-separated words.
 
 ## Usage
 
@@ -23,7 +22,6 @@ tool.wordCount(); // 6
 
 ## Limitations
 
-- Word count splits on whitespace. Hyphenated words and punctuation stay in the
-  count.
+- Word count splits on whitespace. Hyphenated words and punctuation stay in the count.
 - No rich-text model, outline export, or accessibility outline generation.
 - In-memory only; no persistence.
