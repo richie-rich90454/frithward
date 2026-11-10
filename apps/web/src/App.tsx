@@ -1,4 +1,4 @@
-import { A, Route } from "@solidjs/router";
+import { A, Route, Router } from "@solidjs/router";
 import { For } from "solid-js";
 import {
     BadgeCheck,
@@ -35,8 +35,9 @@ const NAVIGATION = [
 
 export function App() {
     return (
-        <div class="app-shell">
-            <header>
+        <Router>
+            <div class="app-shell">
+                <header>
                 <div>
                     <p>
                         <strong>Frithward</strong>
@@ -66,6 +67,7 @@ export function App() {
                 <Route path="/tools" component={DeveloperToolsView} />
                 <Route path="/tools/captions" component={CaptionStudioPage} />
             </main>
-        </div>
+            </div>
+        </Router>
     );
 }
