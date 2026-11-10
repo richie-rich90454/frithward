@@ -22,3 +22,9 @@ def test_missing_manifest_reports_unavailable():
     engine = load_engine()
     result = engine.verify(engine.ProvenanceRequest(asset_id="a1"))
     assert result.status == "missing"
+
+
+def test_present_manifest_reports_present():
+    engine = load_engine()
+    result = engine.verify(engine.ProvenanceRequest(asset_id="a1", manifest="{}"))
+    assert result.status == "present"
