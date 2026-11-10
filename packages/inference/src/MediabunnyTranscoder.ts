@@ -27,6 +27,7 @@ export class MediabunnyTranscoder {
     }
 
     public async transcode(request: MediabunnyTranscodeRequest): Promise<ArrayBuffer> {
+        // Complexity: O(media size); conversion streams through mediabunny's pipeline.
         if (request.signal?.aborted) throw new DOMException("Aborted", "AbortError");
         const target = new BufferTarget();
         const input = new Input({
