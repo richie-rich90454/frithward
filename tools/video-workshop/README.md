@@ -1,7 +1,6 @@
 # Video workshop
 
-Track registry for video editing. `VideoWorkshopTool` stores caption and audio
-track names and returns them sorted.
+Track registry for video editing. `VideoWorkshopTool` stores caption and audio track names and returns them sorted.
 
 ## Usage
 
@@ -16,10 +15,10 @@ tool.listTracks(); // ["Captions", "Narration"]
 
 ## API
 
-| Method | Input | Output |
-| --- | --- | --- |
+| Method           | Input                | Output                                 |
+| ---------------- | -------------------- | -------------------------------------- |
 | `addTrack(name)` | Non-empty track name | Adds the track; duplicates are ignored |
-| `listTracks()` | None | Sorted, deduplicated track names |
+| `listTracks()`   | None                 | Sorted, deduplicated track names       |
 
 ## Limitations
 
