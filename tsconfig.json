@@ -24,6 +24,9 @@
             "path": "./packages/model-registry"
         },
         {
+            "path": "./packages/media-analysis"
+        },
+        {
             "path": "./packages/runtime"
         },
         {
