@@ -22,3 +22,9 @@ def test_detects_spanish():
     engine = load_engine()
     result = engine.detect(engine.LanguageRequest(text="hola mundo"))
     assert result.language == "es"
+
+
+def test_rejects_whitespace_text():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.detect(engine.LanguageRequest(text="   "))
