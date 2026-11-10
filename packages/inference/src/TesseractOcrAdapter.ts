@@ -37,6 +37,7 @@ export class TesseractOcrAdapter {
 
     // shortcut: tesseract.js exposes no abort handle, so cancellation is checked before and after recognition
     public async recognize(request: TesseractOcrRequest): Promise<TesseractOcrResult> {
+        // Complexity: O(image size); recognition runs in tesseract.js's worker.
         if (!this.worker) throw new Error("Tesseract OCR adapter is not started.");
         if (request.signal?.aborted) throw new DOMException("Aborted", "AbortError");
         const { data } = await this.worker.recognize(request.image);
