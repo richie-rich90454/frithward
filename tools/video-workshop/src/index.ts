@@ -1,3 +1,5 @@
+export * from "@frithward/media-analysis";
+
 export class VideoWorkshopTool {
     private readonly tracks = new Set<string>();
 
