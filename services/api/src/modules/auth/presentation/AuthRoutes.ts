@@ -1,15 +1,10 @@
-import { Hono } from "hono";
-import { createAuth } from "../auth.js";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { sessionRoute } from "../../../presentation/http/routes.js";
+import { validationHook } from "../../../presentation/http/validationHook.js";
 
-export class AuthRoutes extends Hono {
+export class AuthRoutes extends OpenAPIHono {
     public constructor() {
-        super();
-        this.get("/session", (context) => {
-            const auth = createAuth(
-                process.env.DATABASE_URL ??
-                    "postgres://frithward:frithward@localhost:5432/frithward",
-            );
-            return context.json({ configured: Boolean(auth) });
-        });
+        super({ defaultHook: validationHook });
+        this.openapi(sessionRoute, (context) => context.json({ configured: true }, 200));
     }
 }
