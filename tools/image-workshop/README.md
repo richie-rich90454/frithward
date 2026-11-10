@@ -1,7 +1,6 @@
 # Image workshop
 
-Region list for image editing and redaction. `ImageWorkshopTool` stores
-rectangular redaction regions.
+Region list for image editing and redaction. `ImageWorkshopTool` stores rectangular redaction regions.
 
 ## Usage
 
@@ -22,8 +21,7 @@ tool.listRegions();
 
 ## Limitations
 
-- Coordinates are not validated against a frame. The caller must keep regions
-  inside the image.
+- Coordinates are not validated against a frame. The caller must keep regions inside the image.
 - No overlap detection, no duplicate-id rejection.
 - In-memory only. No rendering, blur, pixelation, or export.
 - For stronger validation, use `RedactionRegion` from `@frithward/privacy-core`.
