@@ -39,16 +39,14 @@ export function DesktopApp() {
                     <p>
                         <strong>Frithward</strong>
                     </p>
-                    <p>Local processing is the default. Hosted processing is optional and explicit.</p>
+                    <p>
+                        Local processing is the default. Hosted processing is optional and explicit.
+                    </p>
                 </div>
                 <nav aria-label="Primary">
                     <For each={NAVIGATION}>
                         {(item) => (
-                            <A
-                                href={item.path}
-                                end={item.path === "/"}
-                                activeClass="is-active"
-                            >
+                            <A href={item.path} end={item.path === "/"} activeClass="is-active">
                                 <item.icon class="fw-icon" />
                                 {item.label}
                             </A>
