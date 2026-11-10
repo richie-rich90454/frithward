@@ -1,8 +1,6 @@
 # Document OCR engine
 
-Optical character recognition with per-page text. The engine validates the
-document id and language and returns text. The scaffold returns empty text;
-Tesseract is the intended backend.
+Optical character recognition with per-page text. The engine validates the document id and language and returns text. The scaffold returns empty text; Tesseract is the intended backend.
 
 ## Intended use
 
@@ -16,25 +14,23 @@ Tesseract is the intended backend.
 
 ## Interface
 
-| Item | Value |
-| --- | --- |
-| Request | `OcrRequest { document_id: str, language: str = "en" }` |
-| Response | `OcrResult { document_id, text: str }` |
-| Validation | `document_id` must be non-empty |
-| Complexity | O(p) in pixels per page |
-| Streaming | Per page |
-| Cancellation | `AbortSignal` between pages |
-| Model lifecycle | Language data loads separately from inference |
+| Item            | Value                                                   |
+| --------------- | ------------------------------------------------------- |
+| Request         | `OcrRequest { document_id: str, language: str = "en" }` |
+| Response        | `OcrResult { document_id, text: str }`                  |
+| Validation      | `document_id` must be non-empty                         |
+| Complexity      | O(p) in pixels per page                                 |
+| Streaming       | Per page                                                |
+| Cancellation    | `AbortSignal` between pages                             |
+| Model lifecycle | Language data loads separately from inference           |
 
 ## Metrics
 
-Character error rate and word error rate per language, plus per-page latency
-and memory.
+Character error rate and word error rate per language, plus per-page latency and memory.
 
 ## Model candidates and datasets
 
-Tesseract is the intended backend. Language data must be licensed and
-documented. See the dataset policy.
+Tesseract is the intended backend. Language data must be licensed and documented. See the dataset policy.
 
 ## Limitations
 
