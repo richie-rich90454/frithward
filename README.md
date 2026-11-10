@@ -21,11 +21,7 @@ pnpm run start:api
 pnpm run check
 ```
 
-`pnpm run start:web` serves the built web app on port 4173, so run
-`pnpm run build` first on a clean checkout. For live development use
-`pnpm --filter @frithward/web run dev` on port 5173. `pnpm run start:api` runs
-the Hono API with `tsx` on port 3000 and needs no build step. Set
-`DATABASE_URL` and `BETTER_AUTH_SECRET` before deploying the API.
+`pnpm run start:web` serves the built web app on port 4173, so run `pnpm run build` first on a clean checkout. For live development use `pnpm --filter @frithward/web run dev` on port 5173. `pnpm run start:api` runs the Hono API with `tsx` on port 3000 and needs no build step. Set `DATABASE_URL` and `BETTER_AUTH_SECRET` before deploying the API.
 
 ## Repository layout
 
