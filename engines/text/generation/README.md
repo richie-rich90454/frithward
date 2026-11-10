@@ -1,8 +1,6 @@
 # Text generation engine
 
-Experimental assistant generation with explicit limits. The engine validates the
-prompt and token budget and returns generated text. The scaffold returns empty
-text.
+Experimental assistant generation with explicit limits. The engine validates the prompt and token budget and returns generated text. The scaffold returns empty text.
 
 ## Intended use
 
@@ -16,25 +14,23 @@ text.
 
 ## Interface
 
-| Item | Value |
-| --- | --- |
-| Request | `GenerationRequest { prompt: str, max_tokens: int = 256 }` |
-| Response | `GenerationResult { text: str, tokens: int }` |
-| Validation | Non-empty prompt; positive token budget |
-| Complexity | O(max_tokens) decode steps |
-| Streaming | Token streaming |
-| Cancellation | `AbortSignal` between tokens |
-| Model lifecycle | Load once, warm up, generate, release; stage-gated |
+| Item            | Value                                                      |
+| --------------- | ---------------------------------------------------------- |
+| Request         | `GenerationRequest { prompt: str, max_tokens: int = 256 }` |
+| Response        | `GenerationResult { text: str, tokens: int }`              |
+| Validation      | Non-empty prompt; positive token budget                    |
+| Complexity      | O(max_tokens) decode steps                                 |
+| Streaming       | Token streaming                                            |
+| Cancellation    | `AbortSignal` between tokens                               |
+| Model lifecycle | Load once, warm up, generate, release; stage-gated         |
 
 ## Metrics
 
-Toxicity rates, factuality on a documented benchmark, refusal behavior, and
-latency. Report the model version and decoding settings.
+Toxicity rates, factuality on a documented benchmark, refusal behavior, and latency. Report the model version and decoding settings.
 
 ## Model candidates and datasets
 
-No fixed candidate. Training data must be licensed and documented. No training
-on user uploads without separate explicit consent.
+No fixed candidate. Training data must be licensed and documented. No training on user uploads without separate explicit consent.
 
 ## Limitations
 
