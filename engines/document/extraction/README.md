@@ -1,7 +1,6 @@
 # Document extraction engine
 
-Typed field extraction from OCR text. The engine validates a document id and
-returns a field map. The scaffold returns an empty map.
+Typed field extraction from OCR text. The engine validates a document id and returns a field map. The scaffold returns an empty map.
 
 ## Intended use
 
@@ -31,8 +30,7 @@ Field-level precision, recall, and F1, reported per field type and language.
 
 ## Model candidates and datasets
 
-No fixed candidate. Training data must be licensed and consented. See the
-dataset policy.
+No fixed candidate. Training data must be licensed and consented. See the dataset policy.
 
 ## Limitations
 
