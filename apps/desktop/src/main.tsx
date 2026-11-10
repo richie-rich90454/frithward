@@ -1,4 +1,4 @@
-import { Router } from "@solidjs/router";
+import { Route, Router } from "@solidjs/router";
 import { render } from "solid-js/web";
 import { DesktopApp } from "./App.jsx";
 
@@ -7,7 +7,7 @@ if (!root) throw new Error("Missing root element.");
 render(
     () => (
         <Router>
-            <DesktopApp />
+            <Route path="/*" component={DesktopApp} />
         </Router>
     ),
     root,
