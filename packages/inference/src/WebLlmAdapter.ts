@@ -39,6 +39,7 @@ export class WebLlmAdapter {
     }
 
     public async complete(request: WebLlmCompletionRequest): Promise<WebLlmCompletionResult> {
+        // Complexity: O(generated tokens); WebLLM runs on its GPU worker.
         if (!this.engine) throw new Error("WebLLM adapter is not started.");
         if (request.signal?.aborted) throw new DOMException("Aborted", "AbortError");
         const completionPromise = this.engine.chatCompletion({
