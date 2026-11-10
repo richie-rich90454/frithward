@@ -1,0 +1,35 @@
+.fw-nav {
+    display: flex;
+    gap: var(--fw-space-2);
+    flex-wrap: wrap;
+}
+
+.fw-nav a,
+.fw-nav button {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--fw-touch-min);
+    padding: 0 var(--fw-space-3);
+    border: var(--fw-border-width) solid var(--fw-color-border-strong);
+    border-radius: var(--fw-radius);
+    background: transparent;
+    color: var(--fw-color-text);
+    font-weight: var(--fw-weight-semibold);
+    text-decoration: none;
+    transition:
+        background var(--fw-motion-button) var(--fw-easing-standard),
+        border-color var(--fw-motion-button) var(--fw-easing-standard),
+        color var(--fw-motion-button) var(--fw-easing-standard);
+}
+
+.fw-nav a:hover,
+.fw-nav button:hover {
+    border-color: var(--fw-color-accent);
+    color: var(--fw-color-accent);
+}
+
+.fw-nav [aria-current="page"] {
+    background: var(--fw-color-accent);
+    border-color: var(--fw-color-accent);
+    color: var(--fw-color-accent-contrast);
+}
