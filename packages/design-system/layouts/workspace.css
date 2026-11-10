@@ -1,9 +1,10 @@
 .fw-workspace {
     display: grid;
-    grid-template-columns: 232px 1fr 304px;
-    gap: 24px;
+    grid-template-columns: var(--fw-layout-sidebar) 1fr var(--fw-layout-inspector);
+    gap: var(--fw-layout-gap);
 }
 
+/* Media queries cannot read custom properties; the breakpoint stays literal. */
 @media (max-width: 1023px) {
     .fw-workspace {
         grid-template-columns: 1fr;
