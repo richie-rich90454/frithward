@@ -1,8 +1,6 @@
 # Text language engine
 
-Language detection helper. The engine validates the input and returns a
-language code. The scaffold recognizes `hola` as Spanish and defaults to
-English.
+Language detection helper. The engine validates the input and returns a language code. The scaffold recognizes `hola` as Spanish and defaults to English.
 
 ## Intended use
 
@@ -16,15 +14,15 @@ English.
 
 ## Interface
 
-| Item | Value |
-| --- | --- |
-| Request | `LanguageRequest { text: str, source: str = "auto" }` |
-| Response | `LanguageResult { language, text }` |
-| Validation | Non-empty text |
-| Complexity | O(n) in characters |
-| Streaming | Block |
-| Cancellation | Not cancellable |
-| Model lifecycle | A learned detector follows the standard lifecycle |
+| Item            | Value                                                 |
+| --------------- | ----------------------------------------------------- |
+| Request         | `LanguageRequest { text: str, source: str = "auto" }` |
+| Response        | `LanguageResult { language, text }`                   |
+| Validation      | Non-empty text                                        |
+| Complexity      | O(n) in characters                                    |
+| Streaming       | Block                                                 |
+| Cancellation    | Not cancellable                                       |
+| Model lifecycle | A learned detector follows the standard lifecycle     |
 
 ## Metrics
 
@@ -32,8 +30,7 @@ Per-language precision and recall on a documented, licensed corpus.
 
 ## Model candidates and datasets
 
-No fixed candidate. Evaluation data must be licensed and documented. See the
-dataset policy.
+No fixed candidate. Evaluation data must be licensed and documented. See the dataset policy.
 
 ## Limitations
 
