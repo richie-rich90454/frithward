@@ -7,6 +7,8 @@ class ScamText(BaseModel):
 
 
 def analyze_scam_text(payload: ScamText) -> ScamText:
+    if not payload.text.strip():
+        raise ValueError("Text required.")
     indicators = []
     lowered = payload.text.lower()
     if "password" in lowered:
