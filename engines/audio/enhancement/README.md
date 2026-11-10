@@ -1,7 +1,6 @@
 # Audio enhancement engine
 
-Gain and noise-floor controls. The engine validates the request and echoes the
-requested gain. Signal processing is not implemented in the scaffold.
+Gain and noise-floor controls. The engine validates the request and echoes the requested gain. Signal processing is not implemented in the scaffold.
 
 ## Intended use
 
@@ -11,8 +10,7 @@ requested gain. Signal processing is not implemented in the scaffold.
 ## Prohibited use
 
 - Claiming enhancement proves authenticity or removes manipulation.
-- Altering evidence without keeping the original artifact and a processing
-  manifest.
+- Altering evidence without keeping the original artifact and a processing manifest.
 
 ## Interface
 
@@ -32,9 +30,7 @@ SNR, STOI, PESQ, and listening tests. Report input and output conditions.
 
 ## Model candidates and datasets
 
-No fixed candidate. Deterministic gain and noise-floor processing is the
-default; learned enhancement requires a model card and consent for any training
-data.
+No fixed candidate. Deterministic gain and noise-floor processing is the default; learned enhancement requires a model card and consent for any training data.
 
 ## Limitations
 
