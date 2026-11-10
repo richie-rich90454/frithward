@@ -4,6 +4,7 @@ export * from "./domain/MetadataFinding.js";
 export * from "./domain/RedactionRegion.js";
 export * from "./domain/PiiRedactionPolicy.js";
 export * from "./application/InspectPrivacyUseCase.js";
+export * from "./application/RedactPrivacyUseCase.js";
 export * from "./application/MetadataInspectionUseCase.js";
 export * from "./application/SanitizedExportUseCase.js";
 export * from "./ports/PrivacyRepository.js";
