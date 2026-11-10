@@ -102,7 +102,9 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
 export function MediaWorkshopPage() {
     const controller = new MediaWorkshopController();
     const [segments, setSegments] = createSignal(controller.getSegments());
-    const [selectedSegmentId, setSelectedSegmentId] = createSignal(controller.getSelectedSegmentId());
+    const [selectedSegmentId, setSelectedSegmentId] = createSignal(
+        controller.getSelectedSegmentId(),
+    );
     const [error, setError] = createSignal(controller.getError());
     onCleanup(
         controller.subscribe(() => {
