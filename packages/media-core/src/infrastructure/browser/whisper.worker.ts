@@ -10,7 +10,10 @@ export interface WhisperUtterance {
 
 export interface WhisperWorkerApi {
     initialize(input: { modelUrl: string; wasmUrl: string }): Promise<void>;
-    transcribe(input: { audio: Float32Array; language: string }): Promise<readonly WhisperUtterance[]>;
+    transcribe(input: {
+        audio: Float32Array;
+        language: string;
+    }): Promise<readonly WhisperUtterance[]>;
     dispose(): Promise<void>;
 }
 
