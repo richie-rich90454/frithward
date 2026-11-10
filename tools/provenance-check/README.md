@@ -1,7 +1,6 @@
 # Provenance check
 
-Facade over `@frithward/provenance-core`. It describes the signature status of a
-provenance record in plain language.
+Facade over `@frithward/provenance-core`. It describes the signature status of a provenance record in plain language.
 
 ## Usage
 
@@ -21,14 +20,13 @@ verifier.describe(record); // "Signature valid; signer Example News."
 
 ## API
 
-| Export | Purpose |
-| --- | --- |
-| `ProvenanceRecord` | `{ id, signatureStatus, signer, assetSha256, manifest }` |
-| `VerifyProvenanceUseCase.describe` | Maps status to a human-readable string |
+| Export                             | Purpose                                                  |
+| ---------------------------------- | -------------------------------------------------------- |
+| `ProvenanceRecord`                 | `{ id, signatureStatus, signer, assetSha256, manifest }` |
+| `VerifyProvenanceUseCase.describe` | Maps status to a human-readable string                   |
 
 ## Limitations
 
 - Does not verify signatures, hashes, timestamps, or manifest history.
-- A `missing` status means provenance is unavailable, not that the asset is
-  authentic or manipulated.
+- A `missing` status means provenance is unavailable, not that the asset is authentic or manipulated.
 - The Python provenance engine detects manifest presence only.
