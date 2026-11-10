@@ -11,5 +11,8 @@ export * from "./application/ExportSubtitlesUseCase.js";
 export * from "./presentation/controllers/CaptionStudioController.js";
 export * from "./presentation/presenters/CaptionStudioPresenter.js";
 export * from "./presentation/view-models/CaptionStudioViewModel.js";
+export * from "./infrastructure/browser/WhisperWasmAdapter.js";
+export * from "./infrastructure/browser/IndexedDbCaptionRepository.js";
+export * from "./composition/createCaptionStudioFeature.js";
 export * from "./infrastructure/audio/VoiceProtectionAdapter.js";
 export * from "./infrastructure/image/FaceProtectionAdapter.js";
