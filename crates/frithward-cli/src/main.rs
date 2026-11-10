@@ -180,7 +180,10 @@ fn inspect_metadata(metadata: &str) -> Result<MetadataReport, String> {
     if count == 0 {
         return Err("Metadata must contain key=value pairs.".to_string());
     }
-    Ok(MetadataReport { count, location_keys })
+    Ok(MetadataReport {
+        count,
+        location_keys,
+    })
 }
 
 fn parse_execution(value: &str) -> Result<&'static str, String> {
