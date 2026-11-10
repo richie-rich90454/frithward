@@ -1,7 +1,10 @@
-import { AnalyzeMessageUseCase } from "@frithward/security-core";
 import { ScamAnalysisRoutes } from "../presentation/http/ScamAnalysisRoutes.js";
+import type { JobQueue } from "../../../jobs/queue.js";
+import type { JobStatusStore } from "../../../jobs/jobStore.js";
 
-export function createScamModule(): { routes: ScamAnalysisRoutes } {
-    const useCase = new AnalyzeMessageUseCase();
-    return { routes: new ScamAnalysisRoutes(useCase) };
+export function createScamModule(
+    queue: JobQueue,
+    store: JobStatusStore,
+): { routes: ScamAnalysisRoutes } {
+    return { routes: new ScamAnalysisRoutes(queue, store) };
 }
