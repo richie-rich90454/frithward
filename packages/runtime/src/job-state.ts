@@ -16,7 +16,7 @@ const ALLOWED: Readonly<Record<JobState, readonly JobState[]>> = {
     cancelling: ["cancelled", "failed"],
     completed: [],
     cancelled: [],
-    failed: []
+    failed: [],
 };
 
 export class ProcessingJob {
