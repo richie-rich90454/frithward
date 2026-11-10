@@ -20,8 +20,6 @@ tool.needsRedaction(["exif-gps"]); // true
 
 ## Limitations
 
-- Treats every finding as requiring action. It does not apply
-  `PiiRedactionPolicy`, which allows low-severity device and timestamp
-  metadata.
+- Treats every finding as requiring action. It does not apply `PiiRedactionPolicy`, which allows low-severity device and timestamp metadata.
 - No severity, remediation, or region handling.
 - For real inspection and sanitized export, use `@frithward/privacy-core`.
