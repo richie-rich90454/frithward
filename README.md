@@ -12,20 +12,20 @@ Phase 0 foundation plus Frithward 0.1 core tools: local caption generation, subt
 
 ## Quick start
 
-Requires Node.js 26 LTS and pnpm.
+Requires Node.js 26 LTS and pnpm. No Docker or container runtime is needed.
 
 ```powershell
 pnpm install
-pnpm run start
+pnpm run start:web
+pnpm run start:api
 pnpm run check
 ```
 
-Serve separately with plain Node:
-
-```powershell
-pnpm run start:web
-pnpm run start:api
-```
+`pnpm run start:web` serves the built web app on port 4173, so run
+`pnpm run build` first on a clean checkout. For live development use
+`pnpm --filter @frithward/web run dev` on port 5173. `pnpm run start:api` runs
+the Hono API with `tsx` on port 3000 and needs no build step. Set
+`DATABASE_URL` and `BETTER_AUTH_SECRET` before deploying the API.
 
 ## Repository layout
 
