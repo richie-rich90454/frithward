@@ -1,0 +1,19 @@
+{
+    "name": "@frithward/inference",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "dependencies": {
+        "@ffmpeg/ffmpeg": "latest",
+        "@huggingface/transformers": "latest",
+        "@mediapipe/tasks-vision": "latest",
+        "@mlc-ai/web-llm": "latest",
+        "comlink": "latest",
+        "mediabunny": "latest",
+        "onnxruntime-web": "latest",
+        "tesseract.js": "latest"
+    }
+}
