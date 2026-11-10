@@ -1,5 +1,5 @@
-import { A, Route, Router } from "@solidjs/router";
-import { For } from "solid-js";
+import { A, Route, Router, useLocation } from "@solidjs/router";
+import { For, Show, type JSX } from "solid-js";
 import {
     BadgeCheck,
     Clapperboard,
@@ -33,11 +33,25 @@ const NAVIGATION = [
     { path: "/community", label: "Community", icon: Users },
 ] as const;
 
-export function App() {
+function pageFor(pathname: string): JSX.Element {
+    if (pathname === "/") return <HomeView />;
+    if (pathname === "/make") return <MediaWorkshopPage />;
+    if (pathname === "/protect") return <ShareCheckPage />;
+    if (pathname === "/check") return <ScamCheckPage />;
+    if (pathname === "/verify") return <ProvenanceCheckPage />;
+    if (pathname === "/respond") return <IncidentTimelinePage />;
+    if (pathname === "/learn") return <LearnView />;
+    if (pathname === "/community") return <CommunityView />;
+    if (pathname === "/tools") return <DeveloperToolsView />;
+    if (pathname === "/tools/captions") return <CaptionStudioPage />;
+    return <HomeView />;
+}
+
+function Shell() {
+    const location = useLocation();
     return (
-        <Router>
-            <div class="app-shell">
-                <header>
+        <div class="app-shell">
+            <header>
                 <div>
                     <p>
                         <strong>Frithward</strong>
@@ -47,7 +61,11 @@ export function App() {
                 <nav aria-label="Primary">
                     <For each={NAVIGATION}>
                         {(item) => (
-                            <A href={item.path} end={item.path === "/"} activeClass="is-active">
+                            <A
+                                href={item.path}
+                                end={item.path === "/"}
+                                activeClass="is-active"
+                            >
                                 <item.icon class="fw-icon" />
                                 {item.label}
                             </A>
@@ -56,18 +74,18 @@ export function App() {
                 </nav>
             </header>
             <main>
-                <Route path="/" component={HomeView} />
-                <Route path="/make" component={MediaWorkshopPage} />
-                <Route path="/protect" component={ShareCheckPage} />
-                <Route path="/check" component={ScamCheckPage} />
-                <Route path="/verify" component={ProvenanceCheckPage} />
-                <Route path="/respond" component={IncidentTimelinePage} />
-                <Route path="/learn" component={LearnView} />
-                <Route path="/community" component={CommunityView} />
-                <Route path="/tools" component={DeveloperToolsView} />
-                <Route path="/tools/captions" component={CaptionStudioPage} />
+                <Show when={location.pathname} keyed={false}>
+                    {pageFor(location.pathname)}
+                </Show>
             </main>
-            </div>
+        </div>
+    );
+}
+
+export function App() {
+    return (
+        <Router>
+            <Route path="/*" component={Shell} />
         </Router>
     );
 }
