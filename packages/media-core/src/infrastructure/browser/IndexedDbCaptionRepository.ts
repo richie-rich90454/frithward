@@ -52,6 +52,7 @@ export class IndexedDbCaptionRepository implements CaptionRepository {
             title: record.title,
             language: record.language,
         });
+        // Complexity: O(n^2) worst case; each addSegment scans existing segments for overlaps.
         for (const segment of record.segments) {
             project.addSegment(
                 new SubtitleSegment({
