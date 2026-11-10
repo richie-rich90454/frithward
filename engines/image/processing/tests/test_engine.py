@@ -22,3 +22,9 @@ def test_returns_bounds():
     engine = load_engine()
     result = engine.process(engine.ResizeRequest(image_id="i1"))
     assert result.width > 0 and result.height > 0
+
+
+def test_rejects_nonpositive_bounds():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.process(engine.ResizeRequest(image_id="i1", max_width=0))
