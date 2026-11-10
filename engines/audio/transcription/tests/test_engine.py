@@ -22,3 +22,9 @@ def test_returns_utterance_shape():
     engine = load_engine()
     result = engine.transcribe(engine.TranscriptionRequest(audio_id="a1", language="en"))
     assert isinstance(result, list)
+
+
+def test_rejects_unsupported_language():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.transcribe(engine.TranscriptionRequest(audio_id="a1", language="xx"))
