@@ -1,0 +1,20 @@
+.fw-popover {
+    border: var(--fw-border-width) solid var(--fw-color-border);
+    border-radius: var(--fw-radius);
+    background: var(--fw-color-surface);
+    color: var(--fw-color-text);
+    box-shadow: var(--fw-elevation-popover);
+    padding: var(--fw-space-2);
+}
+
+.fw-popover header {
+    padding: var(--fw-space-1) var(--fw-space-2);
+    font-weight: var(--fw-weight-semibold);
+}
+
+.fw-popover p {
+    margin: 0;
+    padding: 0 var(--fw-space-2) var(--fw-space-1);
+    color: var(--fw-color-text-secondary);
+    font-size: var(--fw-type-body-sm);
+}
