@@ -1,3 +1,5 @@
+export * from "@frithward/media-analysis";
+
 export interface RedactionRegion {
     id: string;
     x: number;
