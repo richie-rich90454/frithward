@@ -1,3 +1,22 @@
+body {
+    margin: 0;
+    font-family: var(--fw-font-sans);
+    font-size: var(--fw-type-body);
+    line-height: var(--fw-leading-body);
+}
+
+h1 {
+    font-size: var(--fw-type-page);
+    line-height: var(--fw-leading-page);
+    font-weight: var(--fw-weight-bold);
+}
+
+h2 {
+    font-size: var(--fw-type-section);
+    line-height: var(--fw-leading-section);
+    font-weight: var(--fw-weight-semibold);
+}
+
 .app-shell {
     max-width: 1440px;
     margin: 0 auto;
@@ -6,23 +25,170 @@
     gap: 24px;
 }
 
+.app-shell header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.app-shell header p {
+    margin: 0;
+}
+
 .app-shell nav {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-.app-shell nav button {
+.app-shell nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     min-height: 44px;
+    padding: 0 16px;
     border: 1px solid var(--fw-border-strong);
+    border-radius: var(--fw-radius);
     background: transparent;
     color: var(--fw-text);
-    padding: 0 16px;
     font-weight: 600;
+    text-decoration: none;
 }
 
-.app-shell nav button[aria-current="page"] {
+.app-shell nav a.is-active {
     background: var(--fw-accent);
     color: #ffffff;
     border-color: var(--fw-accent);
+}
+
+.app-shell main {
+    border-top: 1px solid var(--fw-border);
+    padding-top: 24px;
+}
+
+.app-shell section {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+}
+
+.app-shell h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-shell form {
+    display: grid;
+    gap: 12px;
+    max-width: 640px;
+    justify-items: start;
+}
+
+.app-shell label {
+    display: grid;
+    gap: 4px;
+    width: 100%;
+}
+
+.app-shell input,
+.app-shell textarea,
+.app-shell select {
+    width: 100%;
+    border: 1px solid var(--fw-border-strong);
+    border-radius: var(--fw-radius);
+    background: var(--fw-canvas);
+    color: var(--fw-text);
+    font: inherit;
+    min-height: 44px;
+    padding: 0 12px;
+}
+
+.app-shell textarea {
+    min-height: 96px;
+    padding: 8px 12px;
+    resize: vertical;
+}
+
+.app-shell form button {
+    justify-self: start;
+}
+
+.app-shell ul,
+.app-shell ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.app-shell li > button {
+    width: 100%;
+    min-height: 44px;
+    text-align: left;
+    border: 1px solid var(--fw-border-strong);
+    border-radius: var(--fw-radius);
+    background: transparent;
+    color: var(--fw-text);
+    padding: 0 12px;
+}
+
+.app-shell li > button[aria-pressed="true"] {
+    border-color: var(--fw-accent);
+    background: var(--fw-accent-surface);
+}
+
+.app-shell .shortcut-list li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--fw-border-strong);
+    border-radius: var(--fw-radius);
+    color: var(--fw-text);
+    text-decoration: none;
+}
+
+.app-shell .shortcut-list li a:hover {
+    border-color: var(--fw-accent);
+}
+
+.app-shell .lesson-list li,
+.app-shell .resource-list li {
+    display: flex;
+    align-items: start;
+    gap: 12px;
+}
+
+.app-shell .resource-list a {
+    color: var(--fw-accent);
+}
+
+.app-shell .check-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.app-shell .check-option input {
+    width: auto;
+    min-height: 0;
+}
+
+.app-shell [role="alert"] {
+    border: 1px solid var(--fw-danger);
+    border-radius: var(--fw-radius);
+    color: var(--fw-danger);
+    padding: 8px 12px;
+}
+
+.app-shell [role="status"] {
+    border: 1px solid var(--fw-success);
+    border-radius: var(--fw-radius);
+    color: var(--fw-success);
+    padding: 8px 12px;
 }
