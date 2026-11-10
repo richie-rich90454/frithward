@@ -1,3 +1,5 @@
+export * from "@frithward/media-analysis";
+
 export class DocumentWorkshopTool {
     private readonly pages = new Set<number>();
 
