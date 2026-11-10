@@ -63,6 +63,7 @@ export class MediaPipeVisionAdapter {
     }
 
     public detect(request: MediaPipeVisionRequest): readonly VisionDetectionResult[] {
+        // Complexity: O(detections x keypoints) to copy results into plain objects.
         if (!this.detector) throw new Error("MediaPipe vision adapter is not started.");
         if (request.signal?.aborted) throw new DOMException("Aborted", "AbortError");
         const result = this.detector.detect(request.image);
