@@ -61,11 +61,7 @@ function Shell() {
                 <nav aria-label="Primary">
                     <For each={NAVIGATION}>
                         {(item) => (
-                            <A
-                                href={item.path}
-                                end={item.path === "/"}
-                                activeClass="is-active"
-                            >
+                            <A href={item.path} end={item.path === "/"} activeClass="is-active">
                                 <item.icon class="fw-icon" />
                                 {item.label}
                             </A>
