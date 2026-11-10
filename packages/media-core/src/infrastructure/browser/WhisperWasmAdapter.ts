@@ -48,6 +48,7 @@ export class WhisperWasmAdapter implements SpeechRecognitionPort {
     }
 
     // Expects 16-bit signed little-endian PCM mono at 16 kHz, whisper.cpp's native input format.
+    // Complexity: O(samples).
     private decodePcm(audio: ArrayBuffer): Float32Array {
         const samples = new Float32Array(Math.floor(audio.byteLength / 2));
         const view = new DataView(audio);
