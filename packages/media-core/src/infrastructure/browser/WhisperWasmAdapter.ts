@@ -1,5 +1,8 @@
 import { ComlinkWorkerClient } from "@frithward/inference";
-import type { RecognizedUtterance, SpeechRecognitionPort } from "../../ports/SpeechRecognitionPort.js";
+import type {
+    RecognizedUtterance,
+    SpeechRecognitionPort,
+} from "../../ports/SpeechRecognitionPort.js";
 import type { WhisperWorkerApi } from "./whisper.worker.js";
 
 export interface WhisperWasmAdapterOptions {
@@ -14,14 +17,20 @@ export class WhisperWasmAdapter implements SpeechRecognitionPort {
     public constructor(private readonly options: WhisperWasmAdapterOptions) {
         this.client = new ComlinkWorkerClient<WhisperWorkerApi>(
             options.createWorker ??
-                (() => new Worker(new URL("./whisper.worker.ts", import.meta.url), { type: "module" })),
+                (() =>
+                    new Worker(new URL("./whisper.worker.ts", import.meta.url), {
+                        type: "module",
+                    })),
         );
     }
 
     public async start(): Promise<void> {
         this.client.start();
         await this.client.run(async (api) => {
-            await api.initialize({ modelUrl: this.options.modelUrl, wasmUrl: this.options.wasmUrl });
+            await api.initialize({
+                modelUrl: this.options.modelUrl,
+                wasmUrl: this.options.wasmUrl,
+            });
         });
     }
 
