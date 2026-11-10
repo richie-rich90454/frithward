@@ -1,20 +1,12 @@
 # Engines
 
-Frithward's media engines are standalone Python packages. Each directory under
-`engines/` contains a `pyproject.toml`, a `src/engine.py`, tests, and its own
-virtual environment. Engines target Python 3.12 or newer and use Pydantic for
-request and response models.
+Frithward's media engines are standalone Python packages. Each directory under `engines/` contains a `pyproject.toml`, a `src/engine.py`, tests, and its own virtual environment. Engines target Python 3.12 or newer and use Pydantic for request and response models.
 
-Engines are invoked from the hosted path and workers, not from the browser.
-`@frithward/media-analysis` defines the ports and adapters that call them, and
-the job state machine in `@frithward/runtime` tracks execution.
+Engines are invoked from the hosted path and workers, not from the browser. `@frithward/media-analysis` defines the ports and adapters that call them, and the job state machine in `@frithward/runtime` tracks execution.
 
 ## Status
 
-Most engines are interface scaffolds today: they validate input and return a
-structurally correct result, but model-backed inference is not wired. The
-table says what each function actually returns now. Complexity describes the
-intended implementation and the contract the scaffold already exposes.
+Most engines are interface scaffolds today: they validate input and return a structurally correct result, but model-backed inference is not wired. The table says what each function actually returns now. Complexity describes the intended implementation and the contract the scaffold already exposes.
 
 | Engine | Request → response | Complexity | Streaming | Cancellation | Current behavior |
 | --- | --- | --- | --- | --- | --- |
@@ -41,20 +33,14 @@ intended implementation and the contract the scaffold already exposes.
 
 Every model follows the same lifecycle regardless of engine:
 
-1. **Register.** A `ModelEntry` in `@frithward/model-registry` records stage,
-   license, intended use, and limitations.
-2. **Gate.** Experimental and candidate models are limited to research and
-   opt-in preview. Stable models may reach product surfaces.
+1. **Register.** A `ModelEntry` in `@frithward/model-registry` records stage, license, intended use, and limitations.
+2. **Gate.** Experimental and candidate models are limited to research and opt-in preview. Stable models may reach product surfaces.
 3. **Load.** Model weights load once per worker, separate from inference.
 4. **Warm up.** A warm-up run allocates buffers before user traffic.
-5. **Infer.** One model is active per worker. Inputs stream in chunks and
-   outputs stream out with bounded memory.
-6. **Release.** Disposal releases native resources. Adapters expose `dispose()`
-   and reject work after disposal.
+5. **Infer.** One model is active per worker. Inputs stream in chunks and outputs stream out with bounded memory.
+6. **Release.** Disposal releases native resources. Adapters expose `dispose()` and reject work after disposal.
 
-Cancellation is cooperative. Engines check the `AbortSignal` at chunk,
-utterance, page, or frame boundaries and throw `CANCELLED`. A cancelled job
-never reports a partial result as a final answer.
+Cancellation is cooperative. Engines check the `AbortSignal` at chunk, utterance, page, or frame boundaries and throw `CANCELLED`. A cancelled job never reports a partial result as a final answer.
 
 ## Metrics and evaluation
 
@@ -72,8 +58,7 @@ Metrics are evidence for review, never proof of authenticity or identity.
 | Language detection | Per-language precision and recall |
 | Object detection / privacy | Precision and recall at a documented IoU threshold |
 
-The `research/benchmarks` harness produces these numbers. Every released model
-ships with a model card. Missing measurements are reported as "not measured".
+The `research/benchmarks` harness produces these numbers. Every released model ships with a model card. Missing measurements are reported as "not measured".
 
 ## Model candidates and datasets
 
@@ -86,17 +71,14 @@ ships with a model card. Missing measurements are reported as "not measured".
 | Audio enhancement | Deterministic gain/noise-floor processing | Listening tests |
 | Text generation | Explicit-limit assistant models | No training on user uploads |
 
-Datasets require licensing, consent, and redistribution review. No
-non-consensual identity datasets are permitted. See
-[dataset policy](../../DATASET_POLICY.md) and [model policy](../../MODEL_POLICY.md).
+Datasets require licensing, consent, and redistribution review. No non-consensual identity datasets are permitted. See [dataset policy](../../DATASET_POLICY.md) and [model policy](../../MODEL_POLICY.md).
 
 ## Limitations
 
 - Detection scores do not establish authenticity, identity, or intent.
 - A reduction in one metric does not establish protection.
 - Frame sampling can miss brief manipulations.
-- Model performance varies across datasets, languages, and recording
-  conditions.
+- Model performance varies across datasets, languages, and recording conditions.
 - Consequential decisions require independent human review.
 - Generated text is assistance, never verified fact.
 - Engines do not call out to the network. Hosted inference must be explicit.
