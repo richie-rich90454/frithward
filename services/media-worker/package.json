@@ -7,8 +7,11 @@
         "start": "tsx src/index.ts"
     },
     "dependencies": {
+        "@frithward/contracts": "workspace:*",
+        "@frithward/media-core": "workspace:*",
         "hono": "latest",
         "@hono/node-server": "latest",
-        "tsx": "latest"
+        "tsx": "latest",
+        "zod": "latest"
     }
 }
