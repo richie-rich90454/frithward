@@ -1,0 +1,12 @@
+.fw-progress {
+    height: var(--fw-component-progress-height);
+    border-radius: var(--fw-radius-pill);
+    background: var(--fw-color-surface-secondary);
+    overflow: hidden;
+}
+
+.fw-progress-value {
+    height: 100%;
+    background: var(--fw-color-accent);
+    transition: width var(--fw-motion-panel) var(--fw-easing-standard);
+}
