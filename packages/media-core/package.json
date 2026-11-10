@@ -7,6 +7,10 @@
         ".": "./src/index.ts"
     },
     "dependencies": {
-        "@frithward/contracts": "workspace:*"
+        "@frithward/contracts": "workspace:*",
+        "@frithward/inference": "workspace:*",
+        "comlink": "latest",
+        "dexie": "latest",
+        "whisper.cpp": "latest"
     }
 }
