@@ -1,7 +1,6 @@
 # Scam check
 
-Facade over `@frithward/security-core`. It inspects suspicious messages, URLs,
-and QR payloads, and creates evidence reports.
+Facade over `@frithward/security-core`. It inspects suspicious messages, URLs, and QR payloads, and creates evidence reports.
 
 ## Usage
 
@@ -25,13 +24,13 @@ const report = await new ScamReportUseCase().execute({
 
 ## API
 
-| Export | Purpose |
-| --- | --- |
-| `AnalyzeMessageUseCase` | Text indicators, summary, next steps, limitations |
-| `UrlInspectionUseCase` | Transport, hostname, lookalike-brand, and short-link checks |
-| `QrInspectionUseCase` | URL, Wi-Fi, vCard, crypto, and contact payload classification |
-| `ScamReportUseCase` | Evidence report with a SHA-256 hash |
-| `OlderAdultGuidedFlowController` | Six-step guided flow with plain-language steps |
+| Export                           | Purpose                                                       |
+| -------------------------------- | ------------------------------------------------------------- |
+| `AnalyzeMessageUseCase`          | Text indicators, summary, next steps, limitations             |
+| `UrlInspectionUseCase`           | Transport, hostname, lookalike-brand, and short-link checks   |
+| `QrInspectionUseCase`            | URL, Wi-Fi, vCard, crypto, and contact payload classification |
+| `ScamReportUseCase`              | Evidence report with a SHA-256 hash                           |
+| `OlderAdultGuidedFlowController` | Six-step guided flow with plain-language steps                |
 
 ## Limitations
 
