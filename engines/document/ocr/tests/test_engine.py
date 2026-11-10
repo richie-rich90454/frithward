@@ -22,3 +22,9 @@ def test_returns_document_shape():
     engine = load_engine()
     result = engine.recognize(engine.OcrRequest(document_id="d1"))
     assert result.document_id == "d1"
+
+
+def test_rejects_whitespace_id():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.recognize(engine.OcrRequest(document_id="   "))
