@@ -1,0 +1,18 @@
+.fw-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fw-space-2);
+    min-height: var(--fw-touch-min);
+}
+
+.fw-checkbox input {
+    width: var(--fw-component-control-size);
+    height: var(--fw-component-control-size);
+    margin: 0;
+    accent-color: var(--fw-color-accent);
+}
+
+.fw-checkbox span {
+    color: var(--fw-color-text);
+    font-size: var(--fw-type-body);
+}
