@@ -6,5 +6,12 @@
         "outDir": "dist",
         "composite": true
     },
-    "include": ["src"]
+    "include": ["src"],
+    "references": [
+        { "path": "../../packages/contracts" },
+        { "path": "../../packages/media-core" },
+        { "path": "../../packages/privacy-core" },
+        { "path": "../../packages/provenance-core" },
+        { "path": "../../packages/security-core" }
+    ]
 }
