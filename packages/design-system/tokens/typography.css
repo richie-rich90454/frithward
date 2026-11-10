@@ -1,4 +1,5 @@
 :root {
+    --fw-font-sans: "Noto Sans", system-ui, sans-serif;
     --fw-type-display: 48px;
     --fw-type-page: 36px;
     --fw-type-section: 28px;
@@ -15,4 +16,7 @@
     --fw-leading-subsection: 30px;
     --fw-leading-component: 26px;
     --fw-leading-body: 24px;
+    --fw-weight-medium: 500;
+    --fw-weight-semibold: 600;
+    --fw-weight-bold: 700;
 }
