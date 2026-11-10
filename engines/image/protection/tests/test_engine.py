@@ -22,3 +22,9 @@ def test_marks_protected():
     engine = load_engine()
     result = engine.protect(engine.ProtectionRequest(image_id="i1"))
     assert result.protected is True
+
+
+def test_rejects_whitespace_id():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.protect(engine.ProtectionRequest(image_id="   "))
