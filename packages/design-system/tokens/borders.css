@@ -2,4 +2,6 @@
     --fw-border-width: 1px;
     --fw-border-selected: 2px;
     --fw-border-focus: 2px;
+    --fw-radius: 5px;
+    --fw-radius-pill: 999px;
 }
