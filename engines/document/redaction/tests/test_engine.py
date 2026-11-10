@@ -22,3 +22,9 @@ def test_counts_terms():
     engine = load_engine()
     result = engine.redact(engine.RedactionRequest(document_id="d1", terms=["a", "b"]))
     assert result.redacted_count == 2
+
+
+def test_rejects_whitespace_id():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.redact(engine.RedactionRequest(document_id="   "))
