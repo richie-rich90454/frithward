@@ -1,7 +1,25 @@
 .fw-badge {
-    border: 1px solid var(--fw-color-border-strong);
-    border-radius: 5px;
-    padding: 2px 8px;
-    font-size: 12px;
-    font-weight: 500;
+    border: var(--fw-border-width) solid var(--fw-color-border-strong);
+    border-radius: var(--fw-radius);
+    padding: var(--fw-space-0-5) var(--fw-space-2);
+    font-size: var(--fw-type-meta);
+    font-weight: var(--fw-weight-medium);
+}
+
+.fw-badge-success {
+    border-color: var(--fw-color-success);
+    background: var(--fw-color-success-surface);
+    color: var(--fw-color-success);
+}
+
+.fw-badge-warning {
+    border-color: var(--fw-color-warning);
+    background: var(--fw-color-warning-surface);
+    color: var(--fw-color-warning);
+}
+
+.fw-badge-danger {
+    border-color: var(--fw-color-danger);
+    background: var(--fw-color-danger-surface);
+    color: var(--fw-color-danger);
 }
