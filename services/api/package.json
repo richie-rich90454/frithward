@@ -9,6 +9,9 @@
     },
     "dependencies": {
         "@frithward/contracts": "workspace:*",
+        "@frithward/media-core": "workspace:*",
+        "@frithward/privacy-core": "workspace:*",
+        "@frithward/provenance-core": "workspace:*",
         "@frithward/security-core": "workspace:*",
         "@hono/node-server": "latest",
         "@hono/zod-openapi": "latest",
