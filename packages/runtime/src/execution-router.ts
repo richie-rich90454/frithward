@@ -2,7 +2,7 @@ export type ExecutionLocation = "browser" | "native" | "hosted";
 
 export class ExecutionRouter {
     public constructor(
-        private readonly capabilityOverrides: Map<string, ExecutionLocation> = new Map()
+        private readonly capabilityOverrides: Map<string, ExecutionLocation> = new Map(),
     ) {}
 
     public choose(capability: string): ExecutionLocation {
