@@ -22,3 +22,9 @@ def test_inspects_without_findings_by_default():
     engine = load_engine()
     result = engine.inspect(engine.PrivacyRequest(image_id="i1"))
     assert result.findings == []
+
+
+def test_rejects_whitespace_id():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.inspect(engine.PrivacyRequest(image_id="   "))
