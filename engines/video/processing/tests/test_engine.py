@@ -28,3 +28,9 @@ def test_computes_duration():
     engine = load_engine()
     result = engine.process(engine.TrimRequest(video_id="v1", start_ms=0, end_ms=1000))
     assert result.duration_ms == 1000
+
+
+def test_rejects_equal_range():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.process(engine.TrimRequest(video_id="v1", start_ms=500, end_ms=500))
