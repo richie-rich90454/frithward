@@ -1,8 +1,6 @@
 # Document redaction engine
 
-Term and region redaction with exported validation. The engine validates a
-document id and returns a redaction count. The scaffold counts terms without
-rewriting the document.
+Term and region redaction with exported validation. The engine validates a document id and returns a redaction count. The scaffold counts terms without rewriting the document.
 
 ## Intended use
 
@@ -28,8 +26,7 @@ rewriting the document.
 
 ## Metrics
 
-Redaction recall (sensitive spans removed) and false-positive rate, measured on
-a documented sample.
+Redaction recall (sensitive spans removed) and false-positive rate, measured on a documented sample.
 
 ## Model candidates and datasets
 
