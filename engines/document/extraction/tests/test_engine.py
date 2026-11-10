@@ -22,3 +22,9 @@ def test_extracts_empty_fields_by_default():
     engine = load_engine()
     result = engine.extract(engine.ExtractionRequest(document_id="d1"))
     assert result.fields == {}
+
+
+def test_rejects_whitespace_id():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.extract(engine.ExtractionRequest(document_id="   "))
