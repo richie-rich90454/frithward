@@ -26,6 +26,7 @@ export class ComlinkWorkerClient<Api> {
         operation: (api: Remote<Api>) => Promise<T>,
         signal?: AbortSignal,
     ): Promise<T> {
+        // Complexity: O(1) around the transferred operation.
         const remote = this.remote;
         if (!remote) throw new Error("Comlink worker client is not started.");
         if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
