@@ -22,3 +22,9 @@ def test_returns_token_shape():
     engine = load_engine()
     result = engine.generate(engine.GenerationRequest(prompt="hello"))
     assert result.tokens == 0
+
+
+def test_rejects_nonpositive_max_tokens():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.generate(engine.GenerationRequest(prompt="hello", max_tokens=0))
