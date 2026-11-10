@@ -9,11 +9,13 @@
         "start": "vite preview --host 0.0.0.0 --port 4174"
     },
     "dependencies": {
+        "@solidjs/router": "^1.0.1",
+        "lucide-solid": "^1.70.0",
         "solid-js": "latest",
         "vite-plugin-solid": "latest"
     },
     "devDependencies": {
-        "vite": "latest",
-        "typescript": "latest"
+        "typescript": "latest",
+        "vite": "latest"
     }
 }
