@@ -10,8 +10,7 @@
 
 ## Enforced boundary commands
 
-The module boundaries are enforced by tooling. Run these before requesting
-review:
+The module boundaries are enforced by tooling. Run these before requesting review:
 
 ```powershell
 pnpm run check:boundaries
@@ -20,13 +19,7 @@ pnpm run typecheck
 pnpm run test
 ```
 
-`pnpm run check:boundaries` runs `scripts/check-boundaries.mjs`. It fails when
-domain imports infrastructure or presentation, when application imports
-infrastructure, when presentation imports infrastructure, when TSX imports a
-logic layer, or when TSX contains `alert()` or `console.log()`.
-`pnpm run lint` applies the oxlint `import/no-restricted-paths` zones,
-`import/no-cycle`, and `import/no-relative-packages`. `pnpm run check` runs the
-full sequence: format check, lint, boundaries, typecheck, and unit tests.
+`pnpm run check:boundaries` runs `scripts/check-boundaries.mjs`. It fails when domain imports infrastructure or presentation, when application imports infrastructure, when presentation imports infrastructure, when TSX imports a logic layer, or when TSX contains `alert()` or `console.log()`. `pnpm run lint` applies the oxlint `import/no-restricted-paths` zones, `import/no-cycle`, and `import/no-relative-packages`. `pnpm run check` runs the full sequence: format check, lint, boundaries, typecheck, and unit tests.
 
 ## Commits
 
