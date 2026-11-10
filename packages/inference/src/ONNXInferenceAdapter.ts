@@ -41,6 +41,7 @@ export class ONNXInferenceAdapter {
     public async run(request: OnnxInferenceRequest): Promise<readonly OnnxInferenceResult[]> {
         if (!this.session) throw new Error("ONNX inference adapter is not started.");
         if (request.signal?.aborted) throw new DOMException("Aborted", "AbortError");
+        // Complexity: O(inputs) to build feeds plus O(outputs) to copy results.
         const feeds: Record<string, Tensor> = {};
         for (const input of request.inputs) {
             feeds[input.name] = new Tensor(
