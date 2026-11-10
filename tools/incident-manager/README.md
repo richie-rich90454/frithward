@@ -1,7 +1,6 @@
 # Incident manager
 
-Evidence timeline helper. `IncidentManagerTool` records evidence items and
-returns them sorted by collection time.
+Evidence timeline helper. `IncidentManagerTool` records evidence items and returns them sorted by collection time.
 
 ## Usage
 
