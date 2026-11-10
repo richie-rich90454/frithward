@@ -22,3 +22,9 @@ def test_documents_limitations():
     engine = load_engine()
     result = engine.detect(engine.DetectionRequest(video_id="v1"))
     assert result.limitations
+
+
+def test_rejects_nonpositive_sample_frames():
+    engine = load_engine()
+    with pytest.raises(ValueError):
+        engine.detect(engine.DetectionRequest(video_id="v1", sample_frames=0))
