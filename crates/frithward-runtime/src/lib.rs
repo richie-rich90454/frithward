@@ -195,7 +195,10 @@ mod tests {
     #[test]
     fn router_honors_request() {
         let router = ExecutionRouter::default();
-        assert_eq!(router.route(Some(ExecutionTarget::Node)), ExecutionTarget::Node);
+        assert_eq!(
+            router.route(Some(ExecutionTarget::Node)),
+            ExecutionTarget::Node
+        );
     }
 
     #[test]
