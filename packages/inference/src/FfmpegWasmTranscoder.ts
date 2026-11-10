@@ -26,6 +26,7 @@ export class FfmpegWasmTranscoder {
     }
 
     public async transcode(request: FfmpegTranscodeRequest): Promise<ArrayBuffer> {
+        // Complexity: O(media size); ffmpeg.wasm streams through its virtual file system.
         if (!this.ffmpeg) throw new Error("FFmpeg WASM transcoder is not started.");
         if (request.signal?.aborted) throw new DOMException("Aborted", "AbortError");
         const options = request.signal ? { signal: request.signal } : {};
