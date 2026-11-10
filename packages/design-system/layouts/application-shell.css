@@ -1,25 +1,25 @@
 .fw-shell {
-    max-width: 1440px;
+    max-width: var(--fw-layout-max);
     margin: 0 auto;
-    padding: 32px;
+    padding: var(--fw-layout-pad);
     display: grid;
-    gap: 24px;
+    gap: var(--fw-layout-gap);
 }
 
 .fw-shell header {
-    height: 60px;
+    height: var(--fw-layout-header);
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: var(--fw-layout-gap);
 }
 
 .fw-shell nav {
     display: flex;
-    gap: 8px;
+    gap: var(--fw-space-2);
     flex-wrap: wrap;
 }
 
 .fw-shell main {
-    border-top: 1px solid var(--fw-color-border);
-    padding-top: 24px;
+    border-top: var(--fw-border-width) solid var(--fw-color-border);
+    padding-top: var(--fw-layout-gap);
 }
