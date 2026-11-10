@@ -1,27 +1,54 @@
 :root {
     --fw-color-canvas: #ffffff;
+    --fw-color-surface: #ffffff;
+    --fw-color-surface-secondary: #e6e6e6;
+    --fw-color-overlay: rgba(0, 0, 0, 0.4);
     --fw-color-text: #000000;
     --fw-color-text-secondary: #4a4a4a;
-    --fw-color-surface-secondary: #e6e6e6;
     --fw-color-border: #bdbdbd;
     --fw-color-border-strong: #666666;
     --fw-color-accent: #a3481b;
     --fw-color-accent-surface: #f3e5dd;
+    --fw-color-accent-contrast: #ffffff;
     --fw-color-success: #176b43;
+    --fw-color-success-surface: #e3f2ea;
     --fw-color-warning: #8a4b00;
+    --fw-color-warning-surface: #f7ecdd;
     --fw-color-danger: #a32121;
+    --fw-color-danger-surface: #f7e2e2;
 }
 
 [data-theme="dark"] {
     --fw-color-canvas: #000000;
+    --fw-color-surface: #0a0a0a;
+    --fw-color-surface-secondary: #242424;
+    --fw-color-overlay: rgba(0, 0, 0, 0.6);
     --fw-color-text: #ffffff;
     --fw-color-text-secondary: #c2c2c2;
-    --fw-color-surface-secondary: #242424;
     --fw-color-border: #666666;
     --fw-color-border-strong: #a0a0a0;
     --fw-color-accent: #e69a6c;
     --fw-color-accent-surface: #38241b;
+    --fw-color-accent-contrast: #241207;
     --fw-color-success: #7dd3a5;
+    --fw-color-success-surface: #12271c;
     --fw-color-warning: #f4bc62;
+    --fw-color-warning-surface: #2a1d0c;
     --fw-color-danger: #ff7a73;
+    --fw-color-danger-surface: #2c1414;
+}
+
+/* Legacy aliases: keep app.css working until it migrates to --fw-color-*. */
+:root {
+    --fw-canvas: var(--fw-color-canvas);
+    --fw-text: var(--fw-color-text);
+    --fw-text-secondary: var(--fw-color-text-secondary);
+    --fw-surface-secondary: var(--fw-color-surface-secondary);
+    --fw-border: var(--fw-color-border);
+    --fw-border-strong: var(--fw-color-border-strong);
+    --fw-accent: var(--fw-color-accent);
+    --fw-accent-surface: var(--fw-color-accent-surface);
+    --fw-success: var(--fw-color-success);
+    --fw-warning: var(--fw-color-warning);
+    --fw-danger: var(--fw-color-danger);
 }
