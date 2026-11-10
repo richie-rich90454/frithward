@@ -1,7 +1,6 @@
 # Media check
 
-Text summary helper for investigative media analysis. `MediaCheckTool` turns a
-list of signal names into a sentence for review.
+Text summary helper for investigative media analysis. `MediaCheckTool` turns a list of signal names into a sentence for review.
 
 ## Usage
 
@@ -16,13 +15,12 @@ tool.summarize(["inconsistent noise floor", "frame repeat"]);
 
 ## API
 
-| Method | Input | Output |
-| --- | --- | --- |
+| Method               | Input                          | Output         |
+| -------------------- | ------------------------------ | -------------- |
 | `summarize(signals)` | Readonly array of signal names | Summary string |
 
 ## Limitations
 
 - Purely textual. It performs no analysis and holds no model metadata.
-- For real analysis with limitations, model cards, and next steps, use
-  `@frithward/media-analysis` (`MediaCheckController`).
+- For real analysis with limitations, model cards, and next steps, use `@frithward/media-analysis` (`MediaCheckController`).
 - Signals are not proof of authenticity or manipulation.
