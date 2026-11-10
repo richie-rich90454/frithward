@@ -1,3 +1,5 @@
 :root {
-    --fw-elevation: 0;
+    --fw-elevation-none: 0;
+    --fw-elevation-popover: 0 8px 24px rgba(0, 0, 0, 0.18);
+    --fw-elevation-dialog: 0 12px 32px rgba(0, 0, 0, 0.22);
 }
