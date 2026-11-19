@@ -1,0 +1,8 @@
+From: Alice <alice@example.com>
+To: Bob <bob@example.org>
+Subject: Test incident
+Date: Mon, 1 Jan 2026 10:00:00 +0000
+Message-ID: <test@example.com>
+Content-Type: text/plain; charset=utf-8
+
+Please review the attached details.
