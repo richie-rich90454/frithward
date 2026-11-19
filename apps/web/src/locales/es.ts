@@ -43,5 +43,6 @@ export const es: Record<string, string> = {
     "learn.pressure.desc":
         "La urgencia, el secreto y las peticiones de pago son indicios de riesgo habituales.",
     "learn.details.title": "Protege tus datos",
-    "learn.details.desc": "Elimina los metadatos de ubicación y dispositivo antes de publicar medios.",
+    "learn.details.desc":
+        "Elimina los metadatos de ubicación y dispositivo antes de publicar medios.",
 };
