@@ -11,6 +11,7 @@ export class ScamAnalysisRoutes extends OpenAPIHono {
         private readonly queue: JobQueue | null,
         private readonly store: JobStatusStore,
         private readonly useCase: AnalyzeMessageUseCase = new AnalyzeMessageUseCase(),
+        private readonly recordAnalysis: () => void = () => undefined,
     ) {
         super({ defaultHook: validationHook });
         this.openapi(analyzeMessageRoute, async (context) => {
@@ -31,6 +32,7 @@ export class ScamAnalysisRoutes extends OpenAPIHono {
             }
 
             const analysis = this.useCase.execute(body.text);
+            this.recordAnalysis();
             return context.json(
                 {
                     id: randomUUID(),
