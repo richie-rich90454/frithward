@@ -5,6 +5,8 @@ packages:
     - tools/*
     - engines/*
 allowBuilds:
+    # Native addon builds are opt-in here so pnpm lifecycle never hard-fails.
+    # scripts/provision-c2pa.mjs retries provisioning separately and degrades honestly.
     "@contentauth/c2pa-node": false
     esbuild: true
     onnxruntime-node: false
