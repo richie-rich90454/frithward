@@ -19,10 +19,7 @@ function PopupView(props: PopupViewProps) {
             </button>
             <Show when={props.info} keyed>
                 {(info) => (
-                    <Show
-                        when={info.error === null}
-                        fallback={<p role="alert">{info.error}</p>}
-                    >
+                    <Show when={info.error === null} fallback={<p role="alert">{info.error}</p>}>
                         <h2>Page details</h2>
                         <p>
                             URL: <code>{info.url || "not available"}</code>
@@ -49,13 +46,7 @@ export function Popup() {
             setBusy(controller.isBusy());
         }),
     );
-    return (
-        <PopupView
-            info={info()}
-            busy={busy()}
-            onCheck={() => void controller.checkPage()}
-        />
-    );
+    return <PopupView info={info()} busy={busy()} onCheck={() => void controller.checkPage()} />;
 }
 
 const root = document.getElementById("root");
