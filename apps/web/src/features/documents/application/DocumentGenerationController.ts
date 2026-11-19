@@ -5,6 +5,7 @@ import PptxGenJS from "pptxgenjs";
 import { DocumentPolicy, parseRows, parseSections, parseSlides } from "../domain/DocumentModel";
 import type { DocumentInput, SlideInput, SpreadsheetInput } from "../domain/DocumentModel";
 import { DocxReader } from "./DocxReader";
+import { OcrController } from "./OcrController";
 import { ZipController } from "./ZipController";
 
 export type ExportFormat = "docx" | "pdf" | "xlsx" | "pptx";
@@ -16,6 +17,7 @@ export interface DocumentWorkshopState {
     slidesText: string;
     importedHtml: string | null;
     pdfData: ArrayBuffer | null;
+    ocrStatus: string | null;
     error: string | null;
     busy: boolean;
 }
@@ -27,6 +29,7 @@ const INITIAL_STATE: DocumentWorkshopState = {
     slidesText: "",
     importedHtml: null,
     pdfData: null,
+    ocrStatus: null,
     error: null,
     busy: false,
 };
@@ -37,6 +40,11 @@ export class DocumentGenerationController {
     private readonly zip = new ZipController();
     private readonly listeners = new Set<() => void>();
     private state: DocumentWorkshopState = INITIAL_STATE;
+    private ocr: OcrController | null;
+
+    public constructor(ocr?: OcrController) {
+        this.ocr = ocr ?? null;
+    }
 
     public subscribe(listener: () => void): () => void {
         this.listeners.add(listener);
@@ -80,6 +88,40 @@ export class DocumentGenerationController {
                 ...this.state,
                 busy: false,
                 error: cause instanceof Error ? cause.message : "Could not read .docx file.",
+            };
+        }
+        this.notify();
+    }
+
+    public async importImageForOcr(file: File): Promise<void> {
+        this.state = {
+            ...this.state,
+            busy: true,
+            error: null,
+            ocrStatus: "Recognizing text from image...",
+        };
+        this.notify();
+        try {
+            const ocr = await this.getOcr();
+            const result = await ocr.recognize(await file.arrayBuffer(), "eng");
+            const ocrSection = `## OCR text\n${result.text.trim()}`;
+            const existing = this.state.sectionsText.trim();
+            this.state = {
+                ...this.state,
+                busy: false,
+                sectionsText: existing.length > 0 ? `${existing}\n\n${ocrSection}` : ocrSection,
+                ocrStatus: `OCR complete${
+                    result.confidence === undefined
+                        ? ""
+                        : ` (confidence ${Math.round(result.confidence)}%)`
+                }. ${result.limitations.join(" ")}`,
+            };
+        } catch (cause) {
+            this.state = {
+                ...this.state,
+                busy: false,
+                ocrStatus: null,
+                error: cause instanceof Error ? cause.message : "Image OCR failed.",
             };
         }
         this.notify();
@@ -279,6 +321,11 @@ export class DocumentGenerationController {
         }
         if (line !== "") lines.push(line);
         return lines;
+    }
+
+    private async getOcr(): Promise<OcrController> {
+        this.ocr ??= await OcrController.createDefault();
+        return this.ocr;
     }
 
     private notify(): void {
