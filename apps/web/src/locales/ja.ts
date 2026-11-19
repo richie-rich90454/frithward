@@ -42,5 +42,6 @@ export const ja: Record<string, string> = {
     "learn.pressure.title": "圧力を見極める",
     "learn.pressure.desc": "急かす、秘密にする、支払いを求めるは一般的なリスクの兆候です。",
     "learn.details.title": "自分の情報を守る",
-    "learn.details.desc": "メディアを投稿する前に位置情報とデバイスのメタデータを削除してください。",
+    "learn.details.desc":
+        "メディアを投稿する前に位置情報とデバイスのメタデータを削除してください。",
 };
