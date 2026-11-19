@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Security vulnerability
-    url: https://github.com/richie-rich90454/frithward/security/advisories/new
-    about: Report vulnerabilities privately. Do not open a public issue for a suspected vulnerability.
-  - name: Documentation
-    url: https://github.com/richie-rich90454/frithward/tree/main/docs
-    about: Architecture, engineering standards, API, privacy, security, and research documentation.
-  - name: Community guidelines
-    url: https://github.com/richie-rich90454/frithward/blob/main/CODE_OF_CONDUCT.md
-    about: How we work together and how to raise a conduct concern.
+    - name: Security vulnerability
+      url: https://github.com/richie-rich90454/frithward/security/advisories/new
+      about: Report vulnerabilities privately. Do not open a public issue for a suspected vulnerability.
+    - name: Documentation
+      url: https://github.com/richie-rich90454/frithward/tree/main/docs
+      about: Architecture, engineering standards, API, privacy, security, and research documentation.
+    - name: Community guidelines
+      url: https://github.com/richie-rich90454/frithward/blob/main/CODE_OF_CONDUCT.md
+      about: How we work together and how to raise a conduct concern.
