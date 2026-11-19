@@ -1,15 +1,5 @@
 import { CaptionProject, EditSubtitleUseCase, SubtitleSegment } from "@frithward/media-core";
-import type { CaptionRepository } from "@frithward/media-core";
-
-class MemoryMediaRepository implements CaptionRepository {
-    public async save(_project: CaptionProject): Promise<void> {
-        return;
-    }
-
-    public async load(_id: string): Promise<CaptionProject | null> {
-        return null;
-    }
-}
+import { LocalStorageCaptionRepository } from "../../../captions/infrastructure/LocalStorageCaptionRepository.js";
 
 export interface MediaWorkshopSegment {
     id: string;
@@ -31,7 +21,7 @@ export class MediaWorkshopController {
             title: "Media workshop",
             language: "en",
         });
-        this.editor = new EditSubtitleUseCase(new MemoryMediaRepository());
+        this.editor = new EditSubtitleUseCase(new LocalStorageCaptionRepository());
     }
 
     public subscribe(listener: () => void): () => void {
