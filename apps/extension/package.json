@@ -5,7 +5,9 @@
     "type": "module",
     "scripts": {
         "dev": "wxt",
-        "build": "wxt build"
+        "build": "pnpm exec wxt build -b chrome && pnpm exec wxt build -b firefox",
+        "build:chrome": "pnpm exec wxt build -b chrome",
+        "build:firefox": "pnpm exec wxt build -b firefox"
     },
     "dependencies": {
         "wxt": "latest",
