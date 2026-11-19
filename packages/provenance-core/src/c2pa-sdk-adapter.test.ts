@@ -48,7 +48,11 @@ describe("C2paSdkAdapter", () => {
                 ...verifiedStore,
                 validation_state: "Invalid",
                 validation_status: [
-                    { code: "assertion.hashMismatch", success: false, explanation: "Hash mismatch" },
+                    {
+                        code: "assertion.hashMismatch",
+                        success: false,
+                        explanation: "Hash mismatch",
+                    },
                 ],
             }),
         );
