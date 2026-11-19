@@ -1,9 +1,4 @@
-import {
-    Uint8ArrayReader,
-    Uint8ArrayWriter,
-    ZipReader,
-    ZipWriter,
-} from "@zip.js/zip.js";
+import { Uint8ArrayReader, Uint8ArrayWriter, ZipReader, ZipWriter } from "@zip.js/zip.js";
 import type { NamedBytes } from "../domain/DocumentModel";
 
 export class ZipController {
