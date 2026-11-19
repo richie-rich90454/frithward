@@ -94,9 +94,7 @@ export function DocumentWorkshopView(props: DocumentWorkshopViewProps) {
                     </details>
                 )}
             </Show>
-            <Show when={props.state.pdfData}>
-                {(pdf) => <PdfPreview pdf={pdf()} />}
-            </Show>
+            <Show when={props.state.pdfData}>{(pdf) => <PdfPreview pdf={pdf()} />}</Show>
         </section>
     );
 }
