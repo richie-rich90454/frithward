@@ -7,7 +7,10 @@ export class BetterAuthSessionPort implements SessionPort {
 
     public async getSession(headers: Headers): Promise<Session | null> {
         if (this.auth === null)
-            throw new AppError("EXTERNAL_UNAVAILABLE", "Authentication database is not configured.");
+            throw new AppError(
+                "EXTERNAL_UNAVAILABLE",
+                "Authentication database is not configured.",
+            );
         try {
             const result = await this.auth.api.getSession({ headers });
             if (!result) return null;
@@ -15,13 +18,15 @@ export class BetterAuthSessionPort implements SessionPort {
                 token: result.session.token,
                 userId: result.session.userId,
                 expiresAt: new Date(result.session.expiresAt).toISOString(),
-                user: result.user
-                    ? { id: result.user.id, email: result.user.email }
-                    : null,
+                user: result.user ? { id: result.user.id, email: result.user.email } : null,
             };
         } catch (cause) {
             // Never forge a session when the auth database cannot be reached.
-            throw new AppError("EXTERNAL_UNAVAILABLE", "Authentication database is unavailable.", cause);
+            throw new AppError(
+                "EXTERNAL_UNAVAILABLE",
+                "Authentication database is unavailable.",
+                cause,
+            );
         }
     }
 }
