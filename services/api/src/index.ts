@@ -1,3 +1,4 @@
+import "./telemetry/instrumentation.js";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { createScamModule } from "./modules/scam-analysis/composition/createScamAnalysisModule.js";
@@ -15,11 +16,13 @@ import { bodySizeLimit } from "./middleware/bodySize.js";
 import { GraphileJobQueue } from "./jobs/queue.js";
 import { sharedJobStore } from "./jobs/jobStore.js";
 import { openApiDocument } from "./openapi.js";
+import { createMetricsRoutes, metricsMiddleware } from "./telemetry/metrics.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 
 const app = new Hono();
 app.onError(errorHandler);
+app.use("*", metricsMiddleware);
 
 app.use(
     "*",
@@ -45,6 +48,7 @@ app.use("/api/privacy/*", requireSession(auth.sessionPort));
 app.use("/api/provenance/*", requireSession(auth.sessionPort));
 app.use("/api/captions/*", requireSession(auth.sessionPort));
 
+app.route("/", createMetricsRoutes());
 app.route("/", new HealthRoutes(databaseHealth.check, databaseHealth.configured));
 app.route("/", scams.routes);
 app.route("/", auth.routes);
