@@ -1,7 +1,29 @@
-apis:
-    - apiVersion: v1
-      kind: Prometheus
-      metadata:
-          name: frithward
-      spec:
-          serviceMonitorSelector: {}
+# Grafana provisioning for Frithward. This file can be placed in Grafana's
+# provisioning directory; the datasource and dashboard sections may also be
+# split into conf/datasources/ and conf/dashboards/ respectively. The dashboard
+# JSON lives beside this file as frithward-dashboard.json and should be copied
+# to the provider path below. No container runtime is assumed.
+apiVersion: 1
+datasources:
+    - name: Prometheus
+      uid: prometheus
+      type: prometheus
+      access: proxy
+      url: http://127.0.0.1:9090
+      isDefault: true
+      editable: false
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://127.0.0.1:3100
+      editable: false
+dashboards:
+    - name: frithward
+      orgId: 1
+      folder: Frithward
+      type: file
+      disableDeletion: true
+      allowUiUpdates: false
+      updateIntervalSeconds: 30
+      options:
+          path: /etc/grafana/provisioning/dashboards
