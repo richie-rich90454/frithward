@@ -22,7 +22,9 @@ export class WebCodecsTranscoder implements TranscoderPort {
             typeof VideoDecoder === "undefined" ||
             typeof VideoFrame === "undefined"
         ) {
-            throw new Error("WebCodecs video encoding or decoding is not available in this browser.");
+            throw new Error(
+                "WebCodecs video encoding or decoding is not available in this browser.",
+            );
         }
 
         const encoded: EncodedVideoChunk[] = [];
@@ -111,7 +113,9 @@ export class WebCodecsTranscoder implements TranscoderPort {
             typeof AudioDecoder === "undefined" ||
             typeof AudioData === "undefined"
         ) {
-            throw new Error("WebCodecs audio encoding or decoding is not available in this browser.");
+            throw new Error(
+                "WebCodecs audio encoding or decoding is not available in this browser.",
+            );
         }
 
         const encoded: EncodedAudioChunk[] = [];
