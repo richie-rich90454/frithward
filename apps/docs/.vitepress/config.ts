@@ -43,6 +43,8 @@ export default defineConfig({
             { text: "Research", link: "/research" },
             { text: "Community", link: "/community" },
             { text: "Governance", link: "/governance" },
+            { text: "Deployment", link: "/deployment" },
+            { text: "Compatibility", link: "/compatibility" },
         ],
         sidebar: [
             {
@@ -57,6 +59,8 @@ export default defineConfig({
                     { text: "Research", link: "/research" },
                     { text: "Community", link: "/community" },
                     { text: "Governance", link: "/governance" },
+                    { text: "Deployment", link: "/deployment" },
+                    { text: "Compatibility", link: "/compatibility" },
                 ],
             },
         ],
