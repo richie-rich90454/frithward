@@ -3,9 +3,7 @@ import { TranslationTool } from "../index.js";
 import { DictionaryTranslationAdapter, dictionaryKey } from "./DictionaryTranslationAdapter.js";
 
 describe("TranslationTool with dictionary adapter", () => {
-    const dictionary = new Map([
-        [dictionaryKey("en", "fr", "hello"), "bonjour"],
-    ]);
+    const dictionary = new Map([[dictionaryKey("en", "fr", "hello"), "bonjour"]]);
     const tool = new TranslationTool(new DictionaryTranslationAdapter(dictionary));
 
     it("reports a translated term", async () => {
