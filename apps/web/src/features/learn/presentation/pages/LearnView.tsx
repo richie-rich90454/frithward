@@ -1,45 +1,51 @@
-import { For } from "solid-js";
-import { BookOpen, GraduationCap, ScanSearch, ShieldCheck } from "lucide-solid";
-
-const LESSONS = [
-    {
-        icon: BookOpen,
-        title: "Check the source",
-        detail: "Confirm who created the media and where it came from before sharing.",
-    },
-    {
-        icon: ScanSearch,
-        title: "Look for pressure",
-        detail: "Urgency, secrecy, and payment requests are common risk indicators.",
-    },
-    {
-        icon: ShieldCheck,
-        title: "Protect your details",
-        detail: "Remove location and device metadata before posting media.",
-    },
-] as const;
+import { For, createSignal, onCleanup } from "solid-js";
+import { GraduationCap } from "lucide-solid";
+import { Quiz } from "../components/Quiz";
+import { LearnController } from "../controllers/LearnController";
 
 export function LearnView() {
+    const controller = new LearnController();
+    const [state, setState] = createSignal(controller.getState());
+    onCleanup(
+        controller.subscribe(() => {
+            setState(controller.getState());
+        }),
+    );
+    const lessons = controller.getLessons();
+    const questions = controller.getQuestions();
+
     return (
         <section>
             <h1>
                 <GraduationCap class="fw-icon" />
                 Learn
             </h1>
-            <p>Short lessons and media literacy resources.</p>
-            <ul class="lesson-list">
-                <For each={LESSONS}>
-                    {(lesson) => (
-                        <li>
-                            <lesson.icon class="fw-icon" />
-                            <div>
-                                <h2>{lesson.title}</h2>
-                                <p>{lesson.detail}</p>
-                            </div>
-                        </li>
-                    )}
-                </For>
-            </ul>
+            <p>
+                Four short lessons on checking information and staying safe. Each lesson ends with a
+                fictional example; the quiz afterwards checks what you took away.
+            </p>
+
+            <For each={lessons}>
+                {(lesson) => (
+                    <article>
+                        <h2>{lesson.title}</h2>
+                        <For each={lesson.paragraphs}>{(paragraph) => <p>{paragraph}</p>}</For>
+                        <p>
+                            <strong>{lesson.scenario}</strong>
+                        </p>
+                    </article>
+                )}
+            </For>
+
+            <Quiz
+                questions={questions}
+                question={questions[state().currentIndex] ?? null}
+                state={state()}
+                onSelect={(index) => controller.selectQuestion(index)}
+                onAnswer={(index) => controller.answer(index)}
+                onNext={() => controller.next()}
+                onReset={() => controller.reset()}
+            />
         </section>
     );
 }
