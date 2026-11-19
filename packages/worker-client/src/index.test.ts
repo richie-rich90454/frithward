@@ -6,7 +6,10 @@ interface TestApi {
     add(a: number, b: number): Promise<number>;
 }
 
-function createFakeWorker(api: TestApi): { factory: () => Worker; terminate: ReturnType<typeof vi.fn> } {
+function createFakeWorker(api: TestApi): {
+    factory: () => Worker;
+    terminate: ReturnType<typeof vi.fn>;
+} {
     const terminate = vi.fn();
     const factory = (): Worker => {
         const { port1, port2 } = new MessageChannel();
