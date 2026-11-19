@@ -4,9 +4,11 @@
     "private": true,
     "type": "module",
     "exports": {
-        ".": "./src/index.ts"
+        ".": "./src/index.ts",
+        "./c2pa-sdk-adapter": "./src/infrastructure/C2paSdkAdapter.ts"
     },
     "dependencies": {
+        "@contentauth/c2pa-node": "^0.12.1",
         "@frithward/contracts": "workspace:*"
     }
 }
