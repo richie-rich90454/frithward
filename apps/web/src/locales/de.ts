@@ -42,7 +42,8 @@ export const de: Record<string, string> = {
     "learn.source.desc":
         "Bestätigen Sie vor dem Teilen, wer die Medien erstellt hat und woher sie stammen.",
     "learn.pressure.title": "Auf Druck achten",
-    "learn.pressure.desc": "Druck, Geheimhaltung und Zahlungsaufforderungen sind gängige Risikoindikatoren.",
+    "learn.pressure.desc":
+        "Druck, Geheimhaltung und Zahlungsaufforderungen sind gängige Risikoindikatoren.",
     "learn.details.title": "Ihre Daten schützen",
     "learn.details.desc":
         "Entfernen Sie Standort- und Gerätemetadaten, bevor Sie Medien veröffentlichen.",
