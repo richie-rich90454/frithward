@@ -1,4 +1,5 @@
-import { Show, createSignal, onCleanup } from "solid-js";
+import { Show, createEffect, createSignal, onCleanup } from "solid-js";
+import { CodeHighlighter } from "../application/CodeHighlighter";
 import { DiagramRenderer } from "../application/DiagramRenderer";
 
 interface DiagramViewProps {
@@ -14,6 +15,24 @@ const EXAMPLE =
     "flowchart TD\n  A[Start] --> B{Valid?}\n  B -->|yes| C[Continue]\n  B -->|no| D[Stop]";
 
 export function DiagramView(props: DiagramViewProps) {
+    const highlighter = new CodeHighlighter();
+    const [highlighted, setHighlighted] = createSignal<string | null>(null);
+    createEffect(() => {
+        const source = props.source;
+        let cancelled = false;
+        onCleanup(() => {
+            cancelled = true;
+        });
+        void highlighter.highlight(source).then(
+            (html) => {
+                if (!cancelled) setHighlighted(html);
+            },
+            () => {
+                if (!cancelled) setHighlighted(null);
+            },
+        );
+    });
+
     return (
         <section>
             <h1>Diagrams</h1>
@@ -26,6 +45,9 @@ export function DiagramView(props: DiagramViewProps) {
                     onInput={(event) => props.onSourceChange(event.currentTarget.value)}
                 />
             </label>
+            <Show when={highlighted()}>
+                {(html) => <div class="code-highlight" innerHTML={html()} />}
+            </Show>
             <button type="button" disabled={props.busy} onClick={props.onRender}>
                 Render
             </button>
