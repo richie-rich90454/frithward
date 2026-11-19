@@ -132,7 +132,7 @@ h2 {
 .app-shell li > button {
     width: 100%;
     min-height: 44px;
-    text-align: left;
+    text-align: start;
     border: 1px solid var(--fw-border-strong);
     border-radius: var(--fw-radius);
     background: transparent;
