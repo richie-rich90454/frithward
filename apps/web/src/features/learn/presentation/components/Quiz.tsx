@@ -1,4 +1,5 @@
 import { For, Show } from "solid-js";
+import { useI18n } from "../../../../i18n/index.js";
 import type { LearnState, QuizQuestion } from "../controllers/LearnController";
 
 interface QuizProps {
@@ -12,13 +13,18 @@ interface QuizProps {
 }
 
 export function Quiz(props: QuizProps) {
+    const { t } = useI18n();
+    const result = () =>
+        t("learn.quiz.result")
+            .replace("{score}", String(props.state.score))
+            .replace("{total}", String(props.questions.length));
     return (
         <section>
-            <h2>Knowledge check</h2>
+            <h2>{t("learn.quiz.title")}</h2>
             <p>
-                Score: {props.state.score} / {props.questions.length}
+                {t("learn.quiz.score")} {props.state.score} / {props.questions.length}
             </p>
-            <nav aria-label="Quiz questions">
+            <nav aria-label={t("learn.quiz.title")}>
                 <For each={props.questions}>
                     {(_item, index) => (
                         <button
@@ -58,17 +64,16 @@ export function Quiz(props: QuizProps) {
             </Show>
             <Show when={props.state.answered && !props.state.finished}>
                 <button type="button" onClick={() => props.onNext()}>
-                    Next question
+                    {t("learn.quiz.next")}
                 </button>
             </Show>
             <Show when={props.state.finished}>
                 <div>
                     <p role="status">
-                        You scored {props.state.score} out of {props.questions.length}. Review any
-                        lesson above if an answer surprised you.
+                        {result()} {t("learn.quiz.review")}
                     </p>
                     <button type="button" onClick={() => props.onReset()}>
-                        Start over
+                        {t("learn.quiz.restart")}
                     </button>
                 </div>
             </Show>
