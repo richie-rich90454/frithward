@@ -1,6 +1,7 @@
 export const es: Record<string, string> = {
     wordmark: "Frithward",
-    tagline: "El procesamiento local es el predeterminado. El procesamiento alojado es opcional y explícito.",
+    tagline:
+        "El procesamiento local es el predeterminado. El procesamiento alojado es opcional y explícito.",
     language: "Idioma",
     "nav.primary": "Principal",
     "nav.home": "Inicio",
