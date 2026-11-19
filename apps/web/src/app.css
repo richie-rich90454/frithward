@@ -37,6 +37,10 @@ h2 {
     margin: 0;
 }
 
+.app-shell header .language-switcher {
+    width: auto;
+}
+
 .app-shell nav {
     display: flex;
     gap: 8px;
