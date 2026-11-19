@@ -1,4 +1,10 @@
 import { z } from "zod";
+import { parse } from "tldts";
+
+/** Returns the registrable domain (eTLD+1) of a URL or hostname, or null when none is found. */
+export function parseDomain(input: string): string | null {
+    return parse(input).domain ?? null;
+}
 
 export const ScamChannel = z.enum(["message", "url", "qr", "image", "audio"]);
 
