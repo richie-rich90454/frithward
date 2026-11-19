@@ -1,62 +1,133 @@
-import { Show, createSignal, onCleanup } from "solid-js";
+import { For, Show, createSignal, onCleanup } from "solid-js";
 import { BadgeCheck } from "lucide-solid";
-import type { ProvenanceRecord } from "@frithward/provenance-core";
 import { ProvenanceCheckController } from "../controllers/ProvenanceCheckController";
-import type { SignatureStatus } from "../controllers/ProvenanceCheckController";
+import type { ProvenanceInspectionView } from "../controllers/ProvenanceCheckController";
 
 interface ProvenanceCheckViewProps {
-    record: ProvenanceRecord;
-    result: string | null;
-    onSetSignatureStatus: (status: SignatureStatus) => void;
-    onSetSigner: (signer: string) => void;
-    onSetAssetSha256: (assetSha256: string) => void;
-    onVerify: () => void;
+    result: ProvenanceInspectionView | null;
+    error: string | null;
+    onInspect: (manifestText: string) => Promise<unknown>;
+}
+
+function Value(props: { value: string | null }) {
+    return <>{props.value ?? "Not provided"}</>;
 }
 
 export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
+    const [manifest, setManifest] = createSignal("");
     return (
         <section>
             <h1>
                 <BadgeCheck class="fw-icon" />
                 Provenance check
             </h1>
+            <p role="note">
+                No native C2PA SDK is connected here. The signature is read from the manifest and is
+                not cryptographically verified.
+            </p>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
-                    props.onVerify();
+                    void props.onInspect(manifest());
                 }}
             >
                 <label>
-                    Signature status
-                    <select
-                        value={props.record.signatureStatus}
-                        onChange={(event) =>
-                            props.onSetSignatureStatus(event.currentTarget.value as SignatureStatus)
-                        }
-                    >
-                        <option value="valid">Valid</option>
-                        <option value="invalid">Invalid</option>
-                        <option value="missing">Missing</option>
-                    </select>
-                </label>
-                <label>
-                    Signer
-                    <input
-                        value={props.record.signer ?? ""}
-                        onInput={(event) => props.onSetSigner(event.currentTarget.value)}
+                    C2PA manifest (JSON)
+                    <textarea
+                        value={manifest()}
+                        rows={6}
+                        placeholder='{"signature":{"issuer":"...","alg":"..."}}'
+                        onInput={(event) => setManifest(event.currentTarget.value)}
                     />
                 </label>
-                <label>
-                    Asset SHA-256
-                    <input
-                        value={props.record.assetSha256}
-                        onInput={(event) => props.onSetAssetSha256(event.currentTarget.value)}
-                    />
-                </label>
-                <button type="submit">Verify provenance</button>
+                <button type="submit">Inspect manifest</button>
             </form>
-            <Show when={props.result}>
-                <p role="status">{props.result}</p>
+            <Show when={props.error}>
+                <p role="alert">{props.error}</p>
+            </Show>
+            <Show when={props.result} keyed>
+                {(result) => (
+                    <div>
+                        <h2>{result.summary}</h2>
+                        <dl>
+                            <dt>Signature status</dt>
+                            <dd>
+                                <Value value={result.signatureStatus} />
+                                <small>
+                                    Status reported in the manifest; it is not a new cryptographic
+                                    verification.
+                                </small>
+                            </dd>
+                            <dt>Signer</dt>
+                            <dd>
+                                <Value value={result.signer} />
+                                <small>Identity claimed in the manifest, if present.</small>
+                            </dd>
+                            <dt>Signature timestamp</dt>
+                            <dd>
+                                <Value value={result.signedAt} />
+                                <small>Time stated by the manifest, not an independent time proof.</small>
+                            </dd>
+                            <dt>Assertions</dt>
+                            <dd>
+                                <Show
+                                    when={result.assertions.length > 0}
+                                    fallback={<span>None provided</span>}
+                                >
+                                    <ul>
+                                        <For each={result.assertions}>
+                                            {(assertion) => (
+                                                <li>
+                                                    {assertion.label}: {assertion.present ? "present" : "absent"}
+                                                </li>
+                                            )}
+                                        </For>
+                                    </ul>
+                                </Show>
+                                <small>Names of claims present; their contents were not validated.</small>
+                            </dd>
+                            <dt>Asset hash</dt>
+                            <dd>
+                                <Value value={result.assetHash} />
+                                <small>Hash recorded in the manifest; no file was re-hashed here.</small>
+                            </dd>
+                            <dt>Validation failures</dt>
+                            <dd>
+                                <Show
+                                    when={result.validationFailures.length > 0}
+                                    fallback={<span>None reported</span>}
+                                >
+                                    <ul>
+                                        <For each={result.validationFailures}>
+                                            {(failure) => (
+                                                <li>
+                                                    <strong>{failure.code}</strong>: {failure.message}
+                                                </li>
+                                            )}
+                                        </For>
+                                    </ul>
+                                </Show>
+                                <small>Failures listed by the manifest; they need human review.</small>
+                            </dd>
+                            <dt>Missing information</dt>
+                            <dd>
+                                <Show
+                                    when={result.missingInfo.length > 0}
+                                    fallback={<span>None</span>}
+                                >
+                                    <ul>
+                                        <For each={result.missingInfo}>{(item) => <li>{item}</li>}</For>
+                                    </ul>
+                                </Show>
+                                <small>Absent fields reduce how much provenance can be shown.</small>
+                            </dd>
+                        </dl>
+                        <h2>Limitations</h2>
+                        <ul>
+                            <For each={result.limitations}>{(limit) => <li>{limit}</li>}</For>
+                        </ul>
+                    </div>
+                )}
             </Show>
         </section>
     );
@@ -64,22 +135,19 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
 
 export function ProvenanceCheckPage() {
     const controller = new ProvenanceCheckController();
-    const [record, setRecord] = createSignal(controller.getRecord());
     const [result, setResult] = createSignal(controller.getResult());
+    const [error, setError] = createSignal(controller.getError());
     onCleanup(
         controller.subscribe(() => {
-            setRecord(controller.getRecord());
             setResult(controller.getResult());
+            setError(controller.getError());
         }),
     );
     return (
         <ProvenanceCheckView
-            record={record()}
             result={result()}
-            onSetSignatureStatus={(status) => controller.setSignatureStatus(status)}
-            onSetSigner={(signer) => controller.setSigner(signer)}
-            onSetAssetSha256={(assetSha256) => controller.setAssetSha256(assetSha256)}
-            onVerify={() => controller.verify()}
+            error={error()}
+            onInspect={(manifestText) => controller.inspect(manifestText)}
         />
     );
 }
