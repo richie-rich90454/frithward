@@ -30,3 +30,121 @@ jobs:
             - run: pnpm --filter @frithward/web run build
             - run: pnpm exec playwright install chromium
             - run: pnpm run test:e2e
+
+    python:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: astral-sh/setup-uv@v5
+              with:
+                  version: latest
+                  enable-cache: true
+            - name: Install Python 3.12
+              run: uv python install 3.12
+            - name: Check all 18 Python engines
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  mapfile -t projects < <(find engines -name pyproject.toml -not -path '*/.venv/*' -printf '%h\n' | sort)
+                  echo "Discovered ${#projects[@]} engine projects"
+                  if [ "${#projects[@]}" -ne 18 ]; then
+                    echo "::warning::Expected 18 engines, found ${#projects[@]}"
+                  fi
+                  for dir in "${projects[@]}"; do
+                    echo "::group::$dir"
+                    uv sync --project "$dir"
+                    uv run --project "$dir" --with ruff ruff check "$dir"
+                    uv run --project "$dir" --with mypy mypy "$dir/src" "$dir/tests" --ignore-missing-imports
+                    uv run --project "$dir" --with pytest pytest -q "$dir/tests"
+                    echo "::endgroup::"
+                  done
+            - name: Check research harness
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  echo "::group::research"
+                  uv run --with ruff --with mypy --with pytest ruff check research
+                  uv run --with ruff --with mypy --with pytest mypy research --ignore-missing-imports
+                  uv run --with ruff --with mypy --with pytest pytest -q research
+                  echo "::endgroup::"
+
+    rust:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: 1.99.1
+                  components: clippy, rustfmt
+            - uses: Swatinem/rust-cache@v2
+            - name: Test, lint and format all 5 crates
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  for crate in crates/*/; do
+                    echo "::group::$crate"
+                    cargo test --manifest-path "${crate}Cargo.toml"
+                    cargo clippy --manifest-path "${crate}Cargo.toml" --all-targets -- -D warnings
+                    cargo fmt --manifest-path "${crate}Cargo.toml" -- --check
+                    echo "::endgroup::"
+                  done
+
+    security:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - name: Install gitleaks binary
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  curl -sSfL https://raw.githubusercontent.com/gitleaks/gitleaks/master/scripts/install.sh \
+                    | sh -s -- -b "$RUNNER_TEMP/bin" v8.28.0
+                  echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+            - name: Secret scan (gitleaks)
+              run: gitleaks detect --source . --redact --no-banner
+            - name: Vulnerability scan (Trivy)
+              uses: aquasecurity/trivy-action@0.28.0
+              with:
+                  scan-type: fs
+                  scan-ref: .
+                  trivy-config: infrastructure/security/trivy.yaml
+                  format: table
+            - name: Generate SBOM (Syft)
+              uses: anchore/sbom-action@v0
+              with:
+                  path: .
+                  format: spdx-json
+                  output-file: frithward.spdx.json
+                  artifact-name: frithward-spdx
+            - name: Install cosign
+              uses: sigstore/cosign-installer@v3
+            - name: Sign SBOM with cosign (tagged releases only)
+              if: startsWith(github.ref, 'refs/tags/')
+              shell: bash
+              env:
+                  COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
+                  COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+              run: |
+                  set -euo pipefail
+                  if [ -z "$COSIGN_KEY" ] || [ -z "$COSIGN_PASSWORD" ]; then
+                    echo "::warning::COSIGN_KEY/COSIGN_PASSWORD secrets are absent; skipping SBOM signing. Add them to sign release artifacts."
+                    exit 0
+                  fi
+                  printf '%s' "$COSIGN_KEY" > "$RUNNER_TEMP/cosign.key"
+                  cosign sign-blob --yes --key "$RUNNER_TEMP/cosign.key" \
+                    frithward.spdx.json --output-signature frithward.spdx.json.sig
+                  echo "Signed frithward.spdx.json"
+
+    model-cards:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 26
+            - name: Verify model cards
+              run: node scripts/check-model-cards.mjs
