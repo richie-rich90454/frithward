@@ -16,7 +16,6 @@ const violations = [];
 let scanned = 0;
 
 const toSlash = (p) => String(p).replaceAll("\\", "/");
-const fromSlash = (p) => String(p).replaceAll("/", "\\");
 const abs = (...parts) => toSlash(resolve(parts.map(toSlash).join("/")));
 const relDir = (p) => toSlash(dirname(toSlash(p)));
 
@@ -83,9 +82,9 @@ const packageJsonCache = new Map();
 function readPackageJson(path) {
     if (packageJsonCache.has(path)) return packageJsonCache.get(path);
     let value = null;
-    if (existsSync(fromSlash(path))) {
+    if (existsSync(path)) {
         try {
-            value = JSON.parse(readFileSync(fromSlash(path), "utf8"));
+            value = JSON.parse(readFileSync(path, "utf8"));
         } catch {
             value = null;
         }
@@ -129,7 +128,7 @@ function barrelLayers(barrel, seen = new Set()) {
     seen.add(barrel);
     let source;
     try {
-        source = readFileSync(fromSlash(barrel), "utf8");
+        source = readFileSync(barrel, "utf8");
     } catch {
         return result;
     }
@@ -184,7 +183,7 @@ function targetsBackend(specifier, resolved) {
 function checkFile(file) {
     scanned += 1;
     const layer = layerOf(file);
-    const source = readFileSync(fromSlash(file), "utf8");
+    const source = readFileSync(file, "utf8");
     for (const ref of parseImports(source)) {
         const target = targetOf(file, ref.specifier, layer === "tsx");
         const at = `${relative(file)}:${ref.line}`;
@@ -236,11 +235,11 @@ function checkFile(file) {
 }
 
 function walk(dir) {
-    if (!existsSync(fromSlash(dir))) return;
-    for (const entry of readdirSync(fromSlash(dir))) {
+    if (!existsSync(dir)) return;
+    for (const entry of readdirSync(dir)) {
         if (entry === "node_modules" || entry === "dist" || entry.startsWith(".")) continue;
         const full = `${dir}/${entry}`;
-        if (statSync(fromSlash(full)).isDirectory()) {
+        if (statSync(full).isDirectory()) {
             walk(full);
         } else if (/\.tsx?$/i.test(entry) && !/\.d\.ts$/i.test(entry)) {
             checkFile(full);
