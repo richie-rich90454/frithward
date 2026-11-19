@@ -17,15 +17,16 @@ interface ChartsViewProps {
 
 export function ChartsView(props: ChartsViewProps) {
     const adapter = new EChartAdapter();
-    let container!: HTMLDivElement;
+    const [container, setContainer] = createSignal<HTMLDivElement>();
     let chart: ReturnType<EChartAdapter["render"]> | null = null;
 
     createEffect(() => {
         const dataset = props.state.dataset;
+        const element = container();
         chart?.dispose();
         chart = null;
-        if (dataset !== null) {
-            chart = adapter.render(container, dataset);
+        if (dataset !== null && element) {
+            chart = adapter.render(element, dataset);
         }
     });
     onCleanup(() => {
@@ -70,7 +71,7 @@ export function ChartsView(props: ChartsViewProps) {
                 when={props.state.dataset}
                 fallback={<p role="status">No chart to display. Add real data above.</p>}
             >
-                <div ref={container} style={{ width: "100%", height: "360px" }} />
+                <div ref={setContainer} style={{ width: "100%", height: "360px" }} />
             </Show>
         </section>
     );
