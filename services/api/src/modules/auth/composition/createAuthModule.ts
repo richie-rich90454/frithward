@@ -7,8 +7,6 @@ export function createAuthModule(databaseUrl: string | undefined): {
     routes: AuthRoutes;
     sessionPort: SessionPort;
 } {
-    const sessionPort = new BetterAuthSessionPort(
-        databaseUrl ? createAuth(databaseUrl) : null,
-    );
+    const sessionPort = new BetterAuthSessionPort(databaseUrl ? createAuth(databaseUrl) : null);
     return { routes: new AuthRoutes(sessionPort), sessionPort };
 }
