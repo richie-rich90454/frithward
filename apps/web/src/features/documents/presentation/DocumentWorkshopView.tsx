@@ -13,6 +13,7 @@ interface DocumentWorkshopViewProps {
     onSheetChange: (value: string) => void;
     onSlidesChange: (value: string) => void;
     onImport: (file: File) => void;
+    onOcrImage: (file: File) => void;
     onExport: (format: ExportFormat) => void;
     onPreview: () => void;
     onBundle: () => void;
@@ -83,6 +84,21 @@ export function DocumentWorkshopView(props: DocumentWorkshopViewProps) {
                     }}
                 />
             </label>
+            <label>
+                Import image for OCR (English, local tesseract.js)
+                <input
+                    type="file"
+                    accept="image/*"
+                    disabled={props.state.busy}
+                    onChange={(event) => {
+                        const file = event.currentTarget.files?.[0];
+                        if (file) props.onOcrImage(file);
+                    }}
+                />
+            </label>
+            <Show when={props.state.ocrStatus}>
+                <p>{props.state.ocrStatus}</p>
+            </Show>
             <Show when={props.state.error}>
                 <p role="alert">{props.state.error}</p>
             </Show>
@@ -115,6 +131,7 @@ export function DocumentWorkshopPage() {
             onSheetChange={(value) => controller.setSheetText(value)}
             onSlidesChange={(value) => controller.setSlidesText(value)}
             onImport={(file) => void controller.importDocx(file)}
+            onOcrImage={(file) => void controller.importImageForOcr(file)}
             onExport={(format) => void controller.exportDocument(format)}
             onPreview={() => void controller.previewPdf()}
             onBundle={() => void controller.exportBundle()}
