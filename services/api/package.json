@@ -5,7 +5,8 @@
     "type": "module",
     "scripts": {
         "dev": "tsx watch src/index.ts",
-        "start": "tsx src/index.ts"
+        "start": "tsx src/index.ts",
+        "start:worker": "tsx src/jobs/runWorker.ts"
     },
     "dependencies": {
         "@frithward/contracts": "workspace:*",
@@ -15,13 +16,21 @@
         "@frithward/security-core": "workspace:*",
         "@hono/node-server": "latest",
         "@hono/zod-openapi": "latest",
+        "@opentelemetry/api": "^1.10.0",
+        "@opentelemetry/auto-instrumentations-node": "^0.83.1",
+        "@opentelemetry/exporter-trace-otlp-http": "^0.301.2",
+        "@opentelemetry/sdk-node": "^0.301.2",
         "better-auth": "^1.7.18",
+        "drizzle-orm": "^0.45.4",
         "graphile-worker": "^0.18.0",
         "hono": "latest",
+        "pg": "^8.23.1",
+        "prom-client": "^15.1.3",
         "tsx": "latest",
         "zod": "latest"
     },
     "devDependencies": {
+        "@types/pg": "^8.23.1",
         "typescript": "latest"
     }
 }
