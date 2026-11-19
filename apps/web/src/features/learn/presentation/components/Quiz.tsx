@@ -20,7 +20,7 @@ export function Quiz(props: QuizProps) {
             </p>
             <nav aria-label="Quiz questions">
                 <For each={props.questions}>
-                    {(item, index) => (
+                    {(_item, index) => (
                         <button
                             type="button"
                             aria-current={index() === props.state.currentIndex}
