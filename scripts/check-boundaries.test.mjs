@@ -1,13 +1,11 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const checker = fileURLToPath(new URL("./check-boundaries.mjs", import.meta.url));
-const requestedBase = "C:/Users/rjian/AppData/Local/Temp/opencode";
-const tempBase = existsSync(requestedBase) ? requestedBase : tmpdir();
 
 let passed = 0;
 
@@ -23,7 +21,7 @@ function run(root) {
 }
 
 function withRoot(name, body) {
-    const root = mkdtempSync(join(tempBase, "boundaries-"));
+    const root = mkdtempSync(join(tmpdir(), "fw-boundary-"));
     try {
         body(root);
     } finally {
