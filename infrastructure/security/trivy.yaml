@@ -1,1 +1,15 @@
-severity_threshold = 0 paths = []
+# Trivy configuration used by the `security` CI job and local scans.
+# Fail the pipeline on CRITICAL/HIGH findings; medium/low are reported but do
+# not block. Set ignore-unfixed to false so unfixed issues stay visible.
+severity:
+    - CRITICAL
+    - HIGH
+exit-code: 1
+ignore-unfixed: false
+vuln-type:
+    - os
+    - library
+scanners:
+    - vuln
+    - secret
+    - misconfig
