@@ -1,9 +1,11 @@
 import { For, createSignal, onCleanup } from "solid-js";
 import { GraduationCap } from "lucide-solid";
+import { useI18n } from "../../../../i18n/index.js";
 import { Quiz } from "../components/Quiz";
 import { LearnController } from "../controllers/LearnController";
 
 export function LearnView() {
+    const { t } = useI18n();
     const controller = new LearnController();
     const [state, setState] = createSignal(controller.getState());
     onCleanup(
@@ -18,7 +20,7 @@ export function LearnView() {
         <section>
             <h1>
                 <GraduationCap class="fw-icon" />
-                Learn
+                {t("learn.title")}
             </h1>
             <p>
                 Four short lessons on checking information and staying safe. Each lesson ends with a
