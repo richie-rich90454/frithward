@@ -1,0 +1,149 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": false,
+    "graphTooltip": 1,
+    "links": [],
+    "panels": [
+        {
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "lineWidth": 2,
+                        "showPoints": "never",
+                        "spanNulls": true
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": { "h": 9, "w": 12, "x": 0, "y": 0 },
+            "id": 1,
+            "options": {
+                "legend": { "displayMode": "table", "placement": "bottom" },
+                "tooltip": { "mode": "multi" }
+            },
+            "targets": [
+                {
+                    "expr": "histogram_quantile(0.95, sum by (le, service) (rate(http_request_duration_seconds_bucket[5m])))",
+                    "legendFormat": "p95 {{service}}",
+                    "refId": "A"
+                },
+                {
+                    "expr": "histogram_quantile(0.50, sum by (le, service) (rate(http_request_duration_seconds_bucket[5m])))",
+                    "legendFormat": "p50 {{service}}",
+                    "refId": "B"
+                }
+            ],
+            "title": "HTTP request duration by service",
+            "type": "timeseries"
+        },
+        {
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "lineWidth": 2,
+                        "showPoints": "never"
+                    },
+                    "unit": "reqps"
+                },
+                "overrides": []
+            },
+            "gridPos": { "h": 9, "w": 12, "x": 12, "y": 0 },
+            "id": 2,
+            "options": {
+                "legend": { "displayMode": "table", "placement": "bottom" },
+                "tooltip": { "mode": "multi" }
+            },
+            "targets": [
+                {
+                    "expr": "sum by (service) (rate(http_request_duration_seconds_count[5m]))",
+                    "legendFormat": "{{service}}",
+                    "refId": "A"
+                }
+            ],
+            "title": "HTTP request rate by service",
+            "type": "timeseries"
+        },
+        {
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "lineWidth": 2,
+                        "showPoints": "never"
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": { "h": 9, "w": 12, "x": 0, "y": 9 },
+            "id": 3,
+            "options": {
+                "legend": { "displayMode": "table", "placement": "bottom" },
+                "tooltip": { "mode": "multi" }
+            },
+            "targets": [
+                {
+                    "expr": "sum by (engine) (rate(analyses_total[5m]))",
+                    "legendFormat": "{{engine}}",
+                    "refId": "A"
+                }
+            ],
+            "title": "Analyses rate by engine",
+            "type": "timeseries"
+        },
+        {
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "fieldConfig": {
+                "defaults": { "unit": "short" },
+                "overrides": []
+            },
+            "gridPos": { "h": 9, "w": 12, "x": 12, "y": 9 },
+            "id": 4,
+            "options": {
+                "showHeader": true,
+                "cellHeight": "sm"
+            },
+            "targets": [
+                {
+                    "expr": "sum by (engine) (analyses_total)",
+                    "legendFormat": "{{engine}}",
+                    "refId": "A"
+                }
+            ],
+            "title": "Analyses total by engine",
+            "type": "table"
+        }
+    ],
+    "refresh": "30s",
+    "schemaVersion": 39,
+    "tags": ["frithward"],
+    "templating": { "list": [] },
+    "time": { "from": "now-1h", "to": "now" },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Frithward",
+    "uid": "frithward",
+    "version": 1,
+    "weekStart": ""
+}
