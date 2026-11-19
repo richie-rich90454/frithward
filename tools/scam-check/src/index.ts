@@ -13,6 +13,7 @@ import {
 } from "@frithward/security-core";
 
 export * from "@frithward/security-core";
+export { parseDomain } from "@frithward/contracts";
 
 export class ScamCheckTool {
     private readonly analyzer = new AnalyzeMessageUseCase();
