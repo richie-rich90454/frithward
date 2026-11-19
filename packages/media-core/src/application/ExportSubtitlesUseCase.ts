@@ -6,7 +6,7 @@ export class ExportSubtitlesUseCase {
         const segments = input.project.listSegments();
         if (segments.length === 0)
             throw new AppError("VALIDATION_FAILED", "Project has no segments to export.");
-        if (input.format === "vtt") return toVtt(input.project, segments);
+        if (input.format === "vtt") return toVtt(segments);
         return toSrt(segments);
     }
 }
@@ -21,7 +21,6 @@ function formatTimestamp(ms: number, separator: string): string {
 }
 
 function toVtt(
-    project: CaptionProject,
     segments: readonly {
         id: string;
         startMs: number;
@@ -41,7 +40,6 @@ function toVtt(
         );
         lines.push("");
     }
-    void project;
     return lines.join("\n");
 }
 
