@@ -10,36 +10,35 @@ export interface JobStatusRecord {
 }
 
 export interface JobStatusStore {
-    record(jobId: string, status: JobStatus): void;
-    complete(jobId: string, result: unknown): void;
-    fail(jobId: string, error: string): void;
-    get(jobId: string): JobStatusRecord | null;
+    record(jobId: string, status: JobStatus): Promise<void>;
+    complete(jobId: string, result: unknown): Promise<void>;
+    fail(jobId: string, error: string): Promise<void>;
+    get(jobId: string): Promise<JobStatusRecord | null>;
 }
 
-// shortcut: in-memory status store shared by the API and an in-process worker; a
-// standalone worker process has its own copy. Upgrade to a DB-backed store when
-// workers run separately and status must survive restarts.
+// The in-memory shortcut is no longer the production default: when DATABASE_URL is set the API
+// and worker share DatabaseJobStatusStore. This store remains for tests and local no-DB runs.
 export class InMemoryJobStatusStore implements JobStatusStore {
     private readonly jobs = new Map<string, JobStatusRecord>();
 
-    public record(jobId: string, status: JobStatus): void {
+    public async record(jobId: string, status: JobStatus): Promise<void> {
         this.assertJobId(jobId);
         this.jobs.set(jobId, { jobId, status, result: null, error: null });
     }
 
-    public complete(jobId: string, result: unknown): void {
+    public async complete(jobId: string, result: unknown): Promise<void> {
         this.assertJobId(jobId);
         const record = this.current(jobId);
         this.jobs.set(jobId, { ...record, status: "completed", result });
     }
 
-    public fail(jobId: string, error: string): void {
+    public async fail(jobId: string, error: string): Promise<void> {
         this.assertJobId(jobId);
         const record = this.current(jobId);
         this.jobs.set(jobId, { ...record, status: "failed", error });
     }
 
-    public get(jobId: string): JobStatusRecord | null {
+    public async get(jobId: string): Promise<JobStatusRecord | null> {
         return this.jobs.get(jobId) ?? null;
     }
 
