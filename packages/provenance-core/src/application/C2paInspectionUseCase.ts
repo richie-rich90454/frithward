@@ -6,6 +6,7 @@ import type {
 } from "../domain/C2paManifest.js";
 import type { ProvenanceRecord } from "../domain/ProvenanceRecord.js";
 import type { ProvenanceRecordRepository } from "../ports/ProvenanceRecordRepository.js";
+import type { C2paVerificationPort } from "../ports/C2paVerificationPort.js";
 
 const HASH_KEYS = ["hash", "assetHash", "sha256", "assetSha256"];
 
@@ -95,14 +96,20 @@ function findAssetHash(manifest: Record<string, unknown>): string | null {
 }
 
 export class C2paInspectionUseCase {
-    public constructor(private readonly repository?: ProvenanceRecordRepository) {}
+    public constructor(
+        private readonly repository?: ProvenanceRecordRepository,
+        private readonly verifier?: C2paVerificationPort,
+    ) {}
 
     public async execute(input: { manifest: unknown; id?: string }): Promise<C2paInspectionResult> {
+        if (this.verifier) return this.verifyWithSdk(input, this.verifier);
+
         const manifest = parseManifest(input.manifest);
         const limitations = [
             "Signature status is taken from the manifest and was not cryptographically re-verified.",
             "Timestamps come from the manifest and may not reflect real-world signing time.",
             "Assertions are reported as present but their contents were not validated.",
+            "signature not verified via C2PA SDK",
         ];
 
         if (!manifest) {
@@ -182,6 +189,54 @@ export class C2paInspectionUseCase {
             missingInfo,
             summary,
             limitations,
+        };
+        await this.persist(result, input.manifest, input.id);
+        return result;
+    }
+
+    private async verifyWithSdk(
+        input: { manifest: unknown; id?: string },
+        verifier: C2paVerificationPort,
+    ): Promise<C2paInspectionResult> {
+        let verification;
+        try {
+            verification = await verifier.verify(input.manifest);
+        } catch (cause) {
+            const detail = cause instanceof Error ? cause.message : "Unknown SDK error.";
+            verification = {
+                signatureStatus: "unverified" as const,
+                signer: null,
+                timestamp: null,
+                assertions: [],
+                validationFailures: [{ code: "sdk.error", message: detail }],
+                limitations: [
+                    `C2PA SDK verification failed: ${detail}`,
+                    "signature not verified via C2PA SDK",
+                ],
+            };
+        }
+
+        const missingInfo: string[] = [];
+        if (!verification.signer) missingInfo.push("signer");
+        if (!verification.timestamp) missingInfo.push("signature timestamp");
+        if (verification.assertions.length === 0) missingInfo.push("assertions");
+
+        const result: C2paInspectionResult = {
+            signatureStatus: verification.signatureStatus,
+            signer: verification.signer,
+            signedAt: verification.timestamp,
+            assertions: verification.assertions,
+            assetHash: findAssetHash(parseManifest(input.manifest) ?? {}),
+            validationFailures: verification.validationFailures,
+            missingInfo,
+            summary: this.summarize(
+                verification.signatureStatus,
+                verification.signer,
+                verification.assertions.length,
+                verification.validationFailures.length,
+                missingInfo.length,
+            ),
+            limitations: verification.limitations,
         };
         await this.persist(result, input.manifest, input.id);
         return result;
