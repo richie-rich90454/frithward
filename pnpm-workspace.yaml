@@ -5,6 +5,7 @@ packages:
     - tools/*
     - engines/*
 allowBuilds:
+    '@contentauth/c2pa-node': false
     esbuild: true
     onnxruntime-node: false
     protobufjs: false
