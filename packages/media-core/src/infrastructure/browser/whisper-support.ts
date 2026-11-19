@@ -4,7 +4,5 @@ export interface WhisperIsolationGlobal {
 }
 
 export function isCrossOriginIsolationAvailable(global: WhisperIsolationGlobal): boolean {
-    return (
-        typeof global.SharedArrayBuffer !== "undefined" && global.crossOriginIsolated === true
-    );
+    return typeof global.SharedArrayBuffer !== "undefined" && global.crossOriginIsolated === true;
 }
