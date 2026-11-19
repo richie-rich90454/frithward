@@ -44,15 +44,15 @@ Security fixes take priority and may bypass normal discussion, but they still re
 
 ## Policies
 
-| Policy | Scope |
-| --- | --- |
-| [Privacy policy](PRIVACY.md) | User data, execution location, retention |
-| [Security policy](SECURITY.md) | Reporting and coordinated disclosure |
-| [Threat model](THREAT_MODEL.md) | Assets, boundaries, threats, controls |
-| [Model policy](MODEL_POLICY.md) | Model cards, stages, and limitations |
-| [Dataset policy](DATASET_POLICY.md) | Licensing, consent, and removal |
-| [Research policy](RESEARCH_POLICY.md) | Publication ethics and reproduction |
-| [Code of conduct](CODE_OF_CONDUCT.md) | Community behavior and enforcement |
+| Policy                                | Scope                                    |
+| ------------------------------------- | ---------------------------------------- |
+| [Privacy policy](PRIVACY.md)          | User data, execution location, retention |
+| [Security policy](SECURITY.md)        | Reporting and coordinated disclosure     |
+| [Threat model](THREAT_MODEL.md)       | Assets, boundaries, threats, controls    |
+| [Model policy](MODEL_POLICY.md)       | Model cards, stages, and limitations     |
+| [Dataset policy](DATASET_POLICY.md)   | Licensing, consent, and removal          |
+| [Research policy](RESEARCH_POLICY.md) | Publication ethics and reproduction      |
+| [Code of conduct](CODE_OF_CONDUCT.md) | Community behavior and enforcement       |
 
 ## Conflict of interest
 
