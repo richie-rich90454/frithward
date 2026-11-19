@@ -1,6 +1,7 @@
 export const fr: Record<string, string> = {
     wordmark: "Frithward",
-    tagline: "Le traitement local est le mode par défaut. Le traitement hébergé est facultatif et explicite.",
+    tagline:
+        "Le traitement local est le mode par défaut. Le traitement hébergé est facultatif et explicite.",
     language: "Langue",
     "nav.primary": "Principale",
     "nav.home": "Accueil",
