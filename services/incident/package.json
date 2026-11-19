@@ -8,8 +8,9 @@
     },
     "dependencies": {
         "@frithward/contracts": "workspace:*",
-        "hono": "latest",
         "@hono/node-server": "latest",
+        "hono": "latest",
+        "postal-mime": "^4.2.1",
         "tsx": "latest",
         "zod": "latest"
     }
