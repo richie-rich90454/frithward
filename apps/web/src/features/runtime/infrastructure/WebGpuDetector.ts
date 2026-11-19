@@ -109,7 +109,9 @@ export class WebGpuDetector implements GpuDetectionPort {
                 report.error = "The compute pass ran but returned an unexpected value.";
         } catch (cause) {
             report.error = `The GPU compute check failed: ${message(cause)}`;
-            report.limitations.push("The compute pass did not complete, so support is unconfirmed.");
+            report.limitations.push(
+                "The compute pass did not complete, so support is unconfirmed.",
+            );
         }
         return report;
     }
