@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DocumentGenerationController } from "./DocumentGenerationController";
-import type {
-    DocumentInput,
-    SlideInput,
-    SpreadsheetInput,
-} from "../domain/DocumentModel";
+import type { DocumentInput, SlideInput, SpreadsheetInput } from "../domain/DocumentModel";
 
 const document: DocumentInput = {
     title: "Quarterly report",
