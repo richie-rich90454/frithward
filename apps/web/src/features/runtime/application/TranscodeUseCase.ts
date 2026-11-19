@@ -1,8 +1,4 @@
-import type {
-    TranscodeRequest,
-    TranscodeResult,
-    TranscoderPort,
-} from "../ports/TranscoderPort";
+import type { TranscodeRequest, TranscodeResult, TranscoderPort } from "../ports/TranscoderPort";
 
 export class TranscodeUseCase {
     public constructor(private readonly transcoder: TranscoderPort) {}
