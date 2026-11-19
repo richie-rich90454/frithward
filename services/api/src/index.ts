@@ -37,9 +37,7 @@ app.use("*", bodySizeLimit());
 app.use("/api/scam/message", createRateLimiter({ windowMs: 60_000, limit: 60 }));
 
 const queue =
-    process.env.ENABLE_JOB_QUEUE === "1" && databaseUrl
-        ? new GraphileJobQueue(databaseUrl)
-        : null;
+    process.env.ENABLE_JOB_QUEUE === "1" && databaseUrl ? new GraphileJobQueue(databaseUrl) : null;
 const scams = createScamModule(queue, sharedJobStore);
 const auth = createAuthModule(databaseUrl);
 const databaseHealth = createDatabaseHealthCheck(databaseUrl);
