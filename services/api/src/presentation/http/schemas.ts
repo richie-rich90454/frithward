@@ -3,10 +3,28 @@ import { z } from "@hono/zod-openapi";
 export const HealthResponse = z.object({
     status: z.string(),
     service: z.string(),
+    database: z.enum(["connected", "unavailable", "not-configured"]),
 });
 
 export const AnalyzeMessageRequest = z.object({
     text: z.string().min(1).max(20000),
+});
+
+export const ScamIndicatorResponse = z.object({
+    id: z.string(),
+    label: z.string(),
+    detail: z.string(),
+    severity: z.enum(["low", "medium", "high"]),
+});
+
+export const AnalyzeMessageResponse = z.object({
+    id: z.string(),
+    channel: z.enum(["message", "url", "qr", "image", "audio"]),
+    indicators: z.array(ScamIndicatorResponse),
+    summary: z.string(),
+    nextSteps: z.array(z.string()),
+    limitations: z.array(z.string()),
+    createdAt: z.string(),
 });
 
 export const EnqueueAnalysisResponse = z.object({
@@ -14,7 +32,13 @@ export const EnqueueAnalysisResponse = z.object({
 });
 
 export const SessionResponse = z.object({
-    configured: z.boolean(),
+    authenticated: z.boolean(),
+    user: z
+        .object({
+            id: z.string(),
+            email: z.string(),
+        })
+        .nullable(),
 });
 
 export const PrivacyFindingSchema = z.object({
@@ -25,11 +49,11 @@ export const PrivacyFindingSchema = z.object({
 });
 
 export const PrivacyInspectRequest = z.object({
-    findings: z.array(PrivacyFindingSchema),
+    findings: z.array(PrivacyFindingSchema).max(1000),
 });
 
 export const PrivacyRedactRequest = z.object({
-    findings: z.array(PrivacyFindingSchema),
+    findings: z.array(PrivacyFindingSchema).max(1000),
 });
 
 export const ProvenanceInspectRequest = z.object({
@@ -53,5 +77,5 @@ export const CaptionExportRequest = z.object({
     title: z.string().min(1),
     language: z.string().min(1),
     format: z.enum(["vtt", "srt"]),
-    segments: z.array(CaptionSegmentInput),
+    segments: z.array(CaptionSegmentInput).max(1000),
 });
