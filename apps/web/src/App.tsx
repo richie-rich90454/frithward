@@ -9,6 +9,7 @@ import {
     ShieldAlert,
     ShieldCheck,
     Users,
+    Wrench,
 } from "lucide-solid";
 import "./app.css";
 import { HomeView } from "./features/home/presentation/pages/HomeView";
@@ -21,6 +22,11 @@ import { LearnView } from "./features/learn/presentation/pages/LearnView";
 import { CommunityView } from "./features/community/presentation/pages/CommunityView";
 import { DeveloperToolsView } from "./features/developer-tools/presentation/pages/DeveloperToolsView";
 import { CaptionStudioPage } from "./features/captions/presentation/pages/CaptionStudioView";
+import { DocumentWorkshopPage } from "./features/documents/presentation/DocumentWorkshopView";
+import { DiagramPage } from "./features/diagrams/presentation/DiagramView";
+import { ChartsPage } from "./features/charts/presentation/ChartsView";
+import { RuntimePage } from "./features/runtime/presentation/pages/RuntimeView";
+import { ModelManagerPage } from "./features/models/presentation/pages/ModelManagerView";
 import { LanguageSwitcher, useI18n } from "./i18n/index.js";
 
 const NAVIGATION = [
@@ -32,6 +38,7 @@ const NAVIGATION = [
     { path: "/respond", labelKey: "nav.respond", icon: LifeBuoy },
     { path: "/learn", labelKey: "nav.learn", icon: GraduationCap },
     { path: "/community", labelKey: "nav.community", icon: Users },
+    { path: "/tools", labelKey: "nav.tools", icon: Wrench },
 ] as const;
 
 function pageFor(pathname: string): JSX.Element {
@@ -45,6 +52,11 @@ function pageFor(pathname: string): JSX.Element {
     if (pathname === "/community") return <CommunityView />;
     if (pathname === "/tools") return <DeveloperToolsView />;
     if (pathname === "/tools/captions") return <CaptionStudioPage />;
+    if (pathname === "/tools/documents") return <DocumentWorkshopPage />;
+    if (pathname === "/tools/diagrams") return <DiagramPage />;
+    if (pathname === "/tools/charts") return <ChartsPage />;
+    if (pathname === "/tools/runtime") return <RuntimePage />;
+    if (pathname === "/tools/models") return <ModelManagerPage />;
     return <HomeView />;
 }
 
