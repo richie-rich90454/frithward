@@ -24,44 +24,56 @@ export const en: Record<string, string> = {
     "page.community.title": "Community",
     "page.tools.title": "Developer tools",
     "page.captions.title": "Caption studio",
-    "page.home.what": "Frithward brings captioning, media editing, provenance checks, and incident tools into one place.",
+    "page.home.what":
+        "Frithward brings captioning, media editing, provenance checks, and incident tools into one place.",
     "page.home.local":
         "Every tool here is designed to run on this device by default. Hosted processing, where it exists, is optional and explicit.",
     "page.home.limitation.1": "This desktop build is a local interface, not a cloud service.",
     "page.home.limitation.2": "Detection and verification results are clues, not proof.",
-    "page.make.what": "Caption studio, audio, video, image, and document workshops prepare media before you share it.",
+    "page.make.what":
+        "Caption studio, audio, video, image, and document workshops prepare media before you share it.",
     "page.make.local": "Files stay on this device unless you choose to upload them.",
     "page.make.limitation.1": "Generated captions and edits need a human review pass.",
     "page.make.limitation.2": "Not every codec or file format is supported.",
-    "page.protect.what": "Privacy inspection and share checks show what metadata and details a file or message would expose.",
+    "page.protect.what":
+        "Privacy inspection and share checks show what metadata and details a file or message would expose.",
     "page.protect.local": "Inspection happens locally; nothing is sent anywhere.",
     "page.protect.limitation.1": "Removing metadata is not a guarantee of anonymity.",
     "page.protect.limitation.2": "A share check cannot see everything a recipient might infer.",
-    "page.check.what": "Scam check and media analysis surface patterns in a message or file that are worth a second look.",
+    "page.check.what":
+        "Scam check and media analysis surface patterns in a message or file that are worth a second look.",
     "page.check.local": "Analysis runs on this device; no message or media is uploaded.",
     "page.check.limitation.1": "Results can be wrong in both directions.",
     "page.check.limitation.2": "A clean result is not proof that content is safe.",
-    "page.verify.what": "Provenance verification summarises the claims inside a C2PA manifest and shows what is missing.",
+    "page.verify.what":
+        "Provenance verification summarises the claims inside a C2PA manifest and shows what is missing.",
     "page.verify.local": "Manifests are parsed in the app; no external service is contacted.",
-    "page.verify.limitation.1": "Signature and hash claims are not cryptographically re-verified here.",
-    "page.verify.limitation.2": "Timestamps come from the manifest and are not independently trusted.",
-    "page.respond.what": "An evidence timeline and incident reports help you record what happened and what you did next.",
+    "page.verify.limitation.1":
+        "Signature and hash claims are not cryptographically re-verified here.",
+    "page.verify.limitation.2":
+        "Timestamps come from the manifest and are not independently trusted.",
+    "page.respond.what":
+        "An evidence timeline and incident reports help you record what happened and what you did next.",
     "page.respond.local": "Your records stay in this local workspace.",
     "page.respond.limitation.1": "This tool does not report incidents to any authority for you.",
     "page.respond.limitation.2": "Keep your own copies of anything you may need later.",
-    "page.learn.what": "Short lessons cover source checking, pressure tactics, personal information, and synthetic media.",
+    "page.learn.what":
+        "Short lessons cover source checking, pressure tactics, personal information, and synthetic media.",
     "page.learn.local": "The lessons are built into the app and need no connection.",
     "page.learn.limitation.1": "Lessons are general guidance, not legal or safety advice.",
     "page.learn.limitation.2": "Examples are fictional and are not statistics.",
-    "page.community.what": "Frithward Commons lists ways to contribute and the kinds of organisations people partner with.",
+    "page.community.what":
+        "Frithward Commons lists ways to contribute and the kinds of organisations people partner with.",
     "page.community.local": "The directory is informational; taking part is up to you.",
     "page.community.limitation.1": "Never publish a victim's private information.",
     "page.community.limitation.2": "Partnership categories are not endorsements.",
-    "page.tools.what": "Local-first packages and interfaces for building with Frithward in your own projects.",
+    "page.tools.what":
+        "Local-first packages and interfaces for building with Frithward in your own projects.",
     "page.tools.local": "Packages run in your own environment.",
     "page.tools.limitation.1": "APIs may change while the project is early.",
     "page.tools.limitation.2": "Experimental components are not production guarantees.",
-    "page.captions.what": "Caption studio generates and edits captions for media files before export.",
+    "page.captions.what":
+        "Caption studio generates and edits captions for media files before export.",
     "page.captions.local": "Transcription and editing happen on this device.",
     "page.captions.limitation.1": "Auto-generated captions contain mistakes; review them.",
     "page.captions.limitation.2": "Language support depends on the models available locally.",
