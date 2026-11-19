@@ -23,8 +23,7 @@ export class MediaTranscoder {
     private readonly adapter: TranscoderAdapter | null;
 
     public constructor(adapter?: TranscoderAdapter | null) {
-        this.adapter =
-            adapter === undefined ? new MediabunnyAdapter() : adapter;
+        this.adapter = adapter === undefined ? new MediabunnyAdapter() : adapter;
     }
 
     public async convert(input: ArrayBuffer, format: string): Promise<ArrayBuffer> {
