@@ -3,4 +3,5 @@ export * from "./domain/C2paManifest.js";
 export * from "./application/VerifyProvenanceUseCase.js";
 export * from "./application/C2paInspectionUseCase.js";
 export * from "./ports/ProvenanceRecordRepository.js";
+export type { C2paVerificationPort, C2paVerificationResult } from "./ports/C2paVerificationPort.js";
 export * from "./infrastructure/InMemoryProvenanceRecordRepository.js";
