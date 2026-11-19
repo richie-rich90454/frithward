@@ -1,32 +1,22 @@
 import { For } from "solid-js";
-import {
-    Accessibility,
-    GraduationCap,
-    Library,
-    MessageSquare,
-    Users,
-} from "lucide-solid";
+import { Accessibility, GraduationCap, Library, MessageSquare, Users } from "lucide-solid";
 
 const TRACKS = [
     {
         title: "Technology",
-        detail:
-            "Help improve the local tools: report bugs, suggest clearer wording, test new browser features, or contribute code and translations to the open-source packages.",
+        detail: "Help improve the local tools: report bugs, suggest clearer wording, test new browser features, or contribute code and translations to the open-source packages.",
     },
     {
         title: "Public safety",
-        detail:
-            "Share non-identifying patterns you have seen in scam messages so others know what to check. Do not forward the original messages or the personal details of anyone targeted.",
+        detail: "Share non-identifying patterns you have seen in scam messages so others know what to check. Do not forward the original messages or the personal details of anyone targeted.",
     },
     {
         title: "Accessibility",
-        detail:
-            "Review captions, plain-language summaries, and keyboard navigation. Tell us where instructions are hard to follow so we can rewrite them for more people.",
+        detail: "Review captions, plain-language summaries, and keyboard navigation. Tell us where instructions are hard to follow so we can rewrite them for more people.",
     },
     {
         title: "Research",
-        detail:
-            "Ask questions, propose study ideas, and help test whether an educational approach works. Keep participants voluntary, consented, and never identify them in public write-ups.",
+        detail: "Ask questions, propose study ideas, and help test whether an educational approach works. Keep participants voluntary, consented, and never identify them in public write-ups.",
     },
 ] as const;
 
@@ -102,8 +92,8 @@ export function CommunityView() {
             <p role="note">
                 <strong>Privacy rule:</strong> contributors must never publish a victim's private
                 information. That includes names, addresses, phone numbers, account details, images,
-                and any identifying context, even if it was sent to you or found in a public profile.
-                Share general patterns only, and check before you post.
+                and any identifying context, even if it was sent to you or found in a public
+                profile. Share general patterns only, and check before you post.
             </p>
         </section>
     );
