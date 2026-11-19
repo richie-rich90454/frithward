@@ -14,7 +14,10 @@ import { cors } from "./middleware/cors.js";
 import { createRateLimiter } from "./middleware/rateLimit.js";
 import { bodySizeLimit } from "./middleware/bodySize.js";
 import { GraphileJobQueue } from "./jobs/queue.js";
-import { sharedJobStore } from "./jobs/jobStore.js";
+import { DatabaseJobStatusStore } from "./jobs/DatabaseJobStatusStore.js";
+import { sharedJobStore, type JobStatusStore } from "./jobs/jobStore.js";
+import { GarageObjectStorage } from "./modules/storage/GarageObjectStorage.js";
+import { StorageRoutes } from "./modules/storage/StorageRoutes.js";
 import { openApiDocument } from "./openapi.js";
 import { createMetricsRoutes, metricsMiddleware } from "./telemetry/metrics.js";
 
@@ -36,15 +39,22 @@ app.use(
 app.use("*", bodySizeLimit());
 app.use("/api/scam/message", createRateLimiter({ windowMs: 60_000, limit: 60 }));
 
+// With a database configured the store is shared across API and worker processes and survives
+// restarts; without one the honest in-memory store is kept for local/no-DB runs.
+const jobStore: JobStatusStore = databaseUrl
+    ? new DatabaseJobStatusStore(databaseUrl)
+    : sharedJobStore;
 const queue =
     process.env.ENABLE_JOB_QUEUE === "1" && databaseUrl ? new GraphileJobQueue(databaseUrl) : null;
-const scams = createScamModule(queue, sharedJobStore);
+const scams = createScamModule(queue, jobStore);
 const auth = createAuthModule(databaseUrl);
+const garage = GarageObjectStorage.fromEnv();
 const databaseHealth = createDatabaseHealthCheck(databaseUrl);
 
 app.use("/api/privacy/*", requireSession(auth.sessionPort));
 app.use("/api/provenance/*", requireSession(auth.sessionPort));
 app.use("/api/captions/*", requireSession(auth.sessionPort));
+app.use("/api/storage/*", requireSession(auth.sessionPort));
 
 app.route("/", createMetricsRoutes());
 app.route("/", new HealthRoutes(databaseHealth.check, databaseHealth.configured));
@@ -53,7 +63,13 @@ app.route("/", auth.routes);
 app.route("/", new PrivacyRoutes());
 app.route("/", new ProvenanceRoutes());
 app.route("/", new CaptionRoutes());
-app.route("/", new JobsRoutes(sharedJobStore));
+app.route("/", new StorageRoutes(garage));
+app.route("/", new JobsRoutes(jobStore));
+
+// Mount the real Better Auth handler only with a database. Without one the /api/auth/session
+// route above stays honest and returns 503 (EXTERNAL_UNAVAILABLE).
+const betterAuth = auth.auth;
+if (betterAuth) app.all("/api/auth/*", (context) => betterAuth.handler(context.req.raw));
 
 app.get("/api/openapi.json", (context) => context.json(openApiDocument));
 
