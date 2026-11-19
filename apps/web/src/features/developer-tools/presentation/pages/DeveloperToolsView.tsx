@@ -1,5 +1,15 @@
 import { A } from "@solidjs/router";
-import { Captions, Terminal, Wrench } from "lucide-solid";
+import {
+    CloseButton,
+    Content,
+    Description,
+    Overlay,
+    Portal,
+    Root,
+    Title,
+    Trigger,
+} from "@kobalte/core/dialog";
+import { Captions, Info, Terminal, Wrench } from "lucide-solid";
 
 export function DeveloperToolsView() {
     return (
@@ -9,6 +19,37 @@ export function DeveloperToolsView() {
                 Developer tools
             </h1>
             <p>Local-first packages and interfaces for building with Frithward.</p>
+            <Root>
+                <Trigger class="button-secondary">
+                    <Info class="fw-icon" /> About Frithward
+                </Trigger>
+                <Portal>
+                    <Overlay class="dialog-overlay" />
+                    <Content class="dialog-content">
+                        <Title>About Frithward</Title>
+                        <Description>
+                            Keep people safe. Keep media honest.
+                        </Description>
+                        <p>
+                            Frithward is an open-source toolkit for inspecting media, checking
+                            provenance, and spotting scams. Processing runs on your device by
+                            default: no account and no upload.
+                        </p>
+                        <p>
+                            Results are evidence for a person to review, never a verdict. Every
+                            claim shows its limitations, and unmeasured data is labelled as such.
+                            The code is Apache-2.0 and the interface is available in eight
+                            languages.
+                        </p>
+                        <p>
+                            Cryptographic C2PA signature verification needs the native{" "}
+                            <code>@contentauth/c2pa-node</code> SDK; without it, signature status is
+                            reported as unverified rather than valid.
+                        </p>
+                        <CloseButton class="button-secondary">Close</CloseButton>
+                    </Content>
+                </Portal>
+            </Root>
             <ul class="resource-list">
                 <li>
                     <Captions class="fw-icon" />
