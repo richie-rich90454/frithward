@@ -1,3 +1,5 @@
+import { en } from "../../../../locales/en.js";
+
 export interface Lesson {
     id: string;
     title: string;
@@ -22,103 +24,63 @@ export interface LearnState {
     feedback: string | null;
 }
 
-export const LESSONS: readonly Lesson[] = [
-    {
-        id: "sources",
-        title: "Verifying sources",
-        paragraphs: [
-            "A picture or quote can travel far before anyone checks where it started. Before you share, look for the original post, the account that published it, and the date. A repost, a screenshot, or a cropped image removes context and makes a claim harder to trace.",
-            "Check at least one source you did not reach through the same chain that brought you the claim. A linked article, an official statement, or a second independent account is more useful than ten copies of the same repost. If you cannot find an original source, say you are unsure instead of presenting the claim as fact.",
-        ],
-        scenario:
-            "Fictional scenario: A neighbourhood group shares a dramatic photo of a flooded street with the message 'this happened here last night.' The photo has no date or location. You search and find it was posted in another country months earlier. You share that earlier post and ask for a local source before anyone reshare it.",
-    },
-    {
-        id: "pressure",
-        title: "Recognising urgency and pressure",
-        paragraphs: [
-            "Messages that push you to act right now are worth slowing down. Phrases like 'act in ten minutes', 'keep this secret', or 'everyone has already paid' are designed to stop you from checking. Real organisations rarely require an immediate, private payment in a single message.",
-            "Pressure often comes with a story that isolates you: 'do not tell anyone' or 'your account will be deleted.' That isolation is a warning sign, not proof. Step away, open the organisation's own website or app, and contact them through a number or address you already trust.",
-        ],
-        scenario:
-            "Fictional scenario: A text says your electricity will be cut off in fifteen minutes unless you pay through a link. The link asks for a card number and a one-time code. You ignore the link, open your utility provider's app, and see no notice of any unpaid bill.",
-    },
-    {
-        id: "privacy",
-        title: "Protecting personal information",
-        paragraphs: [
-            "Photos and videos can carry clues about where you are and what you own. A street sign, a school uniform, a ticket barcode, or a reflection in a window can identify a person or place even when the caption says nothing. A file can also contain metadata that a platform does not strip.",
-            "Before posting, crop or blur identifying details and check what the file itself contains. Do not publish someone else's address, phone number, workplace, or family details, even if you found them in a public profile. If a message asks you to move a conversation to a private channel or hand over a code, treat that information as sensitive.",
-        ],
-        scenario:
-            "Fictional scenario: You want to share a photo of a crowd at a local event. In the background, a name badge and a licence plate are readable. You crop both out and remove the original full-resolution image before uploading the edited copy.",
-    },
-    {
-        id: "synthetic",
-        title: "Understanding synthetic media limits",
-        paragraphs: [
-            "AI tools can make convincing images, voices, and videos, but detection is uncertain. A tool that says an image is 'fake' may be wrong, and a real photo may look strange because of lighting or compression. There is no single visual tell that is reliable every time.",
-            "Treat a detection result as one clue, not a verdict. Look for corroboration: was the event reported by independent sources, does the original file exist, and does the content match known facts? When you cannot tell, the honest answer is that you cannot tell. Avoid accusing a specific person on the basis of a detector's output.",
-        ],
-        scenario:
-            "Fictional scenario: A short video shows a public figure saying something shocking. A detector labels it 'likely synthetic', but you cannot verify the clip against any official record. You choose not to share it and note that the source is unknown rather than calling it a fake or declaring it real.",
-    },
-];
+export type LearnDictionary = Readonly<Record<string, string>>;
+export type LearnTranslator = (key: string) => string;
 
-export const QUIZ: readonly QuizQuestion[] = [
-    {
-        id: "q-sources",
-        prompt: "You see a dramatic photo in a group chat with no date or location. What is the most useful first step?",
-        options: [
-            "Share it so others can warn their friends",
-            "Try to find the earliest post and check an independent source",
-            "Assume it is false because it has no caption",
-        ],
-        correctIndex: 1,
-        explanation:
-            "Finding the earliest post and an independent source gives you context. Sharing first spreads unverified claims, and assuming it is false is just as unsupported.",
-    },
-    {
-        id: "q-pressure",
-        prompt: "A message says your account will close in ten minutes unless you pay through a link. What does that pressure most likely signal?",
-        options: [
-            "A genuine emergency that needs fast payment",
-            "A routine reminder from your provider",
-            "An attempt to stop you from checking the claim",
-        ],
-        correctIndex: 2,
-        explanation:
-            "Urgency plus a payment link is a common pressure tactic. Check with the provider through a channel you already trust.",
-    },
-    {
-        id: "q-privacy",
-        prompt: "Which detail is safest to leave visible when posting a photo of a public event?",
-        options: [
-            "A readable name badge",
-            "A licence plate",
-            "A plain background with no identifying text",
-        ],
-        correctIndex: 2,
-        explanation:
-            "Identifying text and plates can expose people. Crop or blur them; a plain background carries far less information.",
-    },
-    {
-        id: "q-synthetic",
-        prompt: "A detector labels a video 'likely synthetic'. What is the honest conclusion?",
-        options: [
-            "It is definitely fake and you should accuse the source",
-            "It is one clue; without corroboration you cannot be sure",
-            "It must be real because detectors are often wrong",
-        ],
-        correctIndex: 1,
-        explanation:
-            "Detectors can be wrong in both directions. Without independent corroboration, the honest position is uncertainty.",
-    },
-];
+export function dictionaryTranslator(dictionary: LearnDictionary): LearnTranslator {
+    return (key) => dictionary[key] ?? key;
+}
+
+const LESSON_IDS = ["sources", "pressure", "privacy", "synthetic"] as const;
+const QUIZ_IDS = ["q-sources", "q-pressure", "q-privacy", "q-synthetic"] as const;
+const CORRECT_INDEXES: Readonly<Record<(typeof QUIZ_IDS)[number], number>> = {
+    "q-sources": 1,
+    "q-pressure": 2,
+    "q-privacy": 2,
+    "q-synthetic": 1,
+};
+
+function buildLessons(translate: LearnTranslator): Lesson[] {
+    return LESSON_IDS.map((id) => {
+        const prefix = `learn.lesson.${id}.`;
+        return {
+            id,
+            title: translate(`${prefix}title`),
+            paragraphs: [translate(`${prefix}p1`), translate(`${prefix}p2`)],
+            scenario: translate(`${prefix}scenario`),
+        };
+    });
+}
+
+function buildQuiz(translate: LearnTranslator): QuizQuestion[] {
+    return QUIZ_IDS.map((id) => {
+        const prefix = `learn.quiz.${id}.`;
+        return {
+            id,
+            prompt: translate(`${prefix}prompt`),
+            options: [
+                translate(`${prefix}option.0`),
+                translate(`${prefix}option.1`),
+                translate(`${prefix}option.2`),
+            ],
+            correctIndex: CORRECT_INDEXES[id] ?? 0,
+            explanation: translate(`${prefix}explanation`),
+        };
+    });
+}
+
+const english = dictionaryTranslator(en);
+export const LESSONS: readonly Lesson[] = buildLessons(english);
+export const QUIZ: readonly QuizQuestion[] = buildQuiz(english);
 
 export class LearnController {
     private readonly listeners = new Set<() => void>();
+    private readonly translate: LearnTranslator;
     private state: LearnState = this.initialState();
+
+    public constructor(translate: LearnTranslator = english) {
+        this.translate = translate;
+    }
 
     public subscribe(listener: () => void): () => void {
         this.listeners.add(listener);
@@ -128,11 +90,11 @@ export class LearnController {
     }
 
     public getLessons(): readonly Lesson[] {
-        return LESSONS;
+        return buildLessons(this.translate);
     }
 
     public getQuestions(): readonly QuizQuestion[] {
-        return QUIZ;
+        return buildQuiz(this.translate);
     }
 
     public getState(): LearnState {
@@ -140,11 +102,12 @@ export class LearnController {
     }
 
     public currentQuestion(): QuizQuestion | null {
-        return QUIZ[this.state.currentIndex] ?? null;
+        return this.getQuestions()[this.state.currentIndex] ?? null;
     }
 
     public selectQuestion(index: number): void {
-        if (index < 0 || index >= QUIZ.length) return;
+        const questions = this.getQuestions();
+        if (index < 0 || index >= questions.length) return;
         if (index === this.state.currentIndex && this.state.answered) return;
         const answered = index < this.state.currentIndex;
         this.state = {
@@ -152,7 +115,7 @@ export class LearnController {
             currentIndex: index,
             score: this.state.score,
             answered,
-            feedback: answered ? "You already answered this question." : null,
+            feedback: answered ? this.translate("learn.quiz.answered") : null,
         };
         this.notify();
     }
@@ -161,19 +124,21 @@ export class LearnController {
         const question = this.currentQuestion();
         if (!question || this.state.answered || this.state.finished) return;
         const correct = optionIndex === question.correctIndex;
+        const prefix = correct ? "learn.quiz.correct" : "learn.quiz.incorrect";
         this.state = {
             ...this.state,
             selectedIndex: optionIndex,
             answered: true,
             score: this.state.score + (correct ? 1 : 0),
-            feedback: `${correct ? "Correct. " : "Not quite. "}${question.explanation}`,
+            feedback: `${this.translate(prefix)} ${question.explanation}`,
         };
         this.notify();
     }
 
     public next(): void {
         if (!this.state.answered) return;
-        if (this.state.currentIndex + 1 >= QUIZ.length) {
+        const lastIndex = this.getQuestions().length - 1;
+        if (this.state.currentIndex >= lastIndex) {
             this.state = { ...this.state, finished: true };
         } else {
             this.state = {
