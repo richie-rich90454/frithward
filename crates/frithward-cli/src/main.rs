@@ -107,7 +107,7 @@ fn protect_plan(
     if asset.trim().is_empty() {
         return Err("Asset id required.".to_string());
     }
-    let target = router.route(Some(router.default_target()));
+    let target = router.route(None);
     Ok(ProtectReport {
         kind: kind.to_string(),
         asset: asset.to_string(),
