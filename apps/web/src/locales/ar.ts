@@ -11,6 +11,7 @@ export const ar: Record<string, string> = {
     "nav.respond": "استجابة",
     "nav.learn": "تعلّم",
     "nav.community": "المجتمع",
+    "nav.tools": "أدوات المطور",
     "home.title": "الرئيسية",
     "home.intro":
         "ينشئ الترجمة، ويحرر الوسائط، ويفحص المحتوى المشبوه، ويحمي المعلومات الشخصية محليًا.",
