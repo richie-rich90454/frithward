@@ -24,4 +24,55 @@ export const zh: Record<string, string> = {
     "page.community.title": "社区",
     "page.tools.title": "开发者工具",
     "page.captions.title": "字幕工作室",
+    "page.home.what":
+        "Frithward 将字幕制作、媒体编辑、来源核验和事件处理工具整合在一处。",
+    "page.home.local":
+        "此处的每款工具都默认在本设备上运行。若提供云端处理，也是可选且需要明确选择的。",
+    "page.home.limitation.1": "此桌面版本是本地界面，并非云服务。",
+    "page.home.limitation.2": "检测与验证结果只是线索，并非证据。",
+    "page.make.what":
+        "字幕工作室、音频、视频、图像和文档工作台可在你分享之前准备好媒体文件。",
+    "page.make.local": "除非你选择上传，否则文件会留在本设备上。",
+    "page.make.limitation.1": "生成的字幕和编辑内容需要经过人工检查。",
+    "page.make.limitation.2": "并非所有编解码器或文件格式都受支持。",
+    "page.protect.what":
+        "隐私检查和分享检查会显示文件或消息可能暴露的元数据和细节。",
+    "page.protect.local": "检查在本地进行；不会向任何地方发送内容。",
+    "page.protect.limitation.1": "删除元数据并不保证匿名。",
+    "page.protect.limitation.2": "分享检查无法涵盖接收者可能推断出的所有信息。",
+    "page.check.what":
+        "诈骗检查和媒体分析会找出消息或文件中值得再次查看的模式。",
+    "page.check.local": "分析在本设备上进行；不会上传任何消息或媒体。",
+    "page.check.limitation.1": "结果可能在两个方向上都不准确。",
+    "page.check.limitation.2": "结果正常并不证明内容安全。",
+    "page.verify.what":
+        "来源验证会汇总 C2PA 清单中的声明，并显示缺失的内容。",
+    "page.verify.local": "清单在应用内解析；不会联系任何外部服务。",
+    "page.verify.limitation.1":
+        "此处不会对签名和哈希声明进行密码学层面的重新验证。",
+    "page.verify.limitation.2": "时间戳来自清单，并非独立可信。",
+    "page.respond.what":
+        "证据时间线和事件报告可帮助你记录发生了什么以及后续采取了哪些行动。",
+    "page.respond.local": "你的记录保存在此本地工作区中。",
+    "page.respond.limitation.1": "此工具不会替你向任何机构报告事件。",
+    "page.respond.limitation.2": "请自行保留日后可能需要的材料的副本。",
+    "page.learn.what":
+        "简短课程涵盖来源核查、施压手段、个人信息以及合成媒体。",
+    "page.learn.local": "课程内置于应用中，无需联网。",
+    "page.learn.limitation.1": "课程是一般性指导，并非法律或安全建议。",
+    "page.learn.limitation.2": "示例均为虚构，并非统计数据。",
+    "page.community.what":
+        "Frithward Commons 列出了参与贡献的方式以及人们合作的组织类型。",
+    "page.community.local": "该目录仅供参考；是否参与由你决定。",
+    "page.community.limitation.1": "切勿公开受害者的私人信息。",
+    "page.community.limitation.2": "合作伙伴类别并不代表认可或背书。",
+    "page.tools.what":
+        "本地优先的软件包和接口，方便你在自己的项目中使用 Frithward 进行开发。",
+    "page.tools.local": "软件包在你自己的环境中运行。",
+    "page.tools.limitation.1": "项目尚处早期，API 可能会发生变化。",
+    "page.tools.limitation.2": "实验性组件不保证可用于生产环境。",
+    "page.captions.what": "字幕工作室可在导出前为媒体文件生成和编辑字幕。",
+    "page.captions.local": "转录和编辑均在本设备上进行。",
+    "page.captions.limitation.1": "自动生成的字幕会有错误；请仔细检查。",
+    "page.captions.limitation.2": "语言支持取决于本地可用的模型。",
 };
