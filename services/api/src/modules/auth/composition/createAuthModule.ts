@@ -6,7 +6,9 @@ import type { SessionPort } from "../../../middleware/requireSession.js";
 export function createAuthModule(databaseUrl: string | undefined): {
     routes: AuthRoutes;
     sessionPort: SessionPort;
+    auth: ReturnType<typeof createAuth> | null;
 } {
-    const sessionPort = new BetterAuthSessionPort(databaseUrl ? createAuth(databaseUrl) : null);
-    return { routes: new AuthRoutes(sessionPort), sessionPort };
+    const auth = databaseUrl ? createAuth(databaseUrl) : null;
+    const sessionPort = new BetterAuthSessionPort(auth);
+    return { routes: new AuthRoutes(sessionPort), sessionPort, auth };
 }
