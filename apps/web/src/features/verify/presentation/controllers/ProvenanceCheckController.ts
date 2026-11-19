@@ -1,19 +1,48 @@
-import { VerifyProvenanceUseCase } from "@frithward/provenance-core";
-import type { ProvenanceRecord } from "@frithward/provenance-core";
+import {
+    C2paInspectionUseCase,
+    type C2paInspectionResult,
+    type C2paSignatureStatus,
+} from "@frithward/provenance-core";
 
-export type SignatureStatus = ProvenanceRecord["signatureStatus"];
+export interface ProvenanceAssertionView {
+    label: string;
+    present: boolean;
+}
+
+export interface ProvenanceFailureView {
+    code: string;
+    message: string;
+}
+
+export interface ProvenanceInspectionView {
+    signatureStatus: C2paSignatureStatus;
+    signer: string | null;
+    signedAt: string | null;
+    assertions: readonly ProvenanceAssertionView[];
+    assetHash: string | null;
+    validationFailures: readonly ProvenanceFailureView[];
+    missingInfo: readonly string[];
+    summary: string;
+    limitations: readonly string[];
+}
+
+export interface C2paInspector {
+    execute(input: { manifest: unknown; id?: string }): Promise<C2paInspectionResult>;
+}
+
+export interface ProvenanceCheckControllerOptions {
+    inspector?: C2paInspector;
+}
 
 export class ProvenanceCheckController {
-    private readonly verifier = new VerifyProvenanceUseCase();
+    private readonly inspector: C2paInspector;
     private readonly listeners = new Set<() => void>();
-    private record: ProvenanceRecord = {
-        id: "asset",
-        signatureStatus: "missing",
-        signer: null,
-        assetSha256: "",
-        manifest: null,
-    };
-    private result: string | null = null;
+    private result: ProvenanceInspectionView | null = null;
+    private error: string | null = null;
+
+    public constructor(options: ProvenanceCheckControllerOptions = {}) {
+        this.inspector = options.inspector ?? new C2paInspectionUseCase();
+    }
 
     public subscribe(listener: () => void): () => void {
         this.listeners.add(listener);
@@ -22,38 +51,53 @@ export class ProvenanceCheckController {
         };
     }
 
-    public getRecord(): ProvenanceRecord {
-        return this.record;
-    }
-
-    public getResult(): string | null {
+    public getResult(): ProvenanceInspectionView | null {
         return this.result;
     }
 
-    public setSignatureStatus(status: SignatureStatus): void {
-        this.record = { ...this.record, signatureStatus: status };
-        this.result = null;
-        this.notify();
+    public getError(): string | null {
+        return this.error;
     }
 
-    public setSigner(signer: string): void {
-        this.record = { ...this.record, signer: signer.trim() === "" ? null : signer.trim() };
-        this.result = null;
-        this.notify();
-    }
-
-    public setAssetSha256(assetSha256: string): void {
-        this.record = { ...this.record, assetSha256 };
-        this.result = null;
-        this.notify();
-    }
-
-    public verify(): void {
-        this.result = this.verifier.describe(this.record);
+    public async inspect(manifestText: string): Promise<void> {
+        try {
+            if (manifestText.trim().length === 0) throw new Error("Manifest required.");
+            let manifest: unknown;
+            try {
+                manifest = JSON.parse(manifestText) as unknown;
+            } catch {
+                throw new Error("Manifest must be valid JSON.");
+            }
+            this.result = toView(await this.inspector.execute({ manifest }));
+            this.error = null;
+        } catch (cause) {
+            this.result = null;
+            this.error = cause instanceof Error ? cause.message : "Provenance inspection failed.";
+        }
         this.notify();
     }
 
     private notify(): void {
         for (const listener of this.listeners) listener();
     }
+}
+
+function toView(result: C2paInspectionResult): ProvenanceInspectionView {
+    return {
+        signatureStatus: result.signatureStatus,
+        signer: result.signer,
+        signedAt: result.signedAt,
+        assertions: result.assertions.map((assertion) => ({
+            label: assertion.label,
+            present: assertion.present,
+        })),
+        assetHash: result.assetHash,
+        validationFailures: result.validationFailures.map((failure) => ({
+            code: failure.code,
+            message: failure.message,
+        })),
+        missingInfo: [...result.missingInfo],
+        summary: result.summary,
+        limitations: [...result.limitations],
+    };
 }
