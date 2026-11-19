@@ -24,7 +24,7 @@ export class ScamAnalysisRoutes extends OpenAPIHono {
             if (this.queue !== null) {
                 try {
                     const { jobId } = await this.queue.enqueueAnalysis(body.text);
-                    this.store.record(jobId, "queued");
+                    await this.store.record(jobId, "queued");
                     return context.json({ jobId }, 202);
                 } catch {
                     // fall through to synchronous analysis
