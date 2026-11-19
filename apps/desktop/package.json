@@ -11,7 +11,7 @@
     "dependencies": {
         "@solidjs/router": "^1.0.1",
         "lucide-solid": "^1.70.0",
-        "solid-js": "latest",
+        "solid-js": "1.9.18",
         "vite-plugin-solid": "latest"
     },
     "devDependencies": {
