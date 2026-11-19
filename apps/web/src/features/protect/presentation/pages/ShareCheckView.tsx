@@ -1,5 +1,6 @@
 import { For, Show, createSignal, onCleanup } from "solid-js";
 import { ShieldCheck } from "lucide-solid";
+import { useI18n } from "../../../../i18n/index.js";
 import { ShareCheckController } from "../controllers/ShareCheckController";
 import type { ShareCheckOption } from "../controllers/ShareCheckController";
 
@@ -12,13 +13,14 @@ interface ShareCheckViewProps {
 }
 
 export function ShareCheckView(props: ShareCheckViewProps) {
+    const { t } = useI18n();
     return (
         <section>
             <h1>
                 <ShieldCheck class="fw-icon" />
-                Share check
+                {t("protect.title")}
             </h1>
-            <p>Select the metadata that would be shared, then check whether it is safe.</p>
+            <p>{t("protect.intro")}</p>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -40,10 +42,10 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                         </label>
                     )}
                 </For>
-                <button type="submit">Check share</button>
+                <button type="submit">{t("protect.button")}</button>
             </form>
             <Show when={props.passed === true}>
-                <p role="status">No blocking metadata selected.</p>
+                <p role="status">{t("protect.safe")}</p>
             </Show>
             <Show when={props.error}>
                 <p role="alert">{props.error}</p>
