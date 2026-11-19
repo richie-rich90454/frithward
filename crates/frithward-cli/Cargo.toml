@@ -9,3 +9,7 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
+frithward-runtime = { path = "../frithward-runtime" }
+frithward-media = { path = "../frithward-media" }
+frithward-privacy = { path = "../frithward-privacy" }
+frithward-provenance = { path = "../frithward-provenance" }
