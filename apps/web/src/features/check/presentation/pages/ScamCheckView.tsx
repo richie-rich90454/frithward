@@ -1,6 +1,7 @@
 import { For, Show, createSignal, onCleanup } from "solid-js";
 import { ScanSearch } from "lucide-solid";
 import type { ScamAnalysis } from "@frithward/security-core";
+import { useI18n } from "../../../../i18n/index.js";
 import { ScamCheckController } from "../controllers/ScamCheckController";
 
 interface ScamCheckViewProps {
@@ -11,11 +12,12 @@ interface ScamCheckViewProps {
 
 export function ScamCheckView(props: ScamCheckViewProps) {
     const [text, setText] = createSignal("");
+    const { t } = useI18n();
     return (
         <section>
             <h1>
                 <ScanSearch class="fw-icon" />
-                Scam check
+                {t("check.title")}
             </h1>
             <form
                 onSubmit={(event) => {
@@ -24,13 +26,13 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                 }}
             >
                 <label>
-                    Message text
+                    {t("check.messageLabel")}
                     <textarea
                         value={text()}
                         onInput={(event) => setText(event.currentTarget.value)}
                     />
                 </label>
-                <button type="submit">Check message</button>
+                <button type="submit">{t("check.button")}</button>
             </form>
             <Show when={props.error}>
                 <p role="alert">{props.error}</p>
@@ -47,11 +49,11 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                                 </p>
                             )}
                         </For>
-                        <h2>Next steps</h2>
+                        <h2>{t("check.nextSteps")}</h2>
                         <ul>
                             <For each={analysis.nextSteps}>{(step) => <li>{step}</li>}</For>
                         </ul>
-                        <h2>Limitations</h2>
+                        <h2>{t("check.limitations")}</h2>
                         <ul>
                             <For each={analysis.limitations}>{(limit) => <li>{limit}</li>}</For>
                         </ul>
