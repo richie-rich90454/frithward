@@ -11,6 +11,7 @@ export const hi: Record<string, string> = {
     "nav.respond": "जवाब",
     "nav.learn": "सीखें",
     "nav.community": "समुदाय",
+    "nav.tools": "डेवलपर टूल",
     "home.title": "होम",
     "home.intro":
         "स्थानीय रूप से कैप्शन बनाता है, मीडिया संपादित करता है, संदिग्ध सामग्री जाँचता है और व्यक्तिगत जानकारी सुरक्षित रखता है।",
