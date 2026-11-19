@@ -8,7 +8,9 @@ import { PrivacyRoutes } from "./modules/privacy/PrivacyRoutes.js";
 import { createRateLimiter } from "./middleware/rateLimit.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
-function withErrorHandler(routes: Hono): Hono {
+type RouteApp = Parameters<Hono["route"]>[1];
+
+function withErrorHandler(routes: RouteApp): Hono {
     const app = new Hono();
     app.onError(errorHandler);
     app.route("/", routes);
