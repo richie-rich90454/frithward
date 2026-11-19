@@ -10,7 +10,8 @@ interface DiagramViewProps {
     onRender: () => void;
 }
 
-const EXAMPLE = "flowchart TD\n  A[Start] --> B{Valid?}\n  B -->|yes| C[Continue]\n  B -->|no| D[Stop]";
+const EXAMPLE =
+    "flowchart TD\n  A[Start] --> B{Valid?}\n  B -->|yes| C[Continue]\n  B -->|no| D[Stop]";
 
 export function DiagramView(props: DiagramViewProps) {
     return (
