@@ -14,20 +14,20 @@ export class AnalyzeJobHandler {
         private readonly store: JobStatusStore = sharedJobStore,
     ) {}
 
-    public handle(context: JobContext): ScamAnalysis {
+    public async handle(context: JobContext): Promise<ScamAnalysis> {
         if (context.jobId.trim().length === 0)
             throw new AppError("VALIDATION_FAILED", "Job id required.");
-        this.store.record(context.jobId, "running");
+        await this.store.record(context.jobId, "running");
         try {
             if (context.payload.text === undefined || context.payload.text.trim().length === 0) {
                 throw new AppError("VALIDATION_FAILED", "Job text payload required.");
             }
             const analysis = this.useCase.execute(context.payload.text);
             recordAnalysis();
-            this.store.complete(context.jobId, analysis);
+            await this.store.complete(context.jobId, analysis);
             return analysis;
         } catch (cause) {
-            this.store.fail(
+            await this.store.fail(
                 context.jobId,
                 cause instanceof Error ? cause.message : "Analysis failed.",
             );
