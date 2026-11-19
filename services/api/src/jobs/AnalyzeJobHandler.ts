@@ -27,7 +27,10 @@ export class AnalyzeJobHandler {
             this.store.complete(context.jobId, analysis);
             return analysis;
         } catch (cause) {
-            this.store.fail(context.jobId, cause instanceof Error ? cause.message : "Analysis failed.");
+            this.store.fail(
+                context.jobId,
+                cause instanceof Error ? cause.message : "Analysis failed.",
+            );
             throw cause;
         }
     }
