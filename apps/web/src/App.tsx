@@ -21,16 +21,17 @@ import { LearnView } from "./features/learn/presentation/pages/LearnView";
 import { CommunityView } from "./features/community/presentation/pages/CommunityView";
 import { DeveloperToolsView } from "./features/developer-tools/presentation/pages/DeveloperToolsView";
 import { CaptionStudioPage } from "./features/captions/presentation/pages/CaptionStudioView";
+import { LanguageSwitcher, useI18n } from "./i18n/index.js";
 
 const NAVIGATION = [
-    { path: "/", label: "Home", icon: Home },
-    { path: "/make", label: "Make", icon: Clapperboard },
-    { path: "/protect", label: "Protect", icon: ShieldCheck },
-    { path: "/check", label: "Check", icon: ShieldAlert },
-    { path: "/verify", label: "Verify", icon: BadgeCheck },
-    { path: "/respond", label: "Respond", icon: LifeBuoy },
-    { path: "/learn", label: "Learn", icon: GraduationCap },
-    { path: "/community", label: "Community", icon: Users },
+    { path: "/", labelKey: "nav.home", icon: Home },
+    { path: "/make", labelKey: "nav.make", icon: Clapperboard },
+    { path: "/protect", labelKey: "nav.protect", icon: ShieldCheck },
+    { path: "/check", labelKey: "nav.check", icon: ShieldAlert },
+    { path: "/verify", labelKey: "nav.verify", icon: BadgeCheck },
+    { path: "/respond", labelKey: "nav.respond", icon: LifeBuoy },
+    { path: "/learn", labelKey: "nav.learn", icon: GraduationCap },
+    { path: "/community", labelKey: "nav.community", icon: Users },
 ] as const;
 
 function pageFor(pathname: string): JSX.Element {
@@ -49,21 +50,23 @@ function pageFor(pathname: string): JSX.Element {
 
 function Shell() {
     const location = useLocation();
+    const { t } = useI18n();
     return (
         <div class="app-shell">
             <header>
                 <div>
                     <p>
-                        <strong>Frithward</strong>
+                        <strong>{t("wordmark")}</strong>
                     </p>
-                    <p>Keep people safe. Keep media honest.</p>
+                    <p>{t("tagline")}</p>
                 </div>
-                <nav aria-label="Primary">
+                <LanguageSwitcher />
+                <nav aria-label={t("nav.primary")}>
                     <For each={NAVIGATION}>
                         {(item) => (
                             <A href={item.path} end={item.path === "/"} activeClass="is-active">
                                 <item.icon class="fw-icon" />
-                                {item.label}
+                                {t(item.labelKey)}
                             </A>
                         )}
                     </For>
