@@ -37,15 +37,15 @@ describe("GarageObjectStorage", () => {
 });
 
 describe("AnalyzeJobHandler", () => {
-    it("accepts text payloads", () => {
+    it("accepts text payloads", async () => {
         const handler = new AnalyzeJobHandler();
-        const analysis = handler.handle({ jobId: "j1", payload: { text: "hello" } });
+        const analysis = await handler.handle({ jobId: "j1", payload: { text: "hello" } });
         expect(analysis.indicators).toEqual([]);
     });
 
-    it("rejects empty payloads", () => {
+    it("rejects empty payloads", async () => {
         const handler = new AnalyzeJobHandler();
-        expect(() => handler.handle({ jobId: "j1", payload: {} })).toThrow();
+        await expect(handler.handle({ jobId: "j1", payload: {} })).rejects.toThrow();
     });
 });
 
@@ -103,29 +103,55 @@ describe("ScamAnalysisRoutes (local-first)", () => {
         const routes = new ScamAnalysisRoutes(queue, store);
         const response = await routes.request("/api/scam/message", postJson({ text: "pay now" }));
         expect(response.status).toBe(202);
-        expect(store.get("j-1")?.status).toBe("queued");
+        expect((await store.get("j-1"))?.status).toBe("queued");
     });
 });
 
 describe("job status transitions", () => {
-    it("moves queued -> running -> completed with the result", () => {
+    it("moves queued -> running -> completed with the result", async () => {
         const store = new InMemoryJobStatusStore();
-        store.record("j1", "queued");
-        new AnalyzeJobHandler(undefined, store).handle({ jobId: "j1", payload: { text: "hello" } });
-        const record = store.get("j1");
+        await store.record("j1", "queued");
+        await new AnalyzeJobHandler(undefined, store).handle({
+            jobId: "j1",
+            payload: { text: "hello" },
+        });
+        const record = await store.get("j1");
         expect(record?.status).toBe("completed");
         expect(record?.result).toBeDefined();
         expect(record?.error).toBeNull();
     });
 
-    it("moves to failed when the payload is invalid", () => {
+    it("moves to failed when the payload is invalid", async () => {
         const store = new InMemoryJobStatusStore();
-        store.record("j2", "queued");
-        expect(() =>
+        await store.record("j2", "queued");
+        await expect(
             new AnalyzeJobHandler(undefined, store).handle({ jobId: "j2", payload: {} }),
-        ).toThrow();
-        expect(store.get("j2")?.status).toBe("failed");
-        expect(store.get("j2")?.error).toBeTypeOf("string");
+        ).rejects.toThrow();
+        expect((await store.get("j2"))?.status).toBe("failed");
+        expect((await store.get("j2"))?.error).toBeTypeOf("string");
+    });
+
+    it("persists every transition through a stubbed store", async () => {
+        const transitions: string[] = [];
+        const store = {
+            async record(_id: string, status: string) {
+                transitions.push(`record:${status}`);
+            },
+            async complete(_id: string, _result: unknown) {
+                transitions.push("complete");
+            },
+            async fail(_id: string, _error: string) {
+                transitions.push("fail");
+            },
+            async get() {
+                return null;
+            },
+        };
+        await new AnalyzeJobHandler(undefined, store).handle({
+            jobId: "j3",
+            payload: { text: "pay now" },
+        });
+        expect(transitions).toEqual(["record:running", "complete"]);
     });
 });
 
