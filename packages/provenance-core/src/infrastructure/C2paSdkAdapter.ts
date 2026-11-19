@@ -61,9 +61,11 @@ function toSourceAsset(asset: unknown): { buffer: Uint8Array } | { path: string 
 
 function toSdkAsset(source: SdkSource): unknown {
     if ("path" in source) return { path: source.path };
-    const bufferFactory = (globalThis as unknown as {
-        Buffer?: { from(value: Uint8Array): Uint8Array };
-    }).Buffer;
+    const bufferFactory = (
+        globalThis as unknown as {
+            Buffer?: { from(value: Uint8Array): Uint8Array };
+        }
+    ).Buffer;
     return { buffer: bufferFactory ? bufferFactory.from(source.buffer) : source.buffer };
 }
 
