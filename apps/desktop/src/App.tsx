@@ -10,16 +10,17 @@ import {
     ShieldCheck,
     Users,
 } from "lucide-solid";
+import { LanguageSwitcher, useI18n } from "./i18n/index.jsx";
 
 const NAVIGATION = [
-    { path: "/", label: "Home", icon: Home },
-    { path: "/make", label: "Make", icon: Clapperboard },
-    { path: "/protect", label: "Protect", icon: ShieldCheck },
-    { path: "/check", label: "Check", icon: ShieldAlert },
-    { path: "/verify", label: "Verify", icon: BadgeCheck },
-    { path: "/respond", label: "Respond", icon: LifeBuoy },
-    { path: "/learn", label: "Learn", icon: GraduationCap },
-    { path: "/community", label: "Community", icon: Users },
+    { path: "/", key: "nav.home", icon: Home },
+    { path: "/make", key: "nav.make", icon: Clapperboard },
+    { path: "/protect", key: "nav.protect", icon: ShieldCheck },
+    { path: "/check", key: "nav.check", icon: ShieldAlert },
+    { path: "/verify", key: "nav.verify", icon: BadgeCheck },
+    { path: "/respond", key: "nav.respond", icon: LifeBuoy },
+    { path: "/learn", key: "nav.learn", icon: GraduationCap },
+    { path: "/community", key: "nav.community", icon: Users },
 ] as const;
 
 interface PageContent {
@@ -31,110 +32,80 @@ interface PageContent {
 
 const PAGES: Readonly<Record<string, PageContent>> = {
     "/": {
-        title: "Home",
-        what: "Frithward brings captioning, media editing, provenance checks, and incident tools into one place.",
-        local: "Every tool here is designed to run on this device by default. Hosted processing, where it exists, is optional and explicit.",
-        limitations: [
-            "This desktop build is a local interface, not a cloud service.",
-            "Detection and verification results are clues, not proof.",
-        ],
+        title: "page.home.title",
+        what: "page.home.what",
+        local: "page.home.local",
+        limitations: ["page.home.limitation.1", "page.home.limitation.2"],
     },
     "/make": {
-        title: "Make",
-        what: "Caption studio, audio, video, image, and document workshops prepare media before you share it.",
-        local: "Files stay on this device unless you choose to upload them.",
-        limitations: [
-            "Generated captions and edits need a human review pass.",
-            "Not every codec or file format is supported.",
-        ],
+        title: "page.make.title",
+        what: "page.make.what",
+        local: "page.make.local",
+        limitations: ["page.make.limitation.1", "page.make.limitation.2"],
     },
     "/protect": {
-        title: "Protect",
-        what: "Privacy inspection and share checks show what metadata and details a file or message would expose.",
-        local: "Inspection happens locally; nothing is sent anywhere.",
-        limitations: [
-            "Removing metadata is not a guarantee of anonymity.",
-            "A share check cannot see everything a recipient might infer.",
-        ],
+        title: "page.protect.title",
+        what: "page.protect.what",
+        local: "page.protect.local",
+        limitations: ["page.protect.limitation.1", "page.protect.limitation.2"],
     },
     "/check": {
-        title: "Check",
-        what: "Scam check and media analysis surface patterns in a message or file that are worth a second look.",
-        local: "Analysis runs on this device; no message or media is uploaded.",
-        limitations: [
-            "Results can be wrong in both directions.",
-            "A clean result is not proof that content is safe.",
-        ],
+        title: "page.check.title",
+        what: "page.check.what",
+        local: "page.check.local",
+        limitations: ["page.check.limitation.1", "page.check.limitation.2"],
     },
     "/verify": {
-        title: "Verify",
-        what: "Provenance verification summarises the claims inside a C2PA manifest and shows what is missing.",
-        local: "Manifests are parsed in the app; no external service is contacted.",
-        limitations: [
-            "Signature and hash claims are not cryptographically re-verified here.",
-            "Timestamps come from the manifest and are not independently trusted.",
-        ],
+        title: "page.verify.title",
+        what: "page.verify.what",
+        local: "page.verify.local",
+        limitations: ["page.verify.limitation.1", "page.verify.limitation.2"],
     },
     "/respond": {
-        title: "Respond",
-        what: "An evidence timeline and incident reports help you record what happened and what you did next.",
-        local: "Your records stay in this local workspace.",
-        limitations: [
-            "This tool does not report incidents to any authority for you.",
-            "Keep your own copies of anything you may need later.",
-        ],
+        title: "page.respond.title",
+        what: "page.respond.what",
+        local: "page.respond.local",
+        limitations: ["page.respond.limitation.1", "page.respond.limitation.2"],
     },
     "/learn": {
-        title: "Learn",
-        what: "Short lessons cover source checking, pressure tactics, personal information, and synthetic media.",
-        local: "The lessons are built into the app and need no connection.",
-        limitations: [
-            "Lessons are general guidance, not legal or safety advice.",
-            "Examples are fictional and are not statistics.",
-        ],
+        title: "page.learn.title",
+        what: "page.learn.what",
+        local: "page.learn.local",
+        limitations: ["page.learn.limitation.1", "page.learn.limitation.2"],
     },
     "/community": {
-        title: "Community",
-        what: "Frithward Commons lists ways to contribute and the kinds of organisations people partner with.",
-        local: "The directory is informational; taking part is up to you.",
-        limitations: [
-            "Never publish a victim's private information.",
-            "Partnership categories are not endorsements.",
-        ],
+        title: "page.community.title",
+        what: "page.community.what",
+        local: "page.community.local",
+        limitations: ["page.community.limitation.1", "page.community.limitation.2"],
     },
     "/tools": {
-        title: "Developer tools",
-        what: "Local-first packages and interfaces for building with Frithward in your own projects.",
-        local: "Packages run in your own environment.",
-        limitations: [
-            "APIs may change while the project is early.",
-            "Experimental components are not production guarantees.",
-        ],
+        title: "page.tools.title",
+        what: "page.tools.what",
+        local: "page.tools.local",
+        limitations: ["page.tools.limitation.1", "page.tools.limitation.2"],
     },
     "/tools/captions": {
-        title: "Caption studio",
-        what: "Caption studio generates and edits captions for media files before export.",
-        local: "Transcription and editing happen on this device.",
-        limitations: [
-            "Auto-generated captions contain mistakes; review them.",
-            "Language support depends on the models available locally.",
-        ],
+        title: "page.captions.title",
+        what: "page.captions.what",
+        local: "page.captions.local",
+        limitations: ["page.captions.limitation.1", "page.captions.limitation.2"],
     },
 };
 
-function pageFor(pathname: string): JSX.Element {
+function pageFor(pathname: string, t: (key: string) => string): JSX.Element {
     const page = PAGES[pathname] ?? PAGES["/"];
     if (!page) return <section />;
     return (
         <section>
-            <h1>{page.title}</h1>
-            <h2>What this tool does</h2>
-            <p>{page.what}</p>
-            <h2>Processing</h2>
-            <p>{page.local}</p>
-            <h2>Limitations</h2>
+            <h1>{t(page.title)}</h1>
+            <h2>{t("section.what")}</h2>
+            <p>{t(page.what)}</p>
+            <h2>{t("section.processing")}</h2>
+            <p>{t(page.local)}</p>
+            <h2>{t("section.limitations")}</h2>
             <ul>
-                <For each={page.limitations}>{(limit) => <li>{limit}</li>}</For>
+                <For each={page.limitations}>{(limit) => <li>{t(limit)}</li>}</For>
             </ul>
         </section>
     );
@@ -142,29 +113,29 @@ function pageFor(pathname: string): JSX.Element {
 
 export function DesktopApp() {
     const location = useLocation();
+    const { t } = useI18n();
     return (
         <div>
             <header>
                 <div>
                     <p>
-                        <strong>Frithward</strong>
+                        <strong>{t("wordmark")}</strong>
                     </p>
-                    <p>
-                        Local processing is the default. Hosted processing is optional and explicit.
-                    </p>
+                    <p>{t("tagline")}</p>
                 </div>
-                <nav aria-label="Primary">
+                <nav aria-label={t("nav.primary")}>
                     <For each={NAVIGATION}>
                         {(item) => (
                             <A href={item.path} end={item.path === "/"} activeClass="is-active">
                                 <item.icon class="fw-icon" />
-                                {item.label}
+                                {t(item.key)}
                             </A>
                         )}
                     </For>
                 </nav>
+                <LanguageSwitcher />
             </header>
-            <main>{pageFor(location.pathname)}</main>
+            <main>{pageFor(location.pathname, t)}</main>
         </div>
     );
 }
