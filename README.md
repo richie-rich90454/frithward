@@ -2,10 +2,7 @@
 
 Keep people safe. Keep media honest.
 
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-2f6f9f.svg)](LICENSE)
-[![Node 26](https://img.shields.io/badge/node-26-3c873a.svg)](https://nodejs.org/)
-[![pnpm](https://img.shields.io/badge/package%20manager-pnpm-f9bc01.svg)](https://pnpm.io/)
-[![CI](https://github.com/richie-rich90454/frithward/actions/workflows/ci.yml/badge.svg)](https://github.com/richie-rich90454/frithward/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-2f6f9f.svg)](LICENSE) [![Node 26](https://img.shields.io/badge/node-26-3c873a.svg)](https://nodejs.org/) [![pnpm](https://img.shields.io/badge/package%20manager-pnpm-f9bc01.svg)](https://pnpm.io/) [![CI](https://github.com/richie-rich90454/frithward/actions/workflows/ci.yml/badge.svg)](https://github.com/richie-rich90454/frithward/actions/workflows/ci.yml)
 
 Deepfakes, scams, and privacy exposure travel faster than the people who have to deal with them. A forged voice can authorize a payment, a photo can reveal a location, and a convincing message can empty a savings account. Frithward is an open-source toolkit for inspecting media, checking provenance, and spotting scams. It is built so the default is to work on your own device, with no account and no upload. The goal is a precision civic instrument: exact about what it does, explicit about what it does not, and never a substitute for human judgement.
 
