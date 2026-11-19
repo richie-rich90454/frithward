@@ -1,4 +1,5 @@
-import type { ErrorHandler } from "hono";
+import { type ErrorHandler } from "hono";
+import { HTTPException } from "hono/http-exception";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { AppError, type ErrorCode } from "@frithward/contracts";
 
@@ -19,5 +20,10 @@ export const errorHandler: ErrorHandler = (error, context) => {
             STATUS_BY_CODE[error.code] as ContentfulStatusCode,
         );
     }
+    // Malformed request JSON arrives either as a SyntaxError or as Hono's HTTPException.
+    if (error instanceof SyntaxError || (error instanceof HTTPException && error.status === 400)) {
+        return context.json({ code: "VALIDATION_FAILED", message: "Invalid JSON body." }, 400);
+    }
+    console.error("Unhandled API error:", error);
     return context.json({ code: "PROCESSING_FAILED", message: "Internal server error." }, 500);
 };
