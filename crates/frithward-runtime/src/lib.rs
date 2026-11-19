@@ -153,6 +153,8 @@ pub struct RedbJobStore {
 
 const JOBS: redb::TableDefinition<&str, (&str, u64)> = redb::TableDefinition::new("jobs");
 
+// redb::Error is intentionally large and treated as an opaque error by callers.
+#[allow(clippy::result_large_err)]
 impl RedbJobStore {
     /// Creates a new store (or truncates an existing one) at `path`.
     pub fn create(path: impl AsRef<std::path::Path>) -> Result<Self, redb::Error> {
@@ -183,12 +185,10 @@ impl RedbJobStore {
     pub fn get(&self, job_id: &str) -> Result<Option<(String, u64)>, redb::Error> {
         let read = self.db.begin_read()?;
         let table = read.open_table(JOBS)?;
-        Ok(table
-            .get(job_id)?
-            .map(|value| {
-                let (state, updated_ms) = value.value();
-                (state.to_string(), updated_ms)
-            }))
+        Ok(table.get(job_id)?.map(|value| {
+            let (state, updated_ms) = value.value();
+            (state.to_string(), updated_ms)
+        }))
     }
 
     /// Returns every record as `(job_id, state, updated_ms)`, ordered by job id.
@@ -307,8 +307,9 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let path = std::path::PathBuf::from(r"C:\Users\rjian\AppData\Local\Temp\opencode")
-            .join(format!("frithward-redb-test-{}-{nanos}.db", std::process::id()));
+        let path = std::path::PathBuf::from(r"C:\Users\rjian\AppData\Local\Temp\opencode").join(
+            format!("frithward-redb-test-{}-{nanos}.db", std::process::id()),
+        );
 
         let store = RedbJobStore::create(&path).unwrap();
         store.upsert("job-1", "running", 100).unwrap();
@@ -327,7 +328,10 @@ mod tests {
         store.close();
 
         let reopened = RedbJobStore::open(&path).unwrap();
-        assert_eq!(reopened.get("job-1").unwrap(), Some(("completed".into(), 300)));
+        assert_eq!(
+            reopened.get("job-1").unwrap(),
+            Some(("completed".into(), 300))
+        );
         reopened.close();
         std::fs::remove_file(&path).unwrap();
     }
