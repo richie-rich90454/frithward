@@ -4,17 +4,7 @@ import {
     CaptionStudioViewModel,
     EditSubtitleUseCase,
 } from "@frithward/media-core";
-import type { CaptionRepository } from "@frithward/media-core";
-
-class MemoryCaptionRepository implements CaptionRepository {
-    public async save(_project: CaptionProject): Promise<void> {
-        return;
-    }
-
-    public async load(_id: string): Promise<CaptionProject | null> {
-        return null;
-    }
-}
+import { LocalStorageCaptionRepository } from "../../infrastructure/LocalStorageCaptionRepository.js";
 
 export class CaptionStudioController {
     private readonly controller: MediaCaptionStudioController;
@@ -30,7 +20,7 @@ export class CaptionStudioController {
         });
         this.controller = new MediaCaptionStudioController({
             project,
-            editor: new EditSubtitleUseCase(new MemoryCaptionRepository()),
+            editor: new EditSubtitleUseCase(new LocalStorageCaptionRepository()),
         });
         this.viewModel = this.controller.getViewModel();
     }
