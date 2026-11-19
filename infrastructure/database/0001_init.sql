@@ -17,3 +17,12 @@ create table if not exists scam_analyses (
   summary text not null,
   created_at timestamp with time zone not null default now()
 );
+
+create table if not exists job_status (
+  job_id text primary key,
+  status text not null,
+  result jsonb,
+  error text,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now()
+);
