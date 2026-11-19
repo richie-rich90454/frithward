@@ -258,8 +258,9 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let path = std::path::PathBuf::from(r"C:\Users\rjian\AppData\Local\Temp\opencode")
-            .join(format!("frithward-ffmpeg-fake-{}-{nanos}.exe", std::process::id()));
+        let path = std::path::PathBuf::from(r"C:\Users\rjian\AppData\Local\Temp\opencode").join(
+            format!("frithward-ffmpeg-fake-{}-{nanos}.exe", std::process::id()),
+        );
 
         let missing = FfmpegLocator::from_path(&path);
         assert!(!missing.available());
