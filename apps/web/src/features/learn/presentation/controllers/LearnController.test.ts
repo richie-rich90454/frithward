@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { LearnController, LESSONS, QUIZ } from "./LearnController";
+import { en } from "../../../../locales/en.js";
+import { LearnController, LESSONS, QUIZ, dictionaryTranslator } from "./LearnController";
+
+const translate = dictionaryTranslator(en);
 
 describe("LearnController", () => {
     it("offers four lessons with paragraphs and a fictional scenario", () => {
-        const controller = new LearnController();
+        const controller = new LearnController(translate);
         const lessons = controller.getLessons();
-        expect(lessons).toBe(LESSONS);
-        expect(lessons.length).toBeGreaterThanOrEqual(4);
+        expect(lessons).toEqual(LESSONS);
+        expect(lessons.length).toBe(4);
         for (const lesson of lessons) {
             expect(lesson.title.length).toBeGreaterThan(0);
             expect(lesson.paragraphs.length).toBeGreaterThanOrEqual(2);
@@ -14,8 +17,13 @@ describe("LearnController", () => {
         }
     });
 
+    it("uses the injected dictionary instead of hardcoded strings", () => {
+        const controller = new LearnController((key) => (key === "learn.lesson.sources.title" ? "Quellen" : translate(key)));
+        expect(controller.getLessons()[0]?.title).toBe("Quellen");
+    });
+
     it("scores a correct answer and shows the explanation", () => {
-        const controller = new LearnController();
+        const controller = new LearnController(translate);
         const first = QUIZ[0];
         if (!first) throw new Error("Quiz is empty.");
         controller.answer(first.correctIndex);
@@ -27,7 +35,7 @@ describe("LearnController", () => {
     });
 
     it("does not score an incorrect answer but still explains it", () => {
-        const controller = new LearnController();
+        const controller = new LearnController(translate);
         const first = QUIZ[0];
         if (!first) throw new Error("Quiz is empty.");
         controller.answer((first.correctIndex + 1) % first.options.length);
@@ -36,7 +44,7 @@ describe("LearnController", () => {
     });
 
     it("advances through questions and finishes once", () => {
-        const controller = new LearnController();
+        const controller = new LearnController(translate);
         for (let index = 0; index < QUIZ.length; index += 1) {
             const question = controller.currentQuestion();
             if (!question) throw new Error("Quiz is empty.");
@@ -48,7 +56,7 @@ describe("LearnController", () => {
     });
 
     it("ignores repeat answers and resets cleanly", () => {
-        const controller = new LearnController();
+        const controller = new LearnController(translate);
         const question = QUIZ[0];
         if (!question) throw new Error("Quiz is empty.");
         controller.answer(question.correctIndex);
