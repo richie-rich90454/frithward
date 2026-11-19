@@ -1,5 +1,13 @@
-import { InspectPrivacyUseCase } from "@frithward/privacy-core";
-import type { PrivacyFinding } from "@frithward/privacy-core";
+import {
+    InspectPrivacyUseCase,
+    MetadataInspectionUseCase,
+    SanitizedExportUseCase,
+    type MetadataFinding,
+    type MetadataFindingKind,
+    type MetadataPayload,
+    type PrivacyFinding,
+    type SanitizedOutputDescriptor,
+} from "@frithward/privacy-core";
 
 export interface ShareCheckOption {
     id: string;
@@ -10,8 +18,67 @@ export interface ShareCheckOption {
     selected: boolean;
 }
 
+export interface MetadataIssueView {
+    id: string;
+    kind: MetadataFindingKind;
+    label: string;
+    where: string;
+    why: string;
+    how: string;
+    severity: "low" | "medium" | "high";
+}
+
+export interface MetadataInspectionView {
+    fileName: string;
+    safeToShare: boolean;
+    issues: readonly MetadataIssueView[];
+    remediation: readonly string[];
+    summary: string;
+}
+
+export interface ExportActionView {
+    kind: string;
+    description: string;
+}
+
+export interface SanitizedExportPlanView {
+    summary: string;
+    safeToShare: boolean;
+    actions: readonly ExportActionView[];
+}
+
+const KIND_LABELS: Record<MetadataFindingKind, string> = {
+    "exif-gps": "GPS location",
+    "exif-device": "Device details",
+    "exif-timestamp": "Capture time",
+    "pii-email": "Email address",
+    "pii-phone": "Phone number",
+    "pii-address": "Street address",
+    "pii-name": "Personal name",
+};
+
+const LOCATION_HINTS: Record<MetadataFindingKind, RegExp> = {
+    "exif-gps": /gps|location|latitude|longitude/i,
+    "exif-device": /make|model|camera|lens/i,
+    "exif-timestamp": /date|time/i,
+    "pii-email": /email/i,
+    "pii-phone": /phone|tel/i,
+    "pii-address": /address|street/i,
+    "pii-name": /name|artist|author|creator/i,
+};
+
+function locationFor(kind: MetadataFindingKind, fields: MetadataPayload["fields"]): string {
+    const hint = LOCATION_HINTS[kind];
+    const matches = Object.entries(fields)
+        .filter(([key, value]) => hint.test(key) || hint.test(String(value ?? "")))
+        .map(([key]) => key);
+    return matches.length > 0 ? matches.join(", ") : "field values";
+}
+
 export class ShareCheckController {
     private readonly inspector = new InspectPrivacyUseCase();
+    private readonly metadataInspector = new MetadataInspectionUseCase();
+    private readonly exportPlanner = new SanitizedExportUseCase();
     private readonly listeners = new Set<() => void>();
     private options: ShareCheckOption[] = [
         {
@@ -41,6 +108,10 @@ export class ShareCheckController {
     ];
     private error: string | null = null;
     private passed: boolean | null = null;
+    private currentPayload: MetadataPayload | null = null;
+    private currentFindings: readonly MetadataFinding[] = [];
+    private metadataView: MetadataInspectionView | null = null;
+    private exportPlan: SanitizedExportPlanView | null = null;
 
     public subscribe(listener: () => void): () => void {
         this.listeners.add(listener);
@@ -59,6 +130,18 @@ export class ShareCheckController {
 
     public getPassed(): boolean | null {
         return this.passed;
+    }
+
+    public getMetadataView(): MetadataInspectionView | null {
+        return this.metadataView;
+    }
+
+    public getMetadataFindings(): readonly MetadataFinding[] {
+        return this.currentFindings;
+    }
+
+    public getExportPlan(): SanitizedExportPlanView | null {
+        return this.exportPlan;
     }
 
     public toggle(optionId: string): void {
@@ -86,6 +169,65 @@ export class ShareCheckController {
         } catch (cause) {
             this.error = cause instanceof Error ? cause.message : "Privacy check failed.";
             this.passed = false;
+        }
+        this.notify();
+    }
+
+    public inspectMetadata(findings: MetadataPayload): void {
+        try {
+            const result = this.metadataInspector.execute(findings);
+            this.currentPayload = findings;
+            this.currentFindings = result.findings;
+            this.metadataView = {
+                fileName: result.fileName,
+                safeToShare: result.safeToShare,
+                issues: result.findings.map((finding) => ({
+                    id: finding.id,
+                    kind: finding.kind,
+                    label: KIND_LABELS[finding.kind],
+                    where: locationFor(finding.kind, findings.fields),
+                    why: finding.detail,
+                    how: finding.remediation,
+                    severity: finding.severity,
+                })),
+                remediation: [...result.remediation],
+                summary: result.safeToShare
+                    ? "No sensitive metadata found in the supplied fields."
+                    : `${result.findings.length} privacy issue(s) found in the supplied fields.`,
+            };
+            this.exportPlan = null;
+            this.error = null;
+        } catch (cause) {
+            this.metadataView = null;
+            this.currentFindings = [];
+            this.error = cause instanceof Error ? cause.message : "Metadata inspection failed.";
+        }
+        this.notify();
+    }
+
+    public planSanitizedExport(findings: readonly MetadataFinding[]): void {
+        if (!this.currentPayload) {
+            this.error = "Inspect metadata before planning an export.";
+            this.notify();
+            return;
+        }
+        try {
+            const plan: SanitizedOutputDescriptor = this.exportPlanner.execute({
+                payload: this.currentPayload,
+                findings,
+            });
+            this.exportPlan = {
+                summary: plan.summary,
+                safeToShare: plan.safeToShare,
+                actions: plan.actions.map((action) => ({
+                    kind: action.kind,
+                    description: action.description,
+                })),
+            };
+            this.error = null;
+        } catch (cause) {
+            this.exportPlan = null;
+            this.error = cause instanceof Error ? cause.message : "Could not plan a sanitized export.";
         }
         this.notify();
     }
