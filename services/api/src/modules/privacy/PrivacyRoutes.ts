@@ -12,7 +12,13 @@ export class PrivacyRoutes extends Hono {
         this.post("/api/privacy/inspect", async (context) => {
             const body = await parseJson(context, PrivacyInspectRequest);
             this.inspect.execute({ findings: body.findings });
-            return context.json({ findings: body.findings, safe: true }, 200);
+            const remediation = body.findings
+                .map((finding) => finding.remediation)
+                .filter((value) => value.length > 0);
+            return context.json(
+                { findings: body.findings, safe: body.findings.length === 0, remediation },
+                200,
+            );
         });
         this.post("/api/privacy/redact", async (context) => {
             const body = await parseJson(context, PrivacyRedactRequest);
