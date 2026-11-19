@@ -11,6 +11,7 @@ export const zh: Record<string, string> = {
     "nav.respond": "应对",
     "nav.learn": "学习",
     "nav.community": "社区",
+    "nav.tools": "开发者工具",
     "home.title": "首页",
     "home.intro": "在本地生成字幕、编辑媒体、检查可疑内容并保护个人信息。",
     "home.captions.title": "生成字幕",
