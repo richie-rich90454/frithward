@@ -32,6 +32,7 @@ describe("C2paSdkAdapter", () => {
         const adapter = new C2paSdkAdapter(async () => readerReturning(verifiedStore));
         const result = await adapter.verify(new Uint8Array([1, 2, 3]));
 
+        expect(adapter.isAvailable()).toBe(true);
         expect(result.signatureStatus).toBe("valid");
         expect(result.signer).toBe("Camera Manufacturer");
         expect(result.timestamp).toBe("2026-02-01T10:00:00Z");
@@ -78,9 +79,39 @@ describe("C2paSdkAdapter", () => {
         });
         const result = await adapter.verify(new Uint8Array([1]));
 
+        expect(adapter.isAvailable()).toBe(false);
         expect(result.signatureStatus).toBe("unverified");
         expect(result.validationFailures[0]?.code).toBe("sdk.error");
         expect(result.limitations.join(" ")).toContain("Signature was NOT verified");
+    });
+
+    it("names the platform in the limitation when the SDK cannot load", async () => {
+        const adapter = new C2paSdkAdapter(async () => {
+            throw new C2paSdkUnavailableError(
+                new Error("Could not load dist/index.node"),
+                "native-binary-missing",
+            );
+        });
+        const result = await adapter.verify(new Uint8Array([1]));
+
+        expect(result.signatureStatus).toBe("unverified");
+        const nodeProcess = (
+            globalThis as unknown as { process: { platform: string; arch: string } }
+        ).process;
+        expect(result.limitations[0]).toContain(`${nodeProcess.platform}/${nodeProcess.arch}`);
+        expect(result.limitations[0]).toContain("native-binary-missing");
+    });
+
+    it("detects the reason an SDK failed to load", () => {
+        expect(
+            new C2paSdkUnavailableError(
+                Object.assign(new Error("missing"), { code: "ERR_MODULE_NOT_FOUND" }),
+            ).reason,
+        ).toBe("package-missing");
+        expect(new C2paSdkUnavailableError(new Error("cannot open dist/index.node")).reason).toBe(
+            "native-binary-missing",
+        );
+        expect(new C2paSdkUnavailableError(new Error("other failure")).reason).toBe("load-failed");
     });
 
     it("rejects inputs that are not binary assets", async () => {
