@@ -6,3 +6,9 @@ edition = "2021"
 [lib]
 name = "frithward_media"
 path = "src/lib.rs"
+
+[dependencies]
+# `version = "2"` cannot resolve because only 2.0.0-rc.* prereleases exist;
+# pin the rc explicitly. default-features=false + load-dynamic avoids bundling
+# the multi-hundred-MB ONNX Runtime binary at build time (it is loaded at runtime).
+ort = { version = "2.0.0-rc.15", default-features = false, features = ["load-dynamic"] }
