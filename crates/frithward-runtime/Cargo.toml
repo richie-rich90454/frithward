@@ -6,3 +6,6 @@ edition = "2021"
 [lib]
 name = "frithward_runtime"
 path = "src/lib.rs"
+
+[dependencies]
+redb = "2"
