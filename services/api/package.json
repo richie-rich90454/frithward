@@ -9,6 +9,7 @@
         "start:worker": "tsx src/jobs/runWorker.ts"
     },
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.1172.0",
         "@frithward/contracts": "workspace:*",
         "@frithward/media-core": "workspace:*",
         "@frithward/privacy-core": "workspace:*",
