@@ -43,7 +43,9 @@ describe("localized shell", () => {
         const { container } = render(() => LocalizedShell());
         const results = await axe.run(container);
         const severe = results.violations
-            .filter((violation) => violation.impact === "serious" || violation.impact === "critical")
+            .filter(
+                (violation) => violation.impact === "serious" || violation.impact === "critical",
+            )
             .map((violation) => `${violation.id}: ${violation.help}`);
         expect(severe).toEqual([]);
     });
