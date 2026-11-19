@@ -1,5 +1,6 @@
 import { expose } from "comlink";
 import whisper_factory from "whisper.cpp";
+import { isCrossOriginIsolationAvailable } from "./whisper-support.js";
 
 export interface WhisperUtterance {
     startMs: number;
@@ -32,6 +33,11 @@ let outputLines: string[] = [];
 const api: WhisperWorkerApi = {
     async initialize(input) {
         if (module) return;
+        if (!isCrossOriginIsolationAvailable(globalThis)) {
+            throw new Error(
+                "Cross-origin isolation is required for local transcription. Serve the app with COOP: same-origin and COEP: require-corp headers.",
+            );
+        }
         const [wasmBuffer, modelBuffer] = await Promise.all([
             fetchArrayBuffer(input.wasmUrl),
             fetchArrayBuffer(input.modelUrl),
