@@ -1,4 +1,11 @@
-import { createContext, createEffect, createMemo, createSignal, useContext, type Accessor } from "solid-js";
+import {
+    createContext,
+    createEffect,
+    createMemo,
+    createSignal,
+    useContext,
+    type Accessor,
+} from "solid-js";
 import { translator } from "@solid-primitives/i18n";
 import { ar } from "../locales/ar.js";
 import { de } from "../locales/de.js";
