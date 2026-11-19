@@ -54,7 +54,11 @@ pub fn check_url(url: &str) -> Result<UrlFindings, String> {
         return Err(format!("Unsupported URL scheme: {scheme}"));
     }
     let authority = rest.split(['/', '?', '#']).next().unwrap_or("");
-    let host = authority.rsplit('@').next().unwrap_or("").to_ascii_lowercase();
+    let host = authority
+        .rsplit('@')
+        .next()
+        .unwrap_or("")
+        .to_ascii_lowercase();
     if host.is_empty() {
         return Err("URL must include a host.".to_string());
     }
@@ -67,7 +71,11 @@ pub fn check_url(url: &str) -> Result<UrlFindings, String> {
         });
     };
     if scheme == "http" {
-        push("insecure_scheme", Severity::Medium, "URL uses http, not https");
+        push(
+            "insecure_scheme",
+            Severity::Medium,
+            "URL uses http, not https",
+        );
     }
     if authority.contains('@') {
         push(
@@ -86,9 +94,11 @@ pub fn check_url(url: &str) -> Result<UrlFindings, String> {
     if host.chars().all(|c| c.is_ascii_digit() || c == '.') && host.contains('.') {
         push("ip_literal_host", Severity::Medium, "host is an IP literal");
     }
-    if ["login", "verify", "secure", "account", "update", "support", "urgent"]
-        .iter()
-        .any(|word| host.contains(word))
+    if [
+        "login", "verify", "secure", "account", "update", "support", "urgent",
+    ]
+    .iter()
+    .any(|word| host.contains(word))
     {
         push(
             "suspicious_host_keyword",
@@ -279,8 +289,9 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let path = std::path::PathBuf::from(r"C:\Users\rjian\AppData\Local\Temp\opencode")
-            .join(format!("frithward-manifest-{}-{nanos}.txt", std::process::id()));
+        let path = std::path::PathBuf::from(r"C:\Users\rjian\AppData\Local\Temp\opencode").join(
+            format!("frithward-manifest-{}-{nanos}.txt", std::process::id()),
+        );
 
         let overall = write_redaction_manifest(&path, &[("gps_lat", "1.0")]).unwrap();
         let contents = std::fs::read_to_string(&path).unwrap();
