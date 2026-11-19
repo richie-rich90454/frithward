@@ -1,7 +1,11 @@
 (frithward.local) {
+    header {
+        Cross-Origin-Opener-Policy same-origin
+        Cross-Origin-Embedder-Policy require-corp
+    }
     reverse_proxy /api/* http://127.0.0.1:3000
     handle {
-        root * /opt/frithward/apps/web/dist
+        root * {$FW_WEB_ROOT:/opt/frithward/apps/web/dist}
         file_server
     }
 }
