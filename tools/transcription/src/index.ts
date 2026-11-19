@@ -1,8 +1,5 @@
 import { AppError } from "@frithward/contracts";
-import type {
-    RecognizedUtterance,
-    SpeechRecognitionPort,
-} from "@frithward/media-core";
+import type { RecognizedUtterance, SpeechRecognitionPort } from "@frithward/media-core";
 
 export interface TranscriptionRequest {
     audioId: string;
