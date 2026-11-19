@@ -5,17 +5,19 @@ type Status = "idle" | "loading" | "ready" | "error";
 
 export function PdfPreview(props: { pdf: ArrayBuffer }) {
     const controller = new PdfRenderController();
-    let canvas!: HTMLCanvasElement;
+    const [canvas, setCanvas] = createSignal<HTMLCanvasElement>();
     const [status, setStatus] = createSignal<Status>("idle");
     const [detail, setDetail] = createSignal("");
 
     createEffect(() => {
         const data = props.pdf;
+        const element = canvas();
+        if (!element) return;
         let cancelled = false;
         setStatus("loading");
         setDetail("");
         void controller
-            .render(data, canvas)
+            .render(data, element)
             .then((result) => {
                 if (cancelled) return;
                 setStatus("ready");
@@ -43,7 +45,7 @@ export function PdfPreview(props: { pdf: ArrayBuffer }) {
             <Show when={status() === "ready"}>
                 <p role="status">{detail()}</p>
             </Show>
-            <canvas ref={canvas} hidden={status() !== "ready"} />
+            <canvas ref={setCanvas} hidden={status() !== "ready"} />
         </section>
     );
 }
