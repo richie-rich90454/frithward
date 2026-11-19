@@ -11,6 +11,7 @@ export const fr: Record<string, string> = {
     "nav.respond": "Répondre",
     "nav.learn": "Apprendre",
     "nav.community": "Communauté",
+    "nav.tools": "Outils de développement",
     "home.title": "Accueil",
     "home.intro":
         "Génère des sous-titres, modifie les médias, vérifie les contenus suspects et protège les informations personnelles localement.",
