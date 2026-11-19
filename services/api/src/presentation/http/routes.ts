@@ -1,6 +1,7 @@
 import { createRoute } from "@hono/zod-openapi";
 import {
     AnalyzeMessageRequest,
+    AnalyzeMessageResponse,
     EnqueueAnalysisResponse,
     HealthResponse,
     SessionResponse,
@@ -27,9 +28,16 @@ export const analyzeMessageRoute = createRoute({
         },
     },
     responses: {
+        200: {
+            description: "Synchronous analysis result (local-first default).",
+            content: { "application/json": { schema: AnalyzeMessageResponse } },
+        },
         202: {
             description: "Analysis job queued.",
             content: { "application/json": { schema: EnqueueAnalysisResponse } },
+        },
+        400: {
+            description: "Invalid request body.",
         },
     },
 });
@@ -39,8 +47,11 @@ export const sessionRoute = createRoute({
     path: "/api/auth/session",
     responses: {
         200: {
-            description: "Auth configuration status.",
+            description: "Actual session state.",
             content: { "application/json": { schema: SessionResponse } },
+        },
+        503: {
+            description: "Authentication backend unavailable.",
         },
     },
 });
