@@ -1,11 +1,25 @@
-(frithward.local) {
-    header {
-        Cross-Origin-Opener-Policy same-origin
-        Cross-Origin-Embedder-Policy require-corp
-    }
-    reverse_proxy /api/* http://127.0.0.1:3000
-    handle {
-        root * {$FW_WEB_ROOT:/opt/frithward/apps/web/dist}
-        file_server
-    }
+# Frithward self-hosting site.
+#
+# Run Caddy directly on the host (for example `caddy run --config
+# infrastructure/deployment/Caddyfile` from the repository root). No container
+# runtime is required. For a public deployment set FRITHWARD_DOMAIN to your
+# hostname, point DNS at this host, and let Caddy obtain and renew a certificate
+# automatically. For local development leave the defaults: `localhost`, the API
+# on 127.0.0.1:3000, and the static build under ./apps/web/dist.
+#
+# Automatic HTTPS is Caddy's default for a real domain; for `localhost` Caddy
+# uses its local development CA. Ports 80 and 443 must be reachable.
+
+{$FRITHWARD_DOMAIN:localhost} {
+	header {
+		Cross-Origin-Opener-Policy same-origin
+		Cross-Origin-Embedder-Policy require-corp
+	}
+
+	reverse_proxy /api/* {$FRITHWARD_API:127.0.0.1:3000}
+
+	handle {
+		root * {$FW_WEB_ROOT:./apps/web/dist}
+		file_server
+	}
 }
