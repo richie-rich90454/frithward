@@ -195,16 +195,26 @@ function checkFile(file) {
         }
 
         if (layer === "domain") {
-            if (target.layers.has("infrastructure") || target.layers.has("presentation") || target.layers.has("tsx")) {
-                violations.push(`${at}: domain must not import infrastructure/presentation/tsx ${ref.specifier}`);
+            if (
+                target.layers.has("infrastructure") ||
+                target.layers.has("presentation") ||
+                target.layers.has("tsx")
+            ) {
+                violations.push(
+                    `${at}: domain must not import infrastructure/presentation/tsx ${ref.specifier}`,
+                );
             }
         } else if (layer === "application") {
             if (target.layers.has("infrastructure") || target.layers.has("tsx")) {
-                violations.push(`${at}: application must not import infrastructure/tsx ${ref.specifier}`);
+                violations.push(
+                    `${at}: application must not import infrastructure/tsx ${ref.specifier}`,
+                );
             }
         } else if (layer === "presentation") {
             if (target.layers.has("infrastructure")) {
-                violations.push(`${at}: presentation must not import infrastructure ${ref.specifier}`);
+                violations.push(
+                    `${at}: presentation must not import infrastructure ${ref.specifier}`,
+                );
             }
         } else if (layer === "tsx") {
             // Type-only imports are erased at runtime, so they cannot place logic in the
@@ -217,7 +227,9 @@ function checkFile(file) {
                 target.layers.has(name),
             );
             if (forbidden) {
-                violations.push(`${at}: tsx must not import ${forbidden} at runtime ${ref.specifier}`);
+                violations.push(
+                    `${at}: tsx must not import ${forbidden} at runtime ${ref.specifier}`,
+                );
             }
         }
     }
