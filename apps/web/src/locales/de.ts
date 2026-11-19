@@ -11,6 +11,7 @@ export const de: Record<string, string> = {
     "nav.respond": "Reagieren",
     "nav.learn": "Lernen",
     "nav.community": "Community",
+    "nav.tools": "Entwicklerwerkzeuge",
     "home.title": "Start",
     "home.intro":
         "Erstellt Untertitel, bearbeitet Medien, prüft verdächtige Inhalte und schützt personenbezogene Daten lokal.",
