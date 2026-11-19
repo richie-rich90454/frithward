@@ -9,7 +9,7 @@
     },
     "dependencies": {
         "wxt": "latest",
-        "solid-js": "latest",
+        "solid-js": "1.9.18",
         "vite-plugin-solid": "latest"
     }
 }
