@@ -40,7 +40,11 @@ export class PopupController {
             })) as unknown;
             this.info = this.parse(response);
         } catch (cause) {
-            this.info = { url: "", textLength: 0, error: `Unable to check the page: ${errorMessage(cause)}` };
+            this.info = {
+                url: "",
+                textLength: 0,
+                error: `Unable to check the page: ${errorMessage(cause)}`,
+            };
         } finally {
             this.busy = false;
             this.notify();
