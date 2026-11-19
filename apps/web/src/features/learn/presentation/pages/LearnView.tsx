@@ -6,7 +6,7 @@ import { LearnController } from "../controllers/LearnController";
 
 export function LearnView() {
     const { t } = useI18n();
-    const controller = new LearnController();
+    const controller = new LearnController(t);
     const [state, setState] = createSignal(controller.getState());
     onCleanup(
         controller.subscribe(() => {
@@ -22,10 +22,7 @@ export function LearnView() {
                 <GraduationCap class="fw-icon" />
                 {t("learn.title")}
             </h1>
-            <p>
-                Four short lessons on checking information and staying safe. Each lesson ends with a
-                fictional example; the quiz afterwards checks what you took away.
-            </p>
+            <p>{t("learn.intro")}</p>
 
             <For each={lessons}>
                 {(lesson) => (
