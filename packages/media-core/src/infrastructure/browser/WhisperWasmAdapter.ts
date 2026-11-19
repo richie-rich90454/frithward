@@ -1,3 +1,4 @@
+import { AppError } from "@frithward/contracts";
 import { ComlinkWorkerClient } from "@frithward/inference";
 import type {
     RecognizedUtterance,
@@ -26,12 +27,22 @@ export class WhisperWasmAdapter implements SpeechRecognitionPort {
 
     public async start(): Promise<void> {
         this.client.start();
-        await this.client.run(async (api) => {
-            await api.initialize({
-                modelUrl: this.options.modelUrl,
-                wasmUrl: this.options.wasmUrl,
+        try {
+            await this.client.run(async (api) => {
+                await api.initialize({
+                    modelUrl: this.options.modelUrl,
+                    wasmUrl: this.options.wasmUrl,
+                });
             });
-        });
+        } catch (cause) {
+            if (
+                cause instanceof Error &&
+                cause.message.toLowerCase().includes("cross-origin isolation")
+            ) {
+                throw new AppError("EXTERNAL_UNAVAILABLE", cause.message, cause);
+            }
+            throw cause;
+        }
     }
 
     public async stop(): Promise<void> {
