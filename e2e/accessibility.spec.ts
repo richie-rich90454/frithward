@@ -26,9 +26,7 @@ for (const path of ["/", "/check", "/protect", "/learn"]) {
                 (violation) => violation.impact === "serious" || violation.impact === "critical",
             );
         });
-        expect(
-            violations.map((violation) => `${violation.id}: ${violation.help}`),
-        ).toEqual([]);
+        expect(violations.map((violation) => `${violation.id}: ${violation.help}`)).toEqual([]);
     });
 }
 
