@@ -1,10 +1,16 @@
 import type { MiddlewareHandler } from "hono";
 import { AppError } from "@frithward/contracts";
 
+export interface SessionUser {
+    id: string;
+    email: string;
+}
+
 export interface Session {
     token: string;
     userId: string;
     expiresAt: string;
+    user: SessionUser | null;
 }
 
 export interface SessionPort {
