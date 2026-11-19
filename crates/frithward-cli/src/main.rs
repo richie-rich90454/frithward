@@ -1,4 +1,9 @@
 use clap::{Parser, Subcommand};
+use frithward_privacy::{
+    check_text as check_text_local, has_location_metadata, hash_bytes, redact_terms,
+};
+use frithward_provenance::{describe_signature, parse_manifest_status};
+use frithward_runtime::{ExecutionRouter, ExecutionTarget};
 
 #[derive(Parser)]
 #[command(name = "frithward", version, about = "Frithward media safety CLI.")]
@@ -11,25 +16,25 @@ struct Arguments {
 
 #[derive(Subcommand)]
 enum Command {
-    /// Check a URL or text for safety signals.
+    /// Check a URL or text for local safety signals.
     Check {
         #[command(subcommand)]
         target: CheckTarget,
     },
-    /// Protect voice or face media.
+    /// Protect voice or face media (experimental planning only).
     Protect {
         #[command(subcommand)]
         target: ProtectTarget,
     },
-    /// Verify an asset's provenance manifest.
+    /// Verify an asset's provenance manifest file.
     Verify {
-        /// Asset identifier.
+        /// Path to a manifest file.
         asset: String,
     },
-    /// Inspect comma-separated metadata key=value pairs.
+    /// Inspect metadata stored in a file.
     Inspect {
-        /// Metadata pairs, for example "width=100,height=50,gps_lat=1.0".
-        metadata: String,
+        #[command(subcommand)]
+        target: InspectTarget,
     },
 }
 
@@ -61,164 +66,186 @@ enum ProtectTarget {
     },
 }
 
-#[derive(Debug, PartialEq, Eq)]
-struct UrlInfo {
-    scheme: String,
-    host: String,
+#[derive(Subcommand)]
+enum InspectTarget {
+    /// Inspect metadata key=value lines in a file.
+    Metadata {
+        /// Path to the metadata file.
+        file: String,
+    },
 }
 
-fn parse_url(url: &str) -> Result<UrlInfo, String> {
-    let trimmed = url.trim();
-    if trimmed.is_empty() {
-        return Err("URL required.".to_string());
+fn parse_execution(value: &str) -> Result<ExecutionTarget, String> {
+    match value {
+        "browser" => Ok(ExecutionTarget::Browser),
+        "node" => Ok(ExecutionTarget::Node),
+        "native" => Ok(ExecutionTarget::Native),
+        other => Err(format!("Unsupported execution target: {other}")),
     }
-    let (scheme, rest) = trimmed
-        .split_once("://")
-        .ok_or_else(|| "URL must include a scheme (http:// or https://).".to_string())?;
-    let scheme = scheme.to_ascii_lowercase();
-    if scheme != "http" && scheme != "https" {
-        return Err(format!("Unsupported URL scheme: {scheme}"));
-    }
-    let host = rest.split('/').next().unwrap_or("").to_string();
-    if host.is_empty() {
-        return Err("URL must include a host.".to_string());
-    }
-    Ok(UrlInfo { scheme, host })
 }
 
-#[derive(Debug, PartialEq, Eq)]
-struct TextCheck {
-    characters: usize,
-    words: usize,
-    indicators: Vec<String>,
-}
-
-fn check_text(text: &str) -> Result<TextCheck, String> {
-    if text.trim().is_empty() {
-        return Err("Text required.".to_string());
+fn execution_str(target: ExecutionTarget) -> &'static str {
+    match target {
+        ExecutionTarget::Browser => "browser",
+        ExecutionTarget::Node => "node",
+        ExecutionTarget::Native => "native",
     }
-    let lowered = text.to_lowercase();
-    let mut indicators = Vec::new();
-    for term in [
-        "password",
-        "verify your account",
-        "urgent",
-        "wire transfer",
-        "gift card",
-    ] {
-        if lowered.contains(term) {
-            indicators.push(term.to_string());
-        }
-    }
-    Ok(TextCheck {
-        characters: text.chars().count(),
-        words: text.split_whitespace().count(),
-        indicators,
-    })
 }
 
 #[derive(Debug, PartialEq, Eq)]
 struct ProtectReport {
     kind: String,
     asset: String,
-    performed: bool,
+    target: ExecutionTarget,
 }
 
-fn protect_plan(kind: &str, asset: &str) -> Result<ProtectReport, String> {
+fn protect_plan(
+    kind: &str,
+    asset: &str,
+    router: &ExecutionRouter,
+) -> Result<ProtectReport, String> {
     if asset.trim().is_empty() {
         return Err("Asset id required.".to_string());
     }
+    let target = router.route(Some(router.default_target()));
     Ok(ProtectReport {
         kind: kind.to_string(),
         asset: asset.to_string(),
-        performed: false,
+        target,
     })
+}
+
+/// Extracts a status string from plain text or a JSON manifest `"status"` field.
+fn manifest_status_text(text: &str) -> &str {
+    let trimmed = text.trim();
+    if !trimmed.is_empty() && !trimmed.contains('{') {
+        return trimmed;
+    }
+    const KEY: &str = "\"status\"";
+    if let Some(pos) = trimmed.find(KEY) {
+        let after = &trimmed[pos + KEY.len()..];
+        if let Some(start) = after.find('"') {
+            let after = &after[start + 1..];
+            if let Some(end) = after.find('"') {
+                return &after[..end];
+            }
+        }
+    }
+    trimmed
 }
 
 #[derive(Debug, PartialEq, Eq)]
 struct VerifyReport {
     asset: String,
-    status: &'static str,
+    status: frithward_provenance::ManifestStatus,
     detail: &'static str,
 }
 
-fn verify_asset(asset: &str) -> Result<VerifyReport, String> {
-    if asset.trim().is_empty() {
-        return Err("Asset id required.".to_string());
+fn verify_asset_file(path: &str) -> Result<VerifyReport, String> {
+    if path.trim().is_empty() {
+        return Err("Manifest path required.".to_string());
     }
+    let contents = std::fs::read_to_string(path)
+        .map_err(|err| format!("cannot read manifest {path}: {err}"))?;
+    let status_text = manifest_status_text(&contents);
+    let status = parse_manifest_status(status_text);
     Ok(VerifyReport {
-        asset: asset.to_string(),
-        status: "missing",
-        detail: "No manifest was supplied; signature cannot be verified.",
+        asset: path.to_string(),
+        status,
+        detail: describe_signature(status_text),
     })
 }
 
 #[derive(Debug, PartialEq, Eq)]
 struct MetadataReport {
-    count: usize,
-    location_keys: Vec<String>,
+    entries: usize,
+    has_location: bool,
+    redactions: usize,
+    sha256: String,
 }
 
-fn inspect_metadata(metadata: &str) -> Result<MetadataReport, String> {
-    if metadata.trim().is_empty() {
-        return Err("Metadata required.".to_string());
+fn inspect_metadata_file(path: &str) -> Result<MetadataReport, String> {
+    if path.trim().is_empty() {
+        return Err("Metadata file path required.".to_string());
     }
-    let mut location_keys = Vec::new();
-    let mut count = 0;
-    for pair in metadata.split(',') {
-        let pair = pair.trim();
-        if pair.is_empty() {
-            continue;
-        }
-        let key = pair.split_once('=').map(|(k, _)| k).unwrap_or(pair);
-        count += 1;
-        let lowered = key.to_lowercase();
-        if lowered.contains("gps") || lowered.contains("location") {
-            location_keys.push(key.to_string());
-        }
-    }
-    if count == 0 {
-        return Err("Metadata must contain key=value pairs.".to_string());
-    }
+    let bytes = std::fs::read(path).map_err(|err| format!("cannot read {path}: {err}"))?;
+    let text = String::from_utf8_lossy(&bytes);
+    let entries: Vec<(&str, &str)> = text
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| match line.split_once('=') {
+            Some((key, value)) => (key.trim(), value.trim()),
+            None => (line.trim(), ""),
+        })
+        .collect();
+    let has_location = has_location_metadata(&entries);
+    let (_redacted, redactions) = redact_terms(&text, &["password", "secret", "token"]);
     Ok(MetadataReport {
-        count,
-        location_keys,
+        entries: entries.len(),
+        has_location,
+        redactions,
+        sha256: hash_bytes(&bytes),
     })
-}
-
-fn parse_execution(value: &str) -> Result<&'static str, String> {
-    match value {
-        "browser" => Ok("browser"),
-        "node" => Ok("node"),
-        "native" => Ok("native"),
-        other => Err(format!("Unsupported execution target: {other}")),
-    }
 }
 
 fn main() {
     let arguments = Arguments::parse();
-    if let Err(err) = parse_execution(&arguments.execution) {
-        eprintln!("error: {err}");
-        std::process::exit(1);
-    }
-    println!("execution={}", arguments.execution);
+    let requested = match parse_execution(&arguments.execution) {
+        Ok(target) => target,
+        Err(err) => {
+            eprintln!("error: {err}");
+            std::process::exit(1);
+        }
+    };
+    let router = ExecutionRouter::new(requested);
+    let routed = router.route(None);
+    println!(
+        "execution requested={} routed={}",
+        execution_str(requested),
+        execution_str(routed)
+    );
+
     match arguments.command {
         Command::Check { target } => match target {
-            CheckTarget::Url { url } => match parse_url(&url) {
-                Ok(info) => println!(
-                    "check url scheme={} host={} note=parsed only; no network request or classifier run",
-                    info.scheme, info.host
-                ),
+            CheckTarget::Url { url } => match frithward_privacy::check_url(&url) {
+                Ok(result) => {
+                    println!(
+                        "check url scheme={} host={} findings={} note=local heuristics only; no network request",
+                        result.scheme,
+                        result.host,
+                        result.findings.len()
+                    );
+                    for finding in &result.findings {
+                        println!(
+                            "  finding label={} severity={} detail={}",
+                            finding.label,
+                            finding.severity.as_str(),
+                            finding.detail
+                        );
+                    }
+                }
                 Err(err) => {
                     eprintln!("error: {err}");
                     std::process::exit(1);
                 }
             },
-            CheckTarget::Text { text } => match check_text(&text) {
-                Ok(check) => println!(
-                    "check text characters={} words={} indicators={:?} note=local heuristic only",
-                    check.characters, check.words, check.indicators
-                ),
+            CheckTarget::Text { text } => match check_text_local(&text) {
+                Ok(result) => {
+                    println!(
+                        "check text characters={} words={} findings={} note=local rules only",
+                        result.characters,
+                        result.words,
+                        result.findings.len()
+                    );
+                    for finding in &result.findings {
+                        println!(
+                            "  finding label={} severity={} detail={}",
+                            finding.label,
+                            finding.severity.as_str(),
+                            finding.detail
+                        );
+                    }
+                }
                 Err(err) => {
                     eprintln!("error: {err}");
                     std::process::exit(1);
@@ -230,10 +257,12 @@ fn main() {
                 ProtectTarget::Voice { asset } => ("voice", asset),
                 ProtectTarget::Face { asset } => ("face", asset),
             };
-            match protect_plan(kind, &asset) {
+            match protect_plan(kind, &asset, &router) {
                 Ok(report) => println!(
-                    "protect kind={} asset={} performed={} note=no protection model bundled",
-                    report.kind, report.asset, report.performed
+                    "protect kind={} asset={} experimental=true execution={} decision=routed note=planning only; no model executed",
+                    report.kind,
+                    report.asset,
+                    execution_str(report.target)
                 ),
                 Err(err) => {
                     eprintln!("error: {err}");
@@ -241,9 +270,9 @@ fn main() {
                 }
             }
         }
-        Command::Verify { asset } => match verify_asset(&asset) {
+        Command::Verify { asset } => match verify_asset_file(&asset) {
             Ok(report) => println!(
-                "verify asset={} status={} detail={}",
+                "verify asset={} status={:?} detail={}",
                 report.asset, report.status, report.detail
             ),
             Err(err) => {
@@ -251,15 +280,17 @@ fn main() {
                 std::process::exit(1);
             }
         },
-        Command::Inspect { metadata } => match inspect_metadata(&metadata) {
-            Ok(report) => println!(
-                "inspect count={} location_keys={:?} note=parsed locally; no metadata removed",
-                report.count, report.location_keys
-            ),
-            Err(err) => {
-                eprintln!("error: {err}");
-                std::process::exit(1);
-            }
+        Command::Inspect { target } => match target {
+            InspectTarget::Metadata { file } => match inspect_metadata_file(&file) {
+                Ok(report) => println!(
+                    "inspect file={} entries={} location_detected={} redactions={} sha256={} note=local file bytes; no metadata removed",
+                    file, report.entries, report.has_location, report.redactions, report.sha256
+                ),
+                Err(err) => {
+                    eprintln!("error: {err}");
+                    std::process::exit(1);
+                }
+            },
         },
     }
 }
@@ -268,68 +299,74 @@ fn main() {
 mod tests {
     use super::*;
 
-    #[test]
-    fn url_parses_http() {
-        let info = parse_url("http://example.com/path").unwrap();
-        assert_eq!(info.scheme, "http");
-        assert_eq!(info.host, "example.com");
+    fn temp_path(name: &str) -> std::path::PathBuf {
+        use std::time::{SystemTime, UNIX_EPOCH};
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        std::path::PathBuf::from(r"C:\Users\rjian\AppData\Local\Temp\opencode").join(format!(
+            "frithward-cli-{name}-{}-{nanos}.txt",
+            std::process::id()
+        ))
     }
 
     #[test]
-    fn url_rejects_missing_scheme() {
-        assert!(parse_url("example.com").is_err());
-    }
-
-    #[test]
-    fn url_rejects_unsupported_scheme() {
-        assert!(parse_url("ftp://example.com").is_err());
-    }
-
-    #[test]
-    fn text_check_flags_terms() {
-        let check = check_text("please verify your account").unwrap();
-        assert!(check
-            .indicators
-            .contains(&"verify your account".to_string()));
-    }
-
-    #[test]
-    fn text_check_empty() {
-        assert!(check_text("   ").is_err());
-    }
-
-    #[test]
-    fn protect_reports_not_performed() {
-        let report = protect_plan("voice", "a1").unwrap();
-        assert!(!report.performed);
-    }
-
-    #[test]
-    fn protect_rejects_empty_asset() {
-        assert!(protect_plan("face", "  ").is_err());
-    }
-
-    #[test]
-    fn verify_reports_missing() {
-        let report = verify_asset("a1").unwrap();
-        assert_eq!(report.status, "missing");
-    }
-
-    #[test]
-    fn inspect_flags_location() {
-        let report = inspect_metadata("width=100,gps_lat=1.0").unwrap();
-        assert_eq!(report.count, 2);
-        assert_eq!(report.location_keys, vec!["gps_lat".to_string()]);
-    }
-
-    #[test]
-    fn inspect_rejects_empty() {
-        assert!(inspect_metadata("").is_err());
-    }
-
-    #[test]
-    fn execution_default_is_valid() {
-        assert_eq!(parse_execution("browser").unwrap(), "browser");
+    fn execution_routes_through_router() {
+        let target = parse_execution("native").unwrap();
+        let router = ExecutionRouter::new(target);
+        assert_eq!(router.route(None), ExecutionTarget::Native);
         assert!(parse_execution("bogus").is_err());
+    }
+
+    #[test]
+    fn check_url_uses_privacy_heuristics() {
+        let result = frithward_privacy::check_url("http://verify-login.example.com").unwrap();
+        assert!(result
+            .findings
+            .iter()
+            .any(|f| f.severity == frithward_privacy::Severity::Medium));
+        assert!(frithward_privacy::check_url("example.com").is_err());
+    }
+
+    #[test]
+    fn check_text_uses_privacy_rules() {
+        let result = check_text_local("send your password").unwrap();
+        assert!(result.findings.iter().any(|f| f.label == "password"));
+        assert!(check_text_local("").is_err());
+    }
+
+    #[test]
+    fn protect_uses_router_decision() {
+        let router = ExecutionRouter::new(ExecutionTarget::Node);
+        let report = protect_plan("voice", "asset-1", &router).unwrap();
+        assert_eq!(report.target, ExecutionTarget::Node);
+        assert!(protect_plan("face", " ", &router).is_err());
+    }
+
+    #[test]
+    fn verify_reads_real_manifest_file() {
+        let path = temp_path("manifest");
+        std::fs::write(&path, "{\"status\":\"valid\"}").unwrap();
+        let report = verify_asset_file(path.to_str().unwrap()).unwrap();
+        assert_eq!(report.status, frithward_provenance::ManifestStatus::Valid);
+        std::fs::remove_file(&path).unwrap();
+        assert!(verify_asset_file(path.to_str().unwrap()).is_err());
+    }
+
+    #[test]
+    fn inspect_reads_real_file_and_hashes() {
+        let path = temp_path("metadata");
+        std::fs::write(&path, "width=100\ngps_lat=1.0\npassword=hunter2").unwrap();
+        let report = inspect_metadata_file(path.to_str().unwrap()).unwrap();
+        assert_eq!(report.entries, 3);
+        assert!(report.has_location);
+        assert_eq!(report.redactions, 1);
+        assert_eq!(report.sha256.len(), 64);
+        assert_eq!(
+            report.sha256,
+            hash_bytes(std::fs::read(&path).unwrap().as_slice())
+        );
+        std::fs::remove_file(&path).unwrap();
     }
 }
