@@ -11,6 +11,7 @@ export const ja: Record<string, string> = {
     "nav.respond": "対応",
     "nav.learn": "学ぶ",
     "nav.community": "コミュニティ",
+    "nav.tools": "開発者ツール",
     "home.title": "ホーム",
     "home.intro":
         "字幕の生成、メディア編集、不審なコンテンツの確認、個人情報の保護をローカルで行います。",
