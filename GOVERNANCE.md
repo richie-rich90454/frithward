@@ -33,6 +33,36 @@ Security fixes take priority and may bypass normal discussion, but they still re
 - Experimental features are opt-in and labelled in the interface.
 - Security advisories are published with a fix and a credit line unless the reporter asks to remain anonymous.
 
+## Model release stage gates
+
+Models progress through `experimental`, `candidate`, `stable`, and `deprecated` independently of application versions. A model may not advance until the gate for its current stage is satisfied and reviewed.
+
+| Gate | Required evidence | Reviewer | Permitted use after gate |
+| --- | --- | --- | --- |
+| `experimental` | Model card with all 13 required fields, license, intended use, and limitations | Researcher + maintainer | Research and internal evaluation only |
+| `candidate` | Reproducible benchmark run, known biases, failure modes, and a documented dataset license | Researcher + maintainer + community reviewer | Opt-in preview with human review |
+| `stable` | Cross-dataset evaluation, calibration, support commitment, and a complete model card with no unmeasured claim presented as measured | Maintainer + research reviewer | Product surfaces with limitations displayed |
+| `deprecated` | Migration path, removal date, and notice in [CHANGELOG.md](CHANGELOG.md) | Maintainer | No new integrations |
+
+Gate enforcement:
+
+- `node scripts/check-model-cards.mjs` (wired into CI as the `model-cards` job) verifies that every id in `models/manifest.json` has a card containing all 13 fields: model id, stage, intended use, prohibited use, architecture, training data, dataset licenses, evaluation results, known biases, hardware requirements, license, limitations, and version history.
+- The benchmark harness under `research/benchmarks` supplies results; unmeasured results are written as "not measured" and never inferred from a single metric.
+- A change that would move a model to `stable` requires a maintainer release approval in addition to code review.
+
+## Reviewer ownership
+
+| Area | Owning role | Required approver |
+| --- | --- | --- |
+| Model cards, datasets, benchmarks, stage changes | Researcher | Maintainer (and research reviewer for `stable`) |
+| Privacy policy, data flows, retention, DSR process | Maintainer | Maintainer + community reviewer for public-safety impact |
+| Threat model, security controls, CI security jobs | Maintainer | Maintainer; security reporter consulted for fixes |
+| Deployment, Caddy, monitoring, backups | Maintainer | Maintainer |
+| Accessibility and plain language of user-facing docs | Community reviewer | Community reviewer |
+| Breaking changes and releases | Maintainer | Maintainer |
+
+A reviewer with a conflict of interest steps back under the conflict-of-interest rule below. Where two approvers are listed, both must agree; where the maintainer is the author, a second reviewer from the relevant track is required.
+
 ## Enforcement
 
 - Module boundaries are enforced by `scripts/check-boundaries.mjs` and oxlint, with 11 self-tests.
