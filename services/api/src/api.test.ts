@@ -82,10 +82,7 @@ describe("ScamAnalysisRoutes (local-first)", () => {
             },
         };
         const routes = new ScamAnalysisRoutes(queue, new InMemoryJobStatusStore());
-        const response = await routes.request(
-            "/api/scam/message",
-            postJson({ text: "pay now" }),
-        );
+        const response = await routes.request("/api/scam/message", postJson({ text: "pay now" }));
         expect(response.status).toBe(200);
         expect(((await response.json()) as { summary: string }).summary).toBeTypeOf("string");
     });
@@ -104,10 +101,7 @@ describe("ScamAnalysisRoutes (local-first)", () => {
         const store = new InMemoryJobStatusStore();
         const queue = { enqueueAnalysis: async () => ({ jobId: "j-1" }) };
         const routes = new ScamAnalysisRoutes(queue, store);
-        const response = await routes.request(
-            "/api/scam/message",
-            postJson({ text: "pay now" }),
-        );
+        const response = await routes.request("/api/scam/message", postJson({ text: "pay now" }));
         expect(response.status).toBe(202);
         expect(store.get("j-1")?.status).toBe("queued");
     });
@@ -138,10 +132,7 @@ describe("job status transitions", () => {
 describe("PrivacyRoutes", () => {
     it("marks validated empty findings safe", async () => {
         const routes = new PrivacyRoutes();
-        const response = await routes.request(
-            "/api/privacy/inspect",
-            postJson({ findings: [] }),
-        );
+        const response = await routes.request("/api/privacy/inspect", postJson({ findings: [] }));
         expect(response.status).toBe(200);
         const body = (await response.json()) as { safe: boolean; remediation: string[] };
         expect(body.safe).toBe(true);
