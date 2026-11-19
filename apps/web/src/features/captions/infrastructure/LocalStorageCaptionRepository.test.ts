@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { CaptionProject, SubtitleSegment } from "@frithward/media-core";
-import { LocalStorageCaptionRepository, type StorageLike } from "./LocalStorageCaptionRepository.js";
+import {
+    LocalStorageCaptionRepository,
+    type StorageLike,
+} from "./LocalStorageCaptionRepository.js";
 
 function createStorage(): StorageLike {
     const values = new Map<string, string>();
@@ -18,7 +21,13 @@ describe("LocalStorageCaptionRepository", () => {
         const repository = new LocalStorageCaptionRepository(storage);
         const project = new CaptionProject({ id: "p1", title: "Interview", language: "en" });
         project.addSegment(
-            new SubtitleSegment({ id: "s1", startMs: 0, endMs: 1000, text: "Hello", speakerId: "a" }),
+            new SubtitleSegment({
+                id: "s1",
+                startMs: 0,
+                endMs: 1000,
+                text: "Hello",
+                speakerId: "a",
+            }),
         );
 
         await repository.save(project);
