@@ -5,4 +5,5 @@ export * from "./MediaPipeVisionAdapter.js";
 export * from "./TesseractOcrAdapter.js";
 export * from "./MediabunnyTranscoder.js";
 export * from "./FfmpegWasmTranscoder.js";
+export * from "./TranscoderFacade.js";
 export * from "./ComlinkWorkerClient.js";
