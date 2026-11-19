@@ -43,5 +43,6 @@ export const fr: Record<string, string> = {
     "learn.pressure.desc":
         "L'urgence, le secret et les demandes de paiement sont des signes de risque courants.",
     "learn.details.title": "Protégez vos informations",
-    "learn.details.desc": "Supprimez les métadonnées de localisation et d'appareil avant de publier un média.",
+    "learn.details.desc":
+        "Supprimez les métadonnées de localisation et d'appareil avant de publier un média.",
 };
