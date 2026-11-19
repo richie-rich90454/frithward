@@ -4,16 +4,40 @@ import type {
     C2paVerificationResult,
 } from "../ports/C2paVerificationPort.js";
 
+export type C2paSdkUnavailableReason = "package-missing" | "native-binary-missing" | "load-failed";
+
+function classifySdkError(cause: unknown): C2paSdkUnavailableReason {
+    const code = (cause as { code?: unknown } | null)?.code;
+    if (code === "ERR_MODULE_NOT_FOUND" || code === "MODULE_NOT_FOUND") return "package-missing";
+    const message = cause instanceof Error ? cause.message : "";
+    if (/\.node\b|dlopen|bindings file|cannot open shared object|Win32 error/i.test(message))
+        return "native-binary-missing";
+    return "load-failed";
+}
+
+function platformLabel(): string {
+    const nodeProcess = (
+        globalThis as unknown as { process?: { platform?: string; arch?: string } }
+    ).process;
+    if (!nodeProcess) return "this environment";
+    return `${nodeProcess.platform ?? "unknown"}/${nodeProcess.arch ?? "unknown"}`;
+}
+
 /** Raised when the official C2PA SDK cannot be loaded. Verification must not be faked. */
 export class C2paSdkUnavailableError extends Error {
     public readonly code = "EXTERNAL_UNAVAILABLE";
+    public readonly reason: C2paSdkUnavailableReason;
 
-    public constructor(cause?: unknown) {
+    public constructor(
+        cause?: unknown,
+        reason: C2paSdkUnavailableReason = classifySdkError(cause),
+    ) {
         super(
             "The official C2PA SDK (@contentauth/c2pa-node) is required for signature " +
                 "verification but could not be loaded.",
         );
         this.name = "C2paSdkUnavailableError";
+        this.reason = reason;
         if (cause instanceof Error) this.cause = cause;
     }
 }
@@ -73,11 +97,17 @@ async function loadReader(source: SdkSource): Promise<Reader | null> {
     let sdk: typeof import("@contentauth/c2pa-node");
     try {
         sdk = await import("@contentauth/c2pa-node");
-        type SdkAsset = Parameters<typeof sdk.Reader.fromAsset>[0];
-        return await sdk.Reader.fromAsset(toSdkAsset(source) as SdkAsset);
     } catch (cause) {
         throw new C2paSdkUnavailableError(cause);
     }
+    if (typeof sdk?.Reader?.fromAsset !== "function") {
+        throw new C2paSdkUnavailableError(
+            new Error("SDK module does not expose Reader.fromAsset"),
+            "load-failed",
+        );
+    }
+    type SdkAsset = Parameters<typeof sdk.Reader.fromAsset>[0];
+    return await sdk.Reader.fromAsset(toSdkAsset(source) as SdkAsset);
 }
 
 /**
@@ -85,15 +115,29 @@ async function loadReader(source: SdkSource): Promise<Reader | null> {
  * Every result here is backed by the SDK's cryptographic validation.
  */
 export class C2paSdkAdapter implements C2paVerificationPort {
-    public constructor(private readonly loader: SdkLoader = loadReader) {}
+    private available: boolean;
+
+    public constructor(private readonly loader: SdkLoader = loadReader) {
+        // An injected loader is a deliberate stand-in. The default loader is only
+        // considered available once a real SDK call has succeeded.
+        this.available = loader !== loadReader;
+    }
+
+    /** True when this adapter can reach an SDK (or an injected stand-in) for verification. */
+    public isAvailable(): boolean {
+        return this.available;
+    }
 
     public async verify(asset: unknown): Promise<C2paVerificationResult> {
         const source = toSourceAsset(asset);
         let reader: Reader | null;
         try {
             reader = await this.loader(source);
+            this.available = true;
         } catch (cause) {
+            this.available = false;
             const detail = cause instanceof Error ? cause.message : "Unknown SDK error.";
+            const reason = cause instanceof C2paSdkUnavailableError ? cause.reason : "load-failed";
             return {
                 signatureStatus: "unverified",
                 signer: null,
@@ -101,7 +145,7 @@ export class C2paSdkAdapter implements C2paVerificationPort {
                 assertions: [],
                 validationFailures: [{ code: "sdk.error", message: detail }],
                 limitations: [
-                    `C2PA SDK verification failed: ${detail}`,
+                    `C2PA signature verification is unavailable on ${platformLabel()} (${reason}): ${detail}`,
                     "Signature was NOT verified; this result must not be treated as valid provenance.",
                 ],
             };
