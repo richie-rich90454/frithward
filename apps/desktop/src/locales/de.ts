@@ -1,6 +1,7 @@
 export const de: Record<string, string> = {
     wordmark: "Frithward",
-    tagline: "Die lokale Verarbeitung ist der Standard. Gehostete Verarbeitung ist optional und explizit.",
+    tagline:
+        "Die lokale Verarbeitung ist der Standard. Gehostete Verarbeitung ist optional und explizit.",
     language: "Sprache",
     "nav.primary": "Hauptnavigation",
     "nav.home": "Start",
