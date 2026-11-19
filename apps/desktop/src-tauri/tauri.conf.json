@@ -4,5 +4,20 @@
     "identifier": "org.frithward.app",
     "build": {
         "frontendDist": "../dist"
+    },
+    "app": {
+        "windows": [
+            {
+                "title": "Frithward",
+                "width": 1280,
+                "height": 800,
+                "resizable": true
+            }
+        ]
+    },
+    "bundle": {
+        "active": true,
+        "icon": ["icons/icon.ico", "icons/icon.icns", "icons/icon.png"],
+        "targets": "all"
     }
 }
