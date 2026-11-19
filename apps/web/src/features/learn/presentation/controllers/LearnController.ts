@@ -93,7 +93,11 @@ export const QUIZ: readonly QuizQuestion[] = [
     {
         id: "q-privacy",
         prompt: "Which detail is safest to leave visible when posting a photo of a public event?",
-        options: ["A readable name badge", "A licence plate", "A plain background with no identifying text"],
+        options: [
+            "A readable name badge",
+            "A licence plate",
+            "A plain background with no identifying text",
+        ],
         correctIndex: 2,
         explanation:
             "Identifying text and plates can expose people. Crop or blur them; a plain background carries far less information.",
