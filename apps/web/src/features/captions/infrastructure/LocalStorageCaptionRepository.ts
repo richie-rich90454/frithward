@@ -50,7 +50,11 @@ export class LocalStorageCaptionRepository implements CaptionRepository {
         try {
             record = JSON.parse(raw) as ProjectRecord;
         } catch (cause) {
-            throw new AppError("PROCESSING_FAILED", `Stored caption "${id}" is not valid JSON.`, cause);
+            throw new AppError(
+                "PROCESSING_FAILED",
+                `Stored caption "${id}" is not valid JSON.`,
+                cause,
+            );
         }
         if (
             typeof record?.id !== "string" ||
@@ -82,7 +86,10 @@ export class LocalStorageCaptionRepository implements CaptionRepository {
     private store(): StorageLike {
         const storage = this.storage ?? globalThis.localStorage;
         if (!storage) {
-            throw new AppError("EXTERNAL_UNAVAILABLE", "localStorage is not available in this environment.");
+            throw new AppError(
+                "EXTERNAL_UNAVAILABLE",
+                "localStorage is not available in this environment.",
+            );
         }
         return storage;
     }
