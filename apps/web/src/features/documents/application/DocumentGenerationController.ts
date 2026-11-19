@@ -2,12 +2,7 @@ import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
 import { Workbook } from "exceljs";
 import { PDFDocument } from "pdf-lib";
 import PptxGenJS from "pptxgenjs";
-import {
-    DocumentPolicy,
-    parseRows,
-    parseSections,
-    parseSlides,
-} from "../domain/DocumentModel";
+import { DocumentPolicy, parseRows, parseSections, parseSlides } from "../domain/DocumentModel";
 import type { DocumentInput, SlideInput, SpreadsheetInput } from "../domain/DocumentModel";
 import { DocxReader } from "./DocxReader";
 import { ZipController } from "./ZipController";
@@ -131,7 +126,10 @@ export class DocumentGenerationController {
                             children: [new TextRun({ text: input.title, bold: true, size: 32 })],
                         }),
                         ...input.sections.flatMap((section) => [
-                            new Paragraph({ text: section.heading, heading: HeadingLevel.HEADING_1 }),
+                            new Paragraph({
+                                text: section.heading,
+                                heading: HeadingLevel.HEADING_1,
+                            }),
                             new Paragraph({ children: [new TextRun(section.body)] }),
                         ]),
                     ],
