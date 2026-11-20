@@ -819,4 +819,85 @@ export const en: Record<string, string> = {
         "OCR accuracy depends on image quality, font and language coverage.",
     "result.OCR_LIMIT_LOCAL":
         "Recognition runs locally with tesseract.js using bundled language data; nothing is downloaded.",
+    "result.C2PA_SUMMARY_MISSING_FRAGMENT": " Missing info: {n} item(s).",
+    "result.SCAM_NEXT_CONTACT_KNOWN":
+        "Contact the person through a known channel to confirm the request.",
+    "result.SCAM_NEXT_NO_SEND": "Do not send money, codes, or credentials.",
+    "result.SCAM_NEXT_KEEP_EVIDENCE": "Keep the original message as evidence.",
+    "result.GUIDED_PAUSE_TITLE": "Stop and breathe",
+    "result.GUIDED_PAUSE_PLAIN":
+        "Do not click, reply, or pay anything right now. It is okay to take your time.",
+    "result.GUIDED_PAUSE_ACTION": "Put the phone or mouse down for a moment.",
+    "result.GUIDED_REVIEW_TITLE": "Look at the warning signs",
+    "result.GUIDED_REVIEW_PLAIN": "{findings}",
+    "result.GUIDED_REVIEW_NO_FINDINGS":
+        "We did not find obvious warning signs, but that does not mean the message is safe.",
+    "result.GUIDED_REVIEW_ACTION": "Read each point slowly. You can ask someone to read it with you.",
+    "result.GUIDED_CHECK_TITLE": "Check with someone you trust",
+    "result.GUIDED_CHECK_PLAIN":
+        "Call a family member or friend using a number you already know. Do not use a number from the message.",
+    "result.GUIDED_CHECK_ACTION": "Make the call before you do anything else.",
+    "result.GUIDED_PROTECT_TITLE": "Protect your accounts",
+    "result.GUIDED_PROTECT_PLAIN":
+        "If you entered a password or code, change it now on the official website or app. Do not use links from the message.",
+    "result.GUIDED_PROTECT_ACTION": "Change passwords and turn on extra security if it is offered.",
+    "result.GUIDED_REPORT_TITLE": "Report it",
+    "result.GUIDED_REPORT_PLAIN": "Keep the message and report it.{reportLine}",
+    "result.GUIDED_REPORT_ACTION": "Save the message and any screenshots.",
+    "result.GUIDED_SUPPORT_TITLE": "You are not alone",
+    "result.GUIDED_SUPPORT_PLAIN":
+        "Scams happen to careful people. If money was sent, contact your bank right away and report it.",
+    "result.GUIDED_SUPPORT_ACTION": "Keep this page open and take one step at a time.",
+    "result.PROTECTION_SUMMARY_APPLIED":
+        "Protection applied on an experimental basis using {method}. This does not guarantee prevention of misuse.",
+    "result.PROTECTION_SUMMARY_UNAVAILABLE":
+        "Protection is unavailable for this asset. This does not establish that the media is safe to publish.",
+    "result.PROTECTION_LIMIT_EXPERIMENTAL":
+        "Protection is experimental and does not guarantee prevention of misuse.",
+    "result.PROTECTION_NEXT_KEEP_ARTIFACTS": "Keep the original and protected artifacts together.",
+    "result.PROTECTION_NEXT_REEVALUATE": "Re-evaluate protection after any model or policy update.",
+    "result.DETECTION_SUMMARY_SIGNALS":
+        "{n} signal(s) observed for review. This does not establish authenticity or identify any person.",
+    "result.DETECTION_SUMMARY_NONE":
+        "No manipulation signals observed. Absence of signals does not establish authenticity.",
+    "result.DETECTION_NEXT_REVIEW_AUDIO":
+        "Review the flagged audio segments alongside the original recording.",
+    "result.DETECTION_NEXT_PROVENANCE_AUDIO":
+        "Compare the recording with provenance records where available.",
+    "result.DETECTION_NEXT_REVIEW_IMAGE": "Review the flagged regions alongside the original image.",
+    "result.DETECTION_NEXT_PROVENANCE_IMAGE":
+        "Compare the image with provenance records where available.",
+    "result.DETECTION_NEXT_REVIEW_VIDEO": "Review the flagged frames alongside the original video.",
+    "result.DETECTION_NEXT_PROVENANCE_VIDEO":
+        "Compare the video with provenance records where available.",
+    "result.DETECTION_NEXT_REVIEW_MULTIMODAL":
+        "Review the flagged audio and video segments together.",
+    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL":
+        "Compare the media with provenance records where available.",
+    "result.ANALYSIS_LIMIT_EVIDENCE":
+        "Detection outputs are evidence for review, not proof of authenticity.",
+    "result.ANALYSIS_LIMIT_MODEL_VARIATION":
+        "Model performance varies across datasets, languages, and recording conditions.",
+    "result.ANALYSIS_LIMIT_HUMAN_REVIEW": "Consequential decisions require independent human review.",
+    "result.ANALYSIS_LIMIT_AUDIO":
+        "Single-model audio scores do not establish synthesis or voice conversion.",
+    "result.ANALYSIS_LIMIT_IMAGE": "Frame-level image scores do not establish manipulation.",
+    "result.ANALYSIS_LIMIT_VIDEO": "Frame sampling can miss brief manipulations.",
+    "result.ANALYSIS_LIMIT_MULTIMODAL":
+        "Audio-video synchronization signals are sensitive to language and recording quality.",
+    "error.URL_REQUIRED": "URL required.",
+    "error.URL_LIMIT_EXCEEDED": "URL exceeds inspection limit.",
+    "error.QR_REQUIRED": "QR payload required.",
+    "error.QR_LIMIT_EXCEEDED": "QR payload exceeds inspection limit.",
+    "error.REPORT_DESCRIPTION_REQUIRED": "Report description required.",
+    "error.REPORT_DESCRIPTION_LIMIT": "Report description exceeds limit.",
+    "error.REPORT_SOURCE_REQUIRED": "Report source required.",
+    "error.MESSAGE_REQUIRED": "Message text required.",
+    "error.MESSAGE_LIMIT_EXCEEDED": "Message exceeds analysis limit.",
+    "error.GUIDED_STEP_MISSING": "No guided step available.",
+    "error.GUIDED_STEP_INVALID": "Invalid guided step.",
+    "error.REPORTING_UNAVAILABLE": "Reporting is not available.",
+    "error.ASSET_ID_REQUIRED": "Asset id required.",
+    "error.PROTECTION_METHOD_REQUIRED": "Protection method required.",
+    "error.ANALYSIS_CANCELLED": "Analysis cancelled.",
 };
