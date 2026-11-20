@@ -57,6 +57,27 @@ A reduction in one metric never establishes universal protection. A model that i
 
 Model cards must state intended use, prohibited use, architecture, training data, dataset licenses, evaluation results, known biases, hardware requirements, license, limitations, and version history.
 
+## Model governance and stage gates
+
+`MODEL_POLICY.md` owns stage gates and reviewer ownership. A card passes a gate only when every requirement is recorded; "no measurements in this repository" is an honest status, not a pass.
+
+| Stage | Entry requirements | Permitted use |
+| --- | --- | --- |
+| `experimental` | Complete 13-field card; artifact listed in `models/manifest.json` or explicitly absent. | Research and internal evaluation. |
+| `candidate` | Reproducible harness results, known biases, failure modes. | Opt-in preview with human review. |
+| `stable` | Cross-dataset evaluation, calibration, support owner, limitations displayed. | Product surfaces. |
+| `deprecated` | Migration path and removal date in version history. | No new integrations. |
+
+Reviewer ownership: the model owner submits the card; an independent model governance reviewer owns the stage decision; a dataset reviewer owns license/consent decisions; a security reviewer owns artifact checksum verification. No reviewer approves their own submission. Weights are never downloaded automatically; `scripts/verify_model_checksums.mjs` checks only locally present files.
+
+## Dataset removal
+
+`DATASET_POLICY.md` defines the artifact-removal procedure across Garage buckets, IndexedDB, Postgres (`user`, `session`, `scam_analyses`, `job_status`), and dataset caches. Deletion runs from upstream objects to client stores and caches, then backups. Completion requires empty re-queries at every location and a recorded verification in the ticket.
+
+## Reproduction and publication
+
+`RESEARCH_POLICY.md` requires a pinned harness command, artifact hash, dataset version/split, hardware, runtime, and warm-up policy for every metric. Synthetic fixtures must be labelled `synthetic: true` and results must say they are smoke tests. The only committed result, `research/results/audio-detection-synthetic.json`, is a harness smoke test on synthetic data and is not a performance claim. No metric may be published without a recorded reproduction command.
+
 ## Dataset policy
 
 Every dataset undergoes licensing, consent, and redistribution review before use. No non-consensual identity datasets. No default training on user uploads. Artifact-removal procedures must exist and be documented. Demographic limitations are recorded where evaluation data permits.
