@@ -20,6 +20,7 @@ import { GarageObjectStorage } from "./modules/storage/GarageObjectStorage.js";
 import { StorageRoutes } from "./modules/storage/StorageRoutes.js";
 import { openApiDocument } from "./openapi.js";
 import { createMetricsRoutes, metricsMiddleware } from "./telemetry/metrics.js";
+import { registerGracefulShutdown } from "./middleware/shutdown.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -73,7 +74,12 @@ if (betterAuth) app.all("/api/auth/*", (context) => betterAuth.handler(context.r
 
 app.get("/api/openapi.json", (context) => context.json(openApiDocument));
 
-serve({
+const server = serve({
     fetch: app.fetch,
     port: Number(process.env.PORT ?? 3000),
+});
+
+registerGracefulShutdown(server, async () => {
+    if (jobStore instanceof DatabaseJobStatusStore) await jobStore.close();
+    await databaseHealth.close();
 });
