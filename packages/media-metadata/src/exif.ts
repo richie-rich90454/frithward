@@ -1,3 +1,20 @@
+export interface MetadataRecord {
+    kind: string;
+    entries: Readonly<Record<string, string>>;
+}
+
+export class MetadataInspector {
+    public inspect(record: MetadataRecord): readonly string[] {
+        const findings: string[] = [];
+        for (const [key, value] of Object.entries(record.entries)) {
+            if (key.toLowerCase().includes("gps") || key.toLowerCase().includes("location")) {
+                findings.push(`Location metadata present: ${key}=${value}`);
+            }
+        }
+        return findings;
+    }
+}
+
 export type ParsedFieldValue = string | number | boolean | null;
 
 export type ParsedFormat = "jpeg" | "png" | "unknown";
@@ -195,7 +212,8 @@ class TiffReader {
             const valueCount = this.u32(entry + 4);
             const name = tags[tag] ?? hexTag(tag);
             const value = this.readValue(entry + 8, type, valueCount);
-            if (value !== null) fields[name] = value;
+            const isPointer = tags === IFD0_TAGS && (tag === 0x8769 || tag === 0x8825);
+            if (value !== null && !isPointer) fields[name] = value;
             if (tags === IFD0_TAGS && tag === 0x8769 && typeof value === "number")
                 this.readIfd(value, EXIF_TAGS, fields, depth + 1);
             if (tags === IFD0_TAGS && tag === 0x8825 && typeof value === "number")
