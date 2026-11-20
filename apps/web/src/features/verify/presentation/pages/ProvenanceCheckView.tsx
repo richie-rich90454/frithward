@@ -1,13 +1,19 @@
 import { For, Show, createSignal, onCleanup } from "solid-js";
 import { BadgeCheck } from "lucide-solid";
+import { useCases } from "../../../../cases/CaseProvider.js";
 import { ProvenanceCheckController } from "../controllers/ProvenanceCheckController";
 import type { ProvenanceInspectionView } from "../controllers/ProvenanceCheckController";
 
 interface ProvenanceCheckViewProps {
     result: ProvenanceInspectionView | null;
     error: string | null;
-    onInspect: (manifestText: string) => Promise<unknown>;
+    saveError: string | null;
+    onInspect: (manifestText: string) => Promise<void>;
+    onInspectFile: (input: { name: string; bytes: Uint8Array }) => Promise<void>;
 }
+
+const ACCEPTED_FILES =
+    ".jpg,.jpeg,.png,.webp,.mp4,.json,application/json,image/jpeg,image/png,image/webp,video/mp4";
 
 function Value(props: { value: string | null }) {
     return <>{props.value ?? "Not provided"}</>;
@@ -15,6 +21,7 @@ function Value(props: { value: string | null }) {
 
 export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
     const [manifest, setManifest] = createSignal("");
+    const [file, setFile] = createSignal<File | null>(null);
     return (
         <section>
             <h1>
@@ -23,27 +30,58 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
             </h1>
             <p role="note">
                 No native C2PA SDK is connected here. The signature is read from the manifest and is
-                not cryptographically verified.
+                not cryptographically verified. Binary files are checked locally only; when no
+                embedded manifest can be read, the result is reported as unavailable rather than
+                valid.
             </p>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
-                    void props.onInspect(manifest());
+                    const selected = file();
+                    if (!selected) return;
+                    void selected.arrayBuffer().then((buffer) =>
+                        props.onInspectFile({
+                            name: selected.name,
+                            bytes: new Uint8Array(buffer),
+                        }),
+                    );
                 }}
             >
                 <label>
-                    C2PA manifest (JSON)
-                    <textarea
-                        value={manifest()}
-                        rows={6}
-                        placeholder='{"signature":{"issuer":"...","alg":"..."}}'
-                        onInput={(event) => setManifest(event.currentTarget.value)}
+                    File to check
+                    <input
+                        type="file"
+                        accept={ACCEPTED_FILES}
+                        onChange={(event) => setFile(event.currentTarget.files?.[0] ?? null)}
                     />
                 </label>
-                <button type="submit">Inspect manifest</button>
+                <button type="submit">Inspect file</button>
             </form>
+            <details>
+                <summary>Advanced: paste C2PA JSON</summary>
+                <form
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        void props.onInspect(manifest());
+                    }}
+                >
+                    <label>
+                        C2PA manifest (JSON)
+                        <textarea
+                            value={manifest()}
+                            rows={6}
+                            placeholder='{"signature":{"issuer":"...","alg":"..."}}'
+                            onInput={(event) => setManifest(event.currentTarget.value)}
+                        />
+                    </label>
+                    <button type="submit">Inspect manifest</button>
+                </form>
+            </details>
             <Show when={props.error}>
                 <p role="alert">{props.error}</p>
+            </Show>
+            <Show when={props.saveError}>
+                <p role="alert">{props.saveError}</p>
             </Show>
             <Show when={props.result} keyed>
                 {(result) => (
@@ -203,21 +241,65 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
     );
 }
 
+async function sha256(bytes: Uint8Array): Promise<string> {
+    const copy = new Uint8Array(bytes.length);
+    copy.set(bytes);
+    const digest = await crypto.subtle.digest("SHA-256", copy);
+    return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join(
+        "",
+    );
+}
+
 export function ProvenanceCheckPage() {
     const controller = new ProvenanceCheckController();
+    const { saveCase } = useCases();
     const [result, setResult] = createSignal(controller.getResult());
     const [error, setError] = createSignal(controller.getError());
+    const [saveError, setSaveError] = createSignal<string | null>(null);
     onCleanup(
         controller.subscribe(() => {
             setResult(controller.getResult());
             setError(controller.getError());
         }),
     );
+
+    const persistCase = async (title: string, hash: string | null): Promise<void> => {
+        const view = controller.getResult();
+        if (!view) return;
+        setSaveError(null);
+        try {
+            await saveCase({
+                kind: "provenance",
+                title,
+                inputs: { source: title },
+                findings: view.validationFailures.map((failure) => ({
+                    label: failure.code,
+                    severity: "medium",
+                    detail: failure.message,
+                })),
+                limitations: [...view.limitations],
+                artifacts: hash ? [{ kind: "provenance-file", name: title, hash }] : [],
+                nextSteps: [],
+            });
+        } catch (cause) {
+            setSaveError(cause instanceof Error ? cause.message : "Unable to save case.");
+        }
+    };
+
     return (
         <ProvenanceCheckView
             result={result()}
             error={error()}
-            onInspect={(manifestText) => controller.inspect(manifestText)}
+            saveError={saveError()}
+            onInspect={async (manifestText) => {
+                await controller.inspect(manifestText);
+                await persistCase("Pasted C2PA manifest", null);
+            }}
+            onInspectFile={async ({ name, bytes }) => {
+                const hash = await sha256(bytes);
+                await controller.inspectFile({ name, bytes });
+                await persistCase(name, hash);
+            }}
         />
     );
 }
