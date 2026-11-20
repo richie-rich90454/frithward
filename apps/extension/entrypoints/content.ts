@@ -6,11 +6,18 @@ export default defineContentScript({
     main() {
         browser.runtime.onMessage.addListener((message: unknown) => {
             if (typeof message !== "object" || message === null) return undefined;
-            if ((message as { type?: string }).type !== "frithward:check-page") return undefined;
+            const type = (message as { type?: string }).type;
+            if (type !== "frithward:check-page" && type !== "frithward:check-selection") {
+                return undefined;
+            }
+            const text =
+                type === "frithward:check-selection"
+                    ? (window.getSelection()?.toString() ?? "")
+                    : (document.body?.innerText.slice(0, 20000) ?? "");
             return Promise.resolve({
                 type: "frithward:check-page-result",
                 url: window.location.href,
-                text: document.body?.innerText.slice(0, 20000) ?? "",
+                text,
             });
         });
     },
