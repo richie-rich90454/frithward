@@ -15,13 +15,13 @@ function addressText(value: unknown): string {
     if (typeof value === "string") return value;
     const address = value as { text?: string; address?: string; name?: string };
     if (address.text) return address.text;
-    if (address.address) return address.name ? `${address.name} <${address.address}>` : address.address;
+    if (address.address)
+        return address.name ? `${address.name} <${address.address}>` : address.address;
     return "";
 }
 
 export async function parseEmail(raw: string): Promise<ParsedEmail> {
-    if (raw.trim().length === 0)
-        throw new AppError("VALIDATION_FAILED", "Email content required.");
+    if (raw.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Email content required.");
     try {
         const email = await PostalMime.parse(raw);
         return {
