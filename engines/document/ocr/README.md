@@ -14,15 +14,15 @@ Optical character recognition surface. The engine validates the document id and 
 
 ## Interface
 
-| Item            | Value                                                   |
-| --------------- | ------------------------------------------------------- |
-| Request         | `OcrRequest { document_id, language = "en", document_base64?, document_path? }` |
-| Response        | `OcrResult { document_id, text: str, status, reason, limitations }` |
-| Validation      | `document_id` must be non-empty                         |
-| Complexity      | O(p) in pixels per page                                 |
-| Streaming       | Per page                                                |
-| Cancellation    | `AbortSignal` between pages                             |
-| Model lifecycle | Language data loads separately from inference           |
+| Item | Value |
+| --- | --- |
+| Request | `OcrRequest { document_id, language = "en", document_base64?, document_path? }` |
+| Response | `OcrResult { document_id, text: str, status, reason, limitations }` |
+| Validation | `document_id` must be non-empty |
+| Complexity | O(p) in pixels per page |
+| Streaming | Per page |
+| Cancellation | `AbortSignal` between pages |
+| Model lifecycle | Language data loads separately from inference |
 
 ## Metrics
 

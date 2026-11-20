@@ -14,15 +14,15 @@ Experimental temporal and frame-level synthetic media detection. The engine vali
 
 ## Interface
 
-| Item            | Value                                                        |
-| --------------- | ------------------------------------------------------------ |
+| Item            | Value                                                                          |
+| --------------- | ------------------------------------------------------------------------------ |
 | Request         | `DetectionRequest { video_id, sample_frames = 8, video_path?, frame_base64? }` |
-| Response        | `DetectionResult { video_id, indicators, limitations, status, reason }` |
-| Validation      | Non-empty video id; positive sample count                    |
-| Complexity      | O(f·p) in sampled frames and pixels                          |
-| Streaming       | Sampled frames                                               |
-| Cancellation    | Between frames                                               |
-| Model lifecycle | Load once, warm up, infer, release; stage-gated              |
+| Response        | `DetectionResult { video_id, indicators, limitations, status, reason }`        |
+| Validation      | Non-empty video id; positive sample count                                      |
+| Complexity      | O(f·p) in sampled frames and pixels                                            |
+| Streaming       | Sampled frames                                                                 |
+| Cancellation    | Between frames                                                                 |
+| Model lifecycle | Load once, warm up, infer, release; stage-gated                                |
 
 ## Metrics
 

@@ -13,15 +13,15 @@ Deterministic trim metadata computation. The engine validates the time range and
 
 ## Interface
 
-| Item            | Value                                                                  |
-| --------------- | ---------------------------------------------------------------------- |
-| Request         | `TrimRequest { video_id: str, start_ms: int = 0, end_ms: int = 1000, fps: float \| None, sample_frames: int \| None }` |
-| Response        | `TrimResult { video_id, duration_ms, frame_count, sampled_frame_count, sample_stride, status, detail, limitations }` |
-| Validation      | Non-empty id; `end_ms > start_ms`; `fps` and `sample_frames` positive if supplied |
-| Complexity      | O(1) in supplied metadata                                              |
-| Streaming       | Chunked with bounded memory                                            |
-| Cancellation    | At chunk boundaries                                                    |
-| Model lifecycle | Deterministic processing needs no model                                |
+| Item | Value |
+| --- | --- |
+| Request | `TrimRequest { video_id: str, start_ms: int = 0, end_ms: int = 1000, fps: float \| None, sample_frames: int \| None }` |
+| Response | `TrimResult { video_id, duration_ms, frame_count, sampled_frame_count, sample_stride, status, detail, limitations }` |
+| Validation | Non-empty id; `end_ms > start_ms`; `fps` and `sample_frames` positive if supplied |
+| Complexity | O(1) in supplied metadata |
+| Streaming | Chunked with bounded memory |
+| Cancellation | At chunk boundaries |
+| Model lifecycle | Deterministic processing needs no model |
 
 ## Metrics
 

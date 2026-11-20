@@ -15,15 +15,15 @@ Experimental synthetic speech detection surface. The engine validates an audio i
 
 ## Interface
 
-| Item            | Value                                                                         |
-| --------------- | ----------------------------------------------------------------------------- |
-| Request         | `DetectionRequest { audio_id, audio_base64?, audio_path? }`                   |
-| Response        | `DetectionResult { audio_id, indicators, limitations, status, reason }`       |
-| Validation      | `audio_id` must be non-empty                                                  |
-| Complexity      | O(n) in samples for feature extraction; model inference is model-specific     |
-| Streaming       | Chunked with overlap and bounded memory                                       |
-| Cancellation    | `AbortSignal` checked at chunk boundaries                                     |
-| Model lifecycle | Load once, warm up, infer, release; stage-gated                               |
+| Item            | Value                                                                     |
+| --------------- | ------------------------------------------------------------------------- |
+| Request         | `DetectionRequest { audio_id, audio_base64?, audio_path? }`               |
+| Response        | `DetectionResult { audio_id, indicators, limitations, status, reason }`   |
+| Validation      | `audio_id` must be non-empty                                              |
+| Complexity      | O(n) in samples for feature extraction; model inference is model-specific |
+| Streaming       | Chunked with overlap and bounded memory                                   |
+| Cancellation    | `AbortSignal` checked at chunk boundaries                                 |
+| Model lifecycle | Load once, warm up, infer, release; stage-gated                           |
 
 ## Metrics
 

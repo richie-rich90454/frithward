@@ -172,7 +172,20 @@ components:
             enum: [draft, active, archived]
         Case:
             type: object
-            required: [id, kind, title, inputs, findings, artifacts, nextSteps, limitations, status, createdAt, updatedAt]
+            required:
+                [
+                    id,
+                    kind,
+                    title,
+                    inputs,
+                    findings,
+                    artifacts,
+                    nextSteps,
+                    limitations,
+                    status,
+                    createdAt,
+                    updatedAt,
+                ]
             properties:
                 id:
                     type: string

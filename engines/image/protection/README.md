@@ -15,15 +15,15 @@ Experimental face protection research surface. The engine validates an image id,
 
 ## Interface
 
-| Item            | Value                                            |
-| --------------- | ------------------------------------------------ |
-| Request         | `ProtectionRequest { image_id, image_base64?, image_path? }` |
+| Item            | Value                                                                   |
+| --------------- | ----------------------------------------------------------------------- |
+| Request         | `ProtectionRequest { image_id, image_base64?, image_path? }`            |
 | Response        | `ProtectionResult { image_id, protected, status, reason, limitations }` |
-| Validation      | `image_id` must be non-empty                     |
-| Complexity      | Model-specific                                   |
-| Streaming       | Frame                                            |
-| Cancellation    | Between frames                                   |
-| Model lifecycle | Stage-gated; load once, warm up, infer, release  |
+| Validation      | `image_id` must be non-empty                                            |
+| Complexity      | Model-specific                                                          |
+| Streaming       | Frame                                                                   |
+| Cancellation    | Between frames                                                          |
+| Model lifecycle | Stage-gated; load once, warm up, infer, release                         |
 
 ## Metrics
 

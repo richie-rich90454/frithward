@@ -14,15 +14,15 @@ Honest language heuristic: Unicode script detection for Chinese, Japanese, Arabi
 
 ## Interface
 
-| Item            | Value                                                 |
-| --------------- | ----------------------------------------------------- |
-| Request         | `LanguageRequest { text: str, source: str = "auto" }` |
-| Response        | `LanguageResult { language, text, source, confidence, method, matched_tokens, limitations }` |
-| Validation      | Non-empty text                                        |
-| Complexity      | O(n) in characters                                    |
-| Streaming       | Block                                                 |
-| Cancellation    | Not cancellable                                       |
-| Model lifecycle | No model; script ranges and stopword scoring only     |
+| Item | Value |
+| --- | --- |
+| Request | `LanguageRequest { text: str, source: str = "auto" }` |
+| Response | `LanguageResult { language, text, source, confidence, method, matched_tokens, limitations }` |
+| Validation | Non-empty text |
+| Complexity | O(n) in characters |
+| Streaming | Block |
+| Cancellation | Not cancellable |
+| Model lifecycle | No model; script ranges and stopword scoring only |
 
 ## Metrics
 

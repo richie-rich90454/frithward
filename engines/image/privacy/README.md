@@ -14,15 +14,15 @@ Local metadata inspection for caller-supplied JPEG/PNG bytes. The engine parses 
 
 ## Interface
 
-| Item            | Value                                             |
-| --------------- | ------------------------------------------------- |
-| Request         | `PrivacyRequest { image_id: str, image_base64: str \| None, image_path: str \| None }` |
-| Response        | `PrivacyResult { image_id, findings: list[str], status, detail, metadata: list[MetadataField], limitations }` |
-| Validation      | `image_id` must be non-empty; base64 must be valid |
-| Complexity      | O(b) in supplied bytes                            |
-| Streaming       | Block                                             |
-| Cancellation    | Not cancellable                                   |
-| Model lifecycle | No model; standard-library EXIF parsing only      |
+| Item | Value |
+| --- | --- |
+| Request | `PrivacyRequest { image_id: str, image_base64: str \| None, image_path: str \| None }` |
+| Response | `PrivacyResult { image_id, findings: list[str], status, detail, metadata: list[MetadataField], limitations }` |
+| Validation | `image_id` must be non-empty; base64 must be valid |
+| Complexity | O(b) in supplied bytes |
+| Streaming | Block |
+| Cancellation | Not cancellable |
+| Model lifecycle | No model; standard-library EXIF parsing only |
 
 ## Metrics
 

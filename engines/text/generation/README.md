@@ -14,15 +14,15 @@ Text generation surface with explicit limits. The engine validates the prompt an
 
 ## Interface
 
-| Item            | Value                                                      |
-| --------------- | ---------------------------------------------------------- |
+| Item            | Value                                                                   |
+| --------------- | ----------------------------------------------------------------------- |
 | Request         | `GenerationRequest { prompt: str, max_tokens: int = 256, model_path? }` |
-| Response        | `GenerationResult { text, tokens, status, reason, limitations }` |
-| Validation      | Non-empty prompt; positive token budget                    |
-| Complexity      | O(max_tokens) decode steps                                 |
-| Streaming       | Token streaming                                            |
-| Cancellation    | `AbortSignal` between tokens                               |
-| Model lifecycle | Load once, warm up, generate, release; stage-gated         |
+| Response        | `GenerationResult { text, tokens, status, reason, limitations }`        |
+| Validation      | Non-empty prompt; positive token budget                                 |
+| Complexity      | O(max_tokens) decode steps                                              |
+| Streaming       | Token streaming                                                         |
+| Cancellation    | `AbortSignal` between tokens                                            |
+| Model lifecycle | Load once, warm up, generate, release; stage-gated                      |
 
 ## Metrics
 
