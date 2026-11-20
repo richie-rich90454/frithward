@@ -5,7 +5,12 @@ export interface AssertionInfo {
     present: boolean;
 }
 
+export type FileSource = "paste" | "json-file" | "binary-file";
+
 export interface ProvenanceResult {
+    source: FileSource;
+    fileName: string | null;
+    sha256: string | null;
     signatureStatus: SignatureStatus;
     signer: string | null;
     timestamp: string | null;
@@ -14,12 +19,47 @@ export interface ProvenanceResult {
     summary: string;
 }
 
+export interface FileLike {
+    readonly name: string;
+    arrayBuffer(): Promise<ArrayBuffer>;
+}
+
+export type EmbeddedManifestResult =
+    | { kind: "found"; manifest: unknown }
+    | { kind: "missing" }
+    | { kind: "unavailable"; reason: string };
+
+export interface EmbeddedManifestExtractor {
+    extract(bytes: Uint8Array): Promise<EmbeddedManifestResult>;
+}
+
+/** The native C2PA SDK cannot run in a browser, so the default never claims a verified signature. */
+export const BROWSER_EXTRACTOR: EmbeddedManifestExtractor = {
+    async extract() {
+        return {
+            kind: "unavailable",
+            reason: "Embedded C2PA extraction needs the native @contentauth/c2pa-node SDK, which is not available in this browser.",
+        };
+    },
+};
+
+export async function sha256Hex(bytes: Uint8Array): Promise<string> {
+    const digest = await globalThis.crypto.subtle.digest("SHA-256", new Uint8Array(bytes));
+    return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 const LIMITATIONS = [
-    "This page only parses the manifest text you paste. It does not cryptographically verify the signature, the certificate chain, or the asset hash.",
-    "Every field shown here comes from the pasted manifest and could have been changed. Treat the output as a summary, not as proof of origin.",
+    "This page reads the selected file or pasted JSON in your browser and does not upload it. It does not cryptographically verify the signature, the certificate chain, or the asset hash.",
+    "Every field shown here comes from the file itself and could have been changed. Treat the output as a summary, not as proof of origin.",
     "Timestamps are strings from the manifest and were not checked against a trusted time source.",
     "Assertions are reported as present only; their contents were not validated.",
 ];
+
+interface ManifestMeta {
+    source: FileSource;
+    fileName: string | null;
+    sha256: string | null;
+}
 
 function asRecord(value: unknown): Record<string, unknown> | null {
     if (typeof value !== "object" || value === null || Array.isArray(value)) return null;
@@ -57,6 +97,8 @@ export class ProvenanceController {
     private result: ProvenanceResult | null = null;
     private error: string | null = null;
 
+    public constructor(private readonly extractor: EmbeddedManifestExtractor = BROWSER_EXTRACTOR) {}
+
     public subscribe(listener: () => void): () => void {
         this.listeners.add(listener);
         return () => {
@@ -73,20 +115,80 @@ export class ProvenanceController {
     }
 
     public verify(manifestText: string): void {
-        let parsed: unknown;
+        this.applyManifest(manifestText, { source: "paste", fileName: null, sha256: null });
+    }
+
+    public async verifyFile(file: FileLike): Promise<void> {
+        let bytes: Uint8Array;
+        let sha256: string;
         try {
-            parsed = JSON.parse(manifestText) as unknown;
+            bytes = new Uint8Array(await file.arrayBuffer());
+            sha256 = await sha256Hex(bytes);
         } catch {
-            this.error = "That text is not valid JSON. Paste a C2PA manifest object.";
-            this.result = null;
-            this.notify();
+            this.fail("The selected file could not be read in this browser.");
             return;
         }
-        const manifest = asRecord(parsed);
+        const meta: ManifestMeta = { source: "binary-file", fileName: file.name, sha256 };
+
+        if (/\.json$/i.test(file.name)) {
+            this.applyManifest(new TextDecoder().decode(bytes), { ...meta, source: "json-file" });
+            return;
+        }
+
+        let extraction: EmbeddedManifestResult;
+        try {
+            extraction = await this.extractor.extract(bytes);
+        } catch (cause) {
+            extraction = {
+                kind: "unavailable",
+                reason: cause instanceof Error ? cause.message : "Extractor failed.",
+            };
+        }
+
+        if (extraction.kind === "found") {
+            this.inspectManifest(extraction.manifest, meta, [
+                "The manifest was read from the file locally; its signature was not cryptographically verified here.",
+            ]);
+            return;
+        }
+
+        const unavailable =
+            extraction.kind === "unavailable"
+                ? "Embedded manifest extraction and cryptographic verification are unavailable here: " +
+                  extraction.reason
+                : "No embedded C2PA manifest was found in this file. Cryptographic verification is unavailable in this browser, so no signature was checked.";
+        this.result = {
+            ...meta,
+            signatureStatus: extraction.kind === "unavailable" ? "unverified" : "missing",
+            signer: null,
+            timestamp: null,
+            assertions: [],
+            limitations: [...LIMITATIONS, unavailable],
+            summary: unavailable,
+        };
+        this.error = null;
+        this.notify();
+    }
+
+    private applyManifest(text: string, meta: ManifestMeta): void {
+        let parsed: unknown;
+        try {
+            parsed = JSON.parse(text) as unknown;
+        } catch {
+            this.fail("That input is not valid JSON. Provide a C2PA manifest object as JSON.");
+            return;
+        }
+        if (!asRecord(parsed)) {
+            this.fail("The JSON must be an object describing a manifest.");
+            return;
+        }
+        this.inspectManifest(parsed, meta, []);
+    }
+
+    private inspectManifest(value: unknown, meta: ManifestMeta, extraLimitations: string[]): void {
+        const manifest = asRecord(value);
         if (!manifest) {
-            this.error = "The JSON must be an object describing a manifest.";
-            this.result = null;
-            this.notify();
+            this.fail("The manifest must be an object.");
             return;
         }
 
@@ -117,14 +219,21 @@ export class ProvenanceController {
             missing: "No signature was found in the manifest.",
         };
         this.result = {
+            ...meta,
             signatureStatus,
             signer,
             timestamp,
             assertions,
-            limitations: [...LIMITATIONS],
+            limitations: [...LIMITATIONS, ...extraLimitations],
             summary: `${statusText[signatureStatus]} Signer: ${signer ?? "unknown"}; ${assertions.length} assertion(s) listed.`,
         };
         this.error = null;
+        this.notify();
+    }
+
+    private fail(message: string): void {
+        this.error = message;
+        this.result = null;
         this.notify();
     }
 
