@@ -3,6 +3,7 @@ import { Captions } from "lucide-solid";
 import type { CaptionStudioViewModel } from "@frithward/media-core";
 import type { CaptionGenerationStage } from "../controllers/CaptionStudioController";
 import { CaptionStudioController } from "../controllers/CaptionStudioController";
+import { useI18n } from "../../../../i18n/index.js";
 import "../captions.css";
 
 // Solid's JSX types restrict capture to "user"/"environment"; pass the requested
@@ -50,6 +51,7 @@ interface CaptionStudioViewProps {
 }
 
 export function CaptionStudioView(props: CaptionStudioViewProps) {
+    const { t } = useI18n();
     const [draft, setDraft] = createSignal("");
     const [audioFile, setAudioFile] = createSignal<File | null>(null);
     const [modelUrl, setModelUrl] = createSignal("");
@@ -110,7 +112,7 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
         >
             <h1>
                 <Captions class="fw-icon" />
-                Caption studio
+                {t("captions.title")}
             </h1>
             <p>
                 {props.viewModel.title} &middot; {props.viewModel.language}
@@ -128,12 +130,9 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     });
                 }}
             >
-                <p>
-                    Drag and drop an audio or video file here, or choose one below. Files are
-                    decoded locally with WebCodecs.
-                </p>
+                <p>{t("captions.dragDrop")}</p>
                 <label>
-                    Audio or video file (decoded locally with WebCodecs)
+                    {t("captions.fileLabel")}
                     <input
                         type="file"
                         accept="audio/*,video/*"
@@ -141,7 +140,7 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     />
                 </label>
                 <label>
-                    Record audio
+                    {t("captions.recordAudio")}
                     <input
                         type="file"
                         accept="audio/*"
@@ -150,16 +149,16 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     />
                 </label>
                 <details>
-                    <summary>Advanced: supply your own Whisper WASM runtime and model</summary>
+                    <summary>{t("captions.advanced")}</summary>
                     <label>
-                        Whisper model URL (blank uses /models/whisper-tiny.bin if installed)
+                        {t("captions.modelUrl")}
                         <input
                             value={modelUrl()}
                             onInput={(event) => setModelUrl(event.currentTarget.value)}
                         />
                     </label>
                     <label>
-                        Whisper WASM URL (blank uses the local WebGPU engine above)
+                        {t("captions.wasmUrl")}
                         <input
                             value={wasmUrl()}
                             onInput={(event) => setWasmUrl(event.currentTarget.value)}
@@ -167,7 +166,7 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     </label>
                 </details>
                 <label>
-                    Language code
+                    {t("captions.languageCode")}
                     <input
                         value={language()}
                         onInput={(event) => setLanguage(event.currentTarget.value)}
@@ -181,7 +180,7 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                         props.generationStage === "transcribing"
                     }
                 >
-                    Generate captions
+                    {t("captions.generate")}
                 </button>
                 <button
                     type="button"
@@ -191,40 +190,30 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                         props.generationStage !== "transcribing"
                     }
                 >
-                    Cancel
+                    {t("captions.cancel")}
                 </button>
             </form>
             <p>
-                Status: {props.generationStage}
+                {t("captions.status")} {props.generationStage}
                 <Show when={props.generationMessage}>{(message) => ` - ${message()}`}</Show>
             </p>
-            <p>Transcription runs locally with WebGPU (Chrome/Edge 113+). No upload.</p>
-            <p>
-                The default engine needs no model files from you: model weights are downloaded from
-                Hugging Face on first use and cached in the browser, so the first run needs network
-                and later runs can work offline. No native install and no cross-origin isolation
-                (COOP/COEP) headers are required. To use fully local/offline weights instead, supply
-                your own Whisper WASM runtime and a 16-bit mono 16 kHz .bin model under Advanced
-                (that path needs a cross-origin-isolated page).
-            </p>
+            <p>{t("captions.localNote")}</p>
+            <p>{t("captions.modelNote")}</p>
             <div class="caption-studio-actions">
                 <button type="button" onClick={props.onUndo} disabled={!props.canUndo}>
-                    Undo
+                    {t("captions.undo")}
                 </button>
                 <button type="button" onClick={props.onRedo} disabled={!props.canRedo}>
-                    Redo
+                    {t("captions.redo")}
                 </button>
                 <button type="button" onClick={() => props.onExport("vtt")}>
-                    Export VTT
+                    {t("captions.exportVtt")}
                 </button>
                 <button type="button" onClick={() => props.onExport("srt")}>
-                    Export SRT
+                    {t("captions.exportSrt")}
                 </button>
             </div>
-            <p class="caption-studio-shortcuts">
-                Keyboard: Ctrl/Cmd+Z undo / Ctrl/Cmd+Shift+Z redo / Ctrl+Y redo. Delete removes the
-                selected caption when no text field is focused.
-            </p>
+            <p class="caption-studio-shortcuts">{t("captions.shortcuts")}</p>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -240,9 +229,9 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     setNewSpeaker("");
                 }}
             >
-                <h2>Caption segments</h2>
+                <h2>{t("captions.segments")}</h2>
                 <label>
-                    Start (ms)
+                    {t("time.startMs")}
                     <input
                         type="number"
                         value={newStart()}
@@ -250,7 +239,7 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     />
                 </label>
                 <label>
-                    End (ms)
+                    {t("time.endMs")}
                     <input
                         type="number"
                         value={newEnd()}
@@ -258,20 +247,20 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     />
                 </label>
                 <label>
-                    Caption text
+                    {t("captions.captionText")}
                     <input
                         value={newText()}
                         onInput={(event) => setNewText(event.currentTarget.value)}
                     />
                 </label>
                 <label>
-                    Speaker (optional)
+                    {t("captions.speaker")}
                     <input
                         value={newSpeaker()}
                         onInput={(event) => setNewSpeaker(event.currentTarget.value)}
                     />
                 </label>
-                <button type="submit">Add segment</button>
+                <button type="submit">{t("action.addSegment")}</button>
             </form>
             <form
                 onSubmit={(event) => {
@@ -280,20 +269,20 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                 }}
             >
                 <label>
-                    Search captions
+                    {t("captions.search")}
                     <input
                         value={searchQuery()}
                         onInput={(event) => setSearchQuery(event.currentTarget.value)}
                     />
                 </label>
                 <label>
-                    Replace with
+                    {t("captions.replaceWith")}
                     <input
                         value={replaceText()}
                         onInput={(event) => setReplaceText(event.currentTarget.value)}
                     />
                 </label>
-                <button type="submit">Replace all</button>
+                <button type="submit">{t("captions.replaceAll")}</button>
             </form>
             <div class="caption-studio-editor">
                 <ul>
@@ -317,7 +306,7 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                                     </button>
                                     <div class="caption-studio-timings">
                                         <label>
-                                            Start (ms)
+                                            {t("time.startMs")}
                                             <input
                                                 type="number"
                                                 value={start()}
@@ -327,7 +316,7 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                                             />
                                         </label>
                                         <label>
-                                            End (ms)
+                                            {t("time.endMs")}
                                             <input
                                                 type="number"
                                                 value={end()}
@@ -346,14 +335,14 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                                                 })
                                             }
                                         >
-                                            Apply retime
+                                            {t("captions.applyRetime")}
                                         </button>
                                     </div>
                                     <button
                                         type="button"
                                         onClick={() => props.onRemoveSegment(segment.id)}
                                     >
-                                        Remove
+                                        {t("captions.remove")}
                                     </button>
                                 </li>
                             );
@@ -370,13 +359,13 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                             }}
                         >
                             <label>
-                                Caption text
+                                {t("captions.captionText")}
                                 <input
                                     value={draft()}
                                     onInput={(event) => setDraft(event.currentTarget.value)}
                                 />
                             </label>
-                            <button type="submit">Save caption</button>
+                            <button type="submit">{t("captions.saveCaption")}</button>
                         </form>
                     )}
                 </Show>
@@ -389,7 +378,8 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
 }
 
 export function CaptionStudioPage() {
-    const controller = new CaptionStudioController();
+    const { t } = useI18n();
+    const controller = new CaptionStudioController({ translate: t });
     const [viewModel, setViewModel] = createSignal(controller.getViewModel());
     const [error, setError] = createSignal(controller.getError());
     const [canUndo, setCanUndo] = createSignal(controller.canUndo());
