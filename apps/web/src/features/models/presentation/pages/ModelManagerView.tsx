@@ -4,6 +4,7 @@ import type {
     RegisterCardInput,
 } from "../controllers/ModelManagerController";
 import { ModelManagerController } from "../controllers/ModelManagerController";
+import { useI18n } from "../../../../i18n/index.js";
 
 interface ModelManagerViewProps {
     viewModel: ModelManagerViewModel;
@@ -24,30 +25,43 @@ function formatBytes(bytes: number): string {
 }
 
 export function ModelManagerView(props: ModelManagerViewProps) {
+    const { t } = useI18n();
     return (
         <section>
-            <h1>Model manager</h1>
+            <h1>{t("models.title")}</h1>
 
-            <h2>Installed models</h2>
-            <p>Total installed size: {formatBytes(props.viewModel.totalSizeBytes)}</p>
+            <h2>{t("models.installed")}</h2>
+            <p>
+                {t("models.totalSize").replace(
+                    "{size}",
+                    formatBytes(props.viewModel.totalSizeBytes),
+                )}
+            </p>
             <Show
                 when={props.viewModel.installed.length > 0}
-                fallback={<p>No models are installed.</p>}
+                fallback={<p>{t("models.noInstalled")}</p>}
             >
                 <ul>
                     <For each={props.viewModel.installed}>
                         {(model) => (
                             <li>
-                                <strong>{model.id}</strong> — {model.stage} —{" "}
-                                {formatBytes(model.sizeBytes)} (installed {model.installedAt})
+                                <strong>{model.id}</strong> — {t(`models.stage.${model.stage}`)} —{" "}
+                                {formatBytes(model.sizeBytes)} (
+                                {t("models.installedAt").replace("{date}", model.installedAt)})
                                 <Show when={model.license}>
-                                    <div>License: {model.license}</div>
+                                    <div>
+                                        {t("models.license")} {model.license}
+                                    </div>
                                 </Show>
                                 <Show when={model.intendedUse}>
-                                    <div>Intended use: {model.intendedUse}</div>
+                                    <div>
+                                        {t("models.intendedUse")} {model.intendedUse}
+                                    </div>
                                 </Show>
                                 <Show when={model.limitations}>
-                                    <div>Limitations: {model.limitations}</div>
+                                    <div>
+                                        {t("models.limitations")} {model.limitations}
+                                    </div>
                                 </Show>
                             </li>
                         )}
@@ -55,25 +69,30 @@ export function ModelManagerView(props: ModelManagerViewProps) {
                 </ul>
             </Show>
 
-            <h2>Registry cards</h2>
+            <h2>{t("models.registryCards")}</h2>
             <Show
                 when={props.viewModel.registryCards.length > 0}
-                fallback={<p>No model cards have been registered.</p>}
+                fallback={<p>{t("models.noCards")}</p>}
             >
                 <ul>
                     <For each={props.viewModel.registryCards}>
                         {(card) => (
                             <li>
-                                <strong>{card.id}</strong> — {card.stage} — {card.license}
-                                <div>Intended use: {card.intendedUse}</div>
-                                <div>Limitations: {card.limitations}</div>
+                                <strong>{card.id}</strong> — {t(`models.stage.${card.stage}`)} —{" "}
+                                {card.license}
+                                <div>
+                                    {t("models.intendedUse")} {card.intendedUse}
+                                </div>
+                                <div>
+                                    {t("models.limitations")} {card.limitations}
+                                </div>
                             </li>
                         )}
                     </For>
                 </ul>
             </Show>
 
-            <h2>Register model card</h2>
+            <h2>{t("models.registerCard")}</h2>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -88,28 +107,30 @@ export function ModelManagerView(props: ModelManagerViewProps) {
                 }}
             >
                 <label>
-                    Model id
+                    {t("models.field.id")}
                     <input name="id" required />
                 </label>
                 <label>
-                    Stage
+                    {t("models.field.stage")}
                     <select name="stage">
-                        <For each={STAGES}>{(stage) => <option value={stage}>{stage}</option>}</For>
+                        <For each={STAGES}>
+                            {(stage) => <option value={stage}>{t(`models.stage.${stage}`)}</option>}
+                        </For>
                     </select>
                 </label>
                 <label>
-                    License
+                    {t("models.field.license")}
                     <input name="license" required />
                 </label>
                 <label>
-                    Intended use
+                    {t("models.field.intendedUse")}
                     <input name="intendedUse" required />
                 </label>
                 <label>
-                    Limitations
+                    {t("models.field.limitations")}
                     <input name="limitations" required />
                 </label>
-                <button type="submit">Register card</button>
+                <button type="submit">{t("models.registerCard")}</button>
             </form>
             <Show when={props.error}>
                 <p role="alert">{props.error}</p>
@@ -119,7 +140,8 @@ export function ModelManagerView(props: ModelManagerViewProps) {
 }
 
 export function ModelManagerPage() {
-    const controller = new ModelManagerController();
+    const { t } = useI18n();
+    const controller = new ModelManagerController(undefined, undefined, t);
     const [viewModel, setViewModel] = createSignal(controller.getViewModel());
     const [error, setError] = createSignal(controller.getError());
     onCleanup(
