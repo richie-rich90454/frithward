@@ -4,10 +4,8 @@ import type { ChartViewState } from "../application/ChartDataController";
 import { EChartAdapter } from "../application/EChartAdapter";
 import { ChartDraftStore } from "../infrastructure/ChartDraftStore";
 import { useThemeVersion } from "./useThemeVersion";
+import { useI18n } from "../../../i18n/index.js";
 import "./charts.css";
-
-const DEFAULT_X_LABEL = "Category";
-const DEFAULT_Y_LABEL = "Value";
 
 interface ChartsViewProps {
     state: ChartViewState;
@@ -23,6 +21,7 @@ interface ChartsViewProps {
 }
 
 export function ChartsView(props: ChartsViewProps) {
+    const { t } = useI18n();
     const adapter = new EChartAdapter();
     const themeVersion = useThemeVersion();
     const [container, setContainer] = createSignal<HTMLDivElement>();
@@ -44,14 +43,14 @@ export function ChartsView(props: ChartsViewProps) {
 
     return (
         <section class="charts-workshop">
-            <h1>Charts</h1>
+            <h1>{t("charts.title")}</h1>
             <Show when={props.draftSaved}>
                 <p class="charts-workshop__status" role="status" aria-live="polite">
-                    Draft saved
+                    {t("draft.saved")}
                 </p>
             </Show>
             <label>
-                Data (one "label,value" line per row)
+                {t("charts.dataLabel")}
                 <textarea
                     rows={6}
                     value={props.text}
@@ -59,14 +58,14 @@ export function ChartsView(props: ChartsViewProps) {
                 />
             </label>
             <label>
-                X axis label
+                {t("charts.xAxis")}
                 <input
                     value={props.xAxisLabel}
                     onInput={(event) => props.onXAxisLabelChange(event.currentTarget.value)}
                 />
             </label>
             <label>
-                Y axis label
+                {t("charts.yAxis")}
                 <input
                     value={props.yAxisLabel}
                     onInput={(event) => props.onYAxisLabelChange(event.currentTarget.value)}
@@ -74,19 +73,16 @@ export function ChartsView(props: ChartsViewProps) {
             </label>
             <div class="charts-workshop__actions">
                 <button type="button" onClick={props.onApply}>
-                    Render chart
+                    {t("charts.render")}
                 </button>
                 <button type="button" onClick={props.onClear}>
-                    Clear
+                    {t("action.clear")}
                 </button>
             </div>
             <Show when={props.state.error}>
                 <p role="alert">{props.state.error}</p>
             </Show>
-            <Show
-                when={props.state.dataset}
-                fallback={<p role="status">No chart to display. Add real data above.</p>}
-            >
+            <Show when={props.state.dataset} fallback={<p role="status">{t("charts.noChart")}</p>}>
                 <div
                     class="chart-container"
                     data-chart
@@ -99,12 +95,15 @@ export function ChartsView(props: ChartsViewProps) {
 }
 
 export function ChartsPage() {
-    const controller = new ChartDataController();
+    const { t } = useI18n();
+    const defaultX = () => t("charts.defaultX");
+    const defaultY = () => t("charts.defaultY");
+    const controller = new ChartDataController(t);
     const store = new ChartDraftStore();
     const [state, setState] = createSignal(controller.getState());
     const [text, setText] = createSignal("");
-    const [xAxisLabel, setXAxisLabel] = createSignal(DEFAULT_X_LABEL);
-    const [yAxisLabel, setYAxisLabel] = createSignal(DEFAULT_Y_LABEL);
+    const [xAxisLabel, setXAxisLabel] = createSignal(defaultX());
+    const [yAxisLabel, setYAxisLabel] = createSignal(defaultY());
     const [draftSaved, setDraftSaved] = createSignal(false);
     onCleanup(
         controller.subscribe(() => {
@@ -125,8 +124,8 @@ export function ChartsPage() {
         const draft = { text: text(), xAxisLabel: xAxisLabel(), yAxisLabel: yAxisLabel() };
         const empty =
             draft.text.trim() === "" &&
-            draft.xAxisLabel === DEFAULT_X_LABEL &&
-            draft.yAxisLabel === DEFAULT_Y_LABEL;
+            draft.xAxisLabel === defaultX() &&
+            draft.yAxisLabel === defaultY();
         if (empty) {
             store.clear();
             setDraftSaved(false);
@@ -151,8 +150,8 @@ export function ChartsPage() {
             onClear={() => {
                 store.clear();
                 setText("");
-                setXAxisLabel(DEFAULT_X_LABEL);
-                setYAxisLabel(DEFAULT_Y_LABEL);
+                setXAxisLabel(defaultX());
+                setYAxisLabel(defaultY());
                 setDraftSaved(false);
                 controller.clear();
             }}
