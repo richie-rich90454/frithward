@@ -1,0 +1,72 @@
+/* Theme toggle sits at the end of the header and stays reachable on small screens. */
+.fw-theme-toggle {
+    min-inline-size: var(--fw-touch-min);
+    min-block-size: var(--fw-touch-min);
+    padding-inline: var(--fw-space-3);
+    background: var(--fw-color-surface-secondary);
+    color: var(--fw-color-text);
+    border: 1px solid var(--fw-color-border);
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.fw-shell {
+    --fw-shell-pad: var(--fw-layout-pad);
+    padding-inline: var(--fw-shell-pad);
+    padding-block: var(--fw-shell-pad);
+    padding-inline-start: max(var(--fw-shell-pad), env(safe-area-inset-inline-start, 0px));
+    padding-inline-end: max(var(--fw-shell-pad), env(safe-area-inset-inline-end, 0px));
+    padding-block-start: max(var(--fw-shell-pad), env(safe-area-inset-block-start, 0px));
+    padding-block-end: max(var(--fw-shell-pad), env(safe-area-inset-block-end, 0px));
+}
+
+.fw-shell nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.fw-shell nav a {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fw-space-2);
+    min-block-size: var(--fw-touch-min);
+    min-inline-size: var(--fw-touch-min);
+    padding-inline: var(--fw-space-3);
+    white-space: nowrap;
+}
+
+.fw-shell img,
+.fw-shell video,
+.fw-shell canvas,
+.fw-shell svg {
+    max-width: 100%;
+    block-size: auto;
+}
+
+.fw-shell main {
+    text-align: start;
+}
+
+@media (max-width: 900px) {
+    .fw-shell {
+        --fw-shell-pad: var(--fw-space-6);
+    }
+
+    .fw-shell header {
+        height: auto;
+        flex-wrap: wrap;
+    }
+
+    .fw-shell nav {
+        order: 3;
+        inline-size: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .fw-shell {
+        --fw-shell-pad: var(--fw-space-4);
+    }
+}
