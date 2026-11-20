@@ -14,12 +14,22 @@ export interface ProvenanceFailureView {
     message: string;
 }
 
+export interface ProvenanceTransformationView {
+    action: string;
+    actor: string | null;
+    timestamp: string | null;
+    assetHashBefore: string | null;
+    assetHashAfter: string | null;
+    detail: string | null;
+}
+
 export interface ProvenanceInspectionView {
     signatureStatus: C2paSignatureStatus;
     signer: string | null;
     signedAt: string | null;
     assertions: readonly ProvenanceAssertionView[];
     assetHash: string | null;
+    transformations: readonly ProvenanceTransformationView[];
     validationFailures: readonly ProvenanceFailureView[];
     missingInfo: readonly string[];
     summary: string;
@@ -92,6 +102,14 @@ function toView(result: C2paInspectionResult): ProvenanceInspectionView {
             present: assertion.present,
         })),
         assetHash: result.assetHash,
+        transformations: result.transformations.map((step) => ({
+            action: step.action,
+            actor: step.actor,
+            timestamp: step.timestamp,
+            assetHashBefore: step.assetHashBefore,
+            assetHashAfter: step.assetHashAfter,
+            detail: step.detail,
+        })),
         validationFailures: result.validationFailures.map((failure) => ({
             code: failure.code,
             message: failure.message,
