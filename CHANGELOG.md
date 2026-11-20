@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow semantic versioning. Security-only entries are recorded in [SECURITY_CHANGELOG.md](SECURITY_CHANGELOG.md).
 
+## [Unreleased]
+
+### Added
+
+- Root `db:migrate`, `start:worker`, and `start:docs` scripts and a `.env.example` template covering the environment variables used by the services and Caddy.
+- Environment-variable, docs-site, desktop, and extension sections in the self-hosting guide, plus a "Deployment targets" section in the compatibility guides.
+
+### Changed
+
+- Deployment and compatibility docs now describe the default browser-whisper/WebGPU caption path (first run downloads weights) and the optional user-supplied WASM path.
+- Corrected the security, API, and privacy docs: secrets come from the environment only; there is no hardcoded auth secret or built-in development DSN, and `BETTER_AUTH_SECRET` is required when `NODE_ENV=production`.
+- Removed `npx serve` and local Syft instructions: static hosting uses workspace-local tooling, and the SPDX SBOM is generated in CI by `anchore/sbom-action`.
+- Documented that infrastructure binaries are host prerequisites and that services run TypeScript source through workspace-local `tsx` (no compiled server bundle).
+
 ## [0.1.0] — 2026-11-20
 
 First documented release baseline. This entry describes what is actually present in the repository at this version; it is not a claim of feature completeness.
