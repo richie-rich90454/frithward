@@ -2,12 +2,14 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { parseFileMetadata } from "./exif.js";
 import { sanitizeFile } from "./redaction.js";
 
-const PNG_1PX = new Uint8Array(
-    Buffer.from(
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==",
-        "base64",
-    ),
-);
+const PNG_1PX = new Uint8Array([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x00,
+]);
+
+function blobOf(bytes: Uint8Array, name: string): Blob & { name: string } {
+    const copy = new Uint8Array(bytes);
+    return Object.assign(new Blob([copy.buffer as ArrayBuffer]), { name });
+}
 
 function jpegBytes(): Uint8Array {
     return new Uint8Array([
@@ -41,7 +43,7 @@ afterEach(() => vi.unstubAllGlobals());
 describe("sanitizeFile", () => {
     it("re-encodes JPEG pixels and drops embedded EXIF bytes", async () => {
         const canvas = stubCanvas(1200, 800);
-        const source = Object.assign(new Blob([jpegBytes()]), { name: "photo.jpg" });
+        const source = blobOf(jpegBytes(), "photo.jpg");
         const result = await sanitizeFile(source);
         expect(result.method).toBe("re-encoded");
         expect(result.blob.size).toBeGreaterThan(0);
@@ -57,7 +59,7 @@ describe("sanitizeFile", () => {
 
     it("caps the decoded dimensions before drawing to the canvas", async () => {
         const canvas = stubCanvas(8000, 4000);
-        const source = Object.assign(new Blob([jpegBytes()]), { name: "huge.jpg" });
+        const source = blobOf(jpegBytes(), "huge.jpg");
         await sanitizeFile(source, { maxDimension: 1000 });
         expect(canvas.drawImage).toHaveBeenCalledWith(expect.anything(), 0, 0, 1000, 500);
         expect(canvas.toBlob).toHaveBeenCalledWith(expect.any(Function), "image/png");
@@ -65,7 +67,7 @@ describe("sanitizeFile", () => {
 
     it("labels unsupported formats as unverified byte-for-byte copies", async () => {
         const bytes = new Uint8Array([1, 2, 3, 4]);
-        const source = Object.assign(new Blob([bytes]), { name: "notes.txt" });
+        const source = blobOf(bytes, "notes.txt");
         const result = await sanitizeFile(source);
         expect(result.method).toBe("unverified-copy");
         expect(result.label).toContain("Metadata may still be present");
