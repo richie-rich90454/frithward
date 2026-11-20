@@ -97,6 +97,52 @@ describe("ProvenanceCheckController C2PA inspection", () => {
         expect(controller.getResult()).toEqual(result);
     });
 
+    it("verifies binary bytes with an injected C2PA verifier", async () => {
+        const verify = vi.fn(async () => ({
+            signatureStatus: "invalid" as const,
+            signer: "SDK Signer",
+            timestamp: "2026-04-01T00:00:00Z",
+            assertions: [{ label: "c2pa.actions.v2", present: true }],
+            validationFailures: [
+                { code: "signingCredential.untrusted", message: "signing certificate untrusted" },
+            ],
+            limitations: ["trust depends on the configured trust settings"],
+        }));
+        const controller = new ProvenanceCheckController({ verifier: { verify } });
+        const bytes = new Uint8Array([0xff, 0xd8, 0xff, 0xe0]);
+        await controller.inspectFile({ name: "photo.jpg", bytes });
+
+        expect(verify).toHaveBeenCalledWith(bytes);
+        expect(controller.getResult()?.signatureStatus).toBe("invalid");
+        expect(controller.getResult()?.signer).toBe("SDK Signer");
+        expect(controller.getResult()?.limitations).toContain(
+            "trust depends on the configured trust settings",
+        );
+    });
+
+    it("surfaces a verifier SDK error without faking a valid result", async () => {
+        const controller = new ProvenanceCheckController({
+            verifier: {
+                async verify() {
+                    return {
+                        signatureStatus: "unverified" as const,
+                        signer: null,
+                        timestamp: null,
+                        assertions: [],
+                        validationFailures: [
+                            { code: "sdk.error", message: "C2PA WASM SDK could not read this asset" },
+                        ],
+                        limitations: ["Signature was NOT verified"],
+                    };
+                },
+            },
+        });
+        await controller.inspectFile({ name: "clip.mp4", bytes: new Uint8Array([1, 2, 3]) });
+
+        expect(controller.getResult()?.signatureStatus).not.toBe("valid");
+        expect(controller.getResult()?.validationFailures[0]?.code).toBe("sdk.error");
+    });
+
     it("does not invent a result for an invalid JSON file", async () => {
         const execute = vi.fn(async () => result);
         const controller = new ProvenanceCheckController({ inspector: { execute } });
