@@ -1,4 +1,4 @@
-import { For, Show, createSignal } from "solid-js";
+import { For, Show, createSignal, onCleanup } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useI18n } from "../../../i18n/index.js";
 import {
@@ -6,6 +6,7 @@ import {
     loadWatchlist,
     removeFromWatchlist,
     saveWatchlist,
+    subscribeWatchlist,
     type WatchEntry,
 } from "../infrastructure/WatchlistStore.js";
 import "./watchlist.css";
@@ -17,6 +18,9 @@ export function Watchlist() {
     const [label, setLabel] = createSignal("");
     const [kind, setKind] = createSignal<WatchEntry["kind"]>("domain");
     const [message, setMessage] = createSignal("");
+
+    // Keep the list current when the check page (or another tab) adds an entry.
+    onCleanup(subscribeWatchlist(setEntries));
 
     const displayDate = (value: string | undefined) => {
         if (!value) return t("watchlist.unchecked");
