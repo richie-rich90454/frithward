@@ -4,11 +4,13 @@ import { IncidentTimelineController } from "../controllers/IncidentTimelineContr
 import type {
     EvidenceItem,
     IncidentTimelineEntry,
+    ReportHistoryEntry,
 } from "../controllers/IncidentTimelineController";
 
 interface IncidentTimelineViewProps {
     entries: readonly IncidentTimelineEntry[];
     evidence: readonly EvidenceItem[];
+    history: readonly ReportHistoryEntry[];
     error: string | null;
     onAnalyze: (input: { text: string; receivedAt: string }) => void;
     onAddEvidence: (input: {
@@ -16,7 +18,7 @@ interface IncidentTimelineViewProps {
         content: ArrayBuffer;
         source: string;
     }) => Promise<unknown>;
-    onExport: () => string;
+    onExport: () => Promise<string>;
     onReset: () => void;
 }
 
@@ -47,14 +49,19 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
         }
     };
 
-    const exportReport = () => {
-        const blob = new Blob([props.onExport()], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "evidence-report.json";
-        link.click();
-        URL.revokeObjectURL(url);
+    const exportReport = async () => {
+        try {
+            const json = await props.onExport();
+            const blob = new Blob([json], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "evidence-report.json";
+            link.click();
+            URL.revokeObjectURL(url);
+        } catch (cause) {
+            setLocalError(cause instanceof Error ? cause.message : "Could not export report.");
+        }
     };
 
     return (
@@ -164,9 +171,27 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                         </For>
                     </tbody>
                 </table>
-                <button type="button" onClick={exportReport}>
+                <button type="button" onClick={() => void exportReport()}>
                     Export report
                 </button>
+            </Show>
+
+            <h2>Report history</h2>
+            <p role="note">Exports are recorded locally in this browser. Nothing is uploaded.</p>
+            <Show when={props.history.length > 0} fallback={<p>No reports exported yet.</p>}>
+                <ul>
+                    <For each={props.history}>
+                        {(item) => (
+                            <li>
+                                <strong>{item.createdAt}</strong> — {item.summary}
+                                <br />
+                                ID: {item.id}
+                                <br />
+                                SHA-256: <span style={tabular}>{item.sha256}</span>
+                            </li>
+                        )}
+                    </For>
+                </ul>
             </Show>
         </section>
     );
@@ -176,11 +201,13 @@ export function IncidentTimelinePage() {
     const controller = new IncidentTimelineController();
     const [entries, setEntries] = createSignal(controller.getEntries());
     const [evidence, setEvidence] = createSignal(controller.getEvidence());
+    const [history, setHistory] = createSignal(controller.getReportHistory());
     const [error, setError] = createSignal(controller.getError());
     onCleanup(
         controller.subscribe(() => {
             setEntries(controller.getEntries());
             setEvidence(controller.getEvidence());
+            setHistory(controller.getReportHistory());
             setError(controller.getError());
         }),
     );
@@ -188,10 +215,11 @@ export function IncidentTimelinePage() {
         <IncidentTimelineView
             entries={entries()}
             evidence={evidence()}
+            history={history()}
             error={error()}
             onAnalyze={(input) => controller.analyze(input)}
             onAddEvidence={(input) => controller.addEvidence(input)}
-            onExport={() => controller.buildEvidenceReport()}
+            onExport={() => controller.exportReport()}
             onReset={() => controller.reset()}
         />
     );
