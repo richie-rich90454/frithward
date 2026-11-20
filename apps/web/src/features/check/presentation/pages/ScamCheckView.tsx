@@ -6,6 +6,7 @@ import { ScamCheckController } from "../controllers/ScamCheckController";
 import type { CheckFindingView } from "../controllers/ScamCheckController";
 
 interface ScamCheckViewProps {
+    initialText?: string;
     analysis: ScamAnalysis | null;
     urlView: ReturnType<ScamCheckController["getUrlView"]>;
     qrView: ReturnType<ScamCheckController["getQrView"]>;
@@ -36,7 +37,7 @@ function Findings(props: { findings: readonly CheckFindingView[] }) {
 }
 
 export function ScamCheckView(props: ScamCheckViewProps) {
-    const [text, setText] = createSignal("");
+    const [text, setText] = createSignal(props.initialText ?? "");
     const [url, setUrl] = createSignal("");
     const [qr, setQr] = createSignal("");
     const [simplified, setSimplified] = createSignal(false);
@@ -181,8 +182,19 @@ export function ScamCheckView(props: ScamCheckViewProps) {
     );
 }
 
+function readSharedText(): string {
+    if (typeof window === "undefined") return "";
+    try {
+        const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+        return fragment.get("text") ?? "";
+    } catch {
+        return "";
+    }
+}
+
 export function ScamCheckPage() {
     const controller = new ScamCheckController();
+    const initialText = readSharedText();
     const [analysis, setAnalysis] = createSignal(controller.getAnalysis());
     const [urlView, setUrlView] = createSignal(controller.getUrlView());
     const [qrView, setQrView] = createSignal(controller.getQrView());
@@ -200,6 +212,7 @@ export function ScamCheckPage() {
         setGuidedComplete(controller.isGuidedComplete());
     };
     onCleanup(controller.subscribe(sync));
+    if (initialText) controller.check(initialText);
     const generateReport = async () => {
         const report = await controller.generateReport();
         if (!report) return;
@@ -213,6 +226,7 @@ export function ScamCheckPage() {
     };
     return (
         <ScamCheckView
+            initialText={initialText}
             analysis={analysis()}
             urlView={urlView()}
             qrView={qrView()}
