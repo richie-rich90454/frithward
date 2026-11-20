@@ -111,20 +111,17 @@ test.describe("real browser feature behaviour", () => {
         ).toBeVisible();
         await expect(page.getByRole("button", { name: "Generate captions" })).toBeDisabled();
 
-        const addSegment = page.getByRole("button", { name: /add (a )?segment/i });
-        const exportControl = page.getByRole("button", { name: /export/i });
-        if (await addSegment.count()) {
-            await addSegment.first().click();
-            await expect(page.locator("ul li button").first()).toBeVisible();
-        } else {
-            await expect(page.locator("ul li button")).toHaveCount(0);
-        }
-        if (await exportControl.count()) {
-            await exportControl.first().click();
-            await expect(page.getByRole("alert").or(page.getByText(/no segments/i))).toBeVisible();
-        } else {
-            await expect(exportControl).toHaveCount(0);
-        }
+        // Add a real segment through the form, then verify export produces a download.
+        await page.getByLabel("Start (ms)").fill("0");
+        await page.getByLabel("End (ms)").fill("1000");
+        await page.getByLabel("Caption text").fill("Hello from the browser");
+        await page.getByRole("button", { name: "Add segment" }).click();
+        await expect(page.getByText("Hello from the browser")).toBeVisible();
+
+        const downloadPromise = page.waitForEvent("download");
+        await page.getByRole("button", { name: "Export VTT" }).click();
+        const download = await downloadPromise;
+        expect(download.suggestedFilename()).toMatch(/\.vtt$/);
     });
 
     test("quiz accepts an answer and shows feedback", async ({ page }) => {
