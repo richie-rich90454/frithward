@@ -14,16 +14,16 @@ Experimental synthetic image detection. The engine validates an image id and run
 
 ## Interface
 
-| Item            | Value                                                                         |
-| --------------- | ----------------------------------------------------------------------------- |
-| Request         | `DetectionRequest { image_id, model_path?, model_name?, model_version?, image_base64?, image_path? }` |
-| Response        | `DetectionResult { image_id, model_name, model_version, scores: list[float], limitations }` |
-| Validation      | Non-empty `image_id`; a model path and a tensor input are required            |
-| Tensor input    | Base64 or file bytes interpreted as little-endian float32                     |
-| Model loading   | `torch.jit.load` on CPU, falling back to `torch.load` on CPU                  |
-| Complexity      | O(p) in pixels per frame                                                      |
-| Streaming       | Frame-level; no temporal stream                                               |
-| Model lifecycle | Load once, warm up, infer, release; stage-gated                               |
+| Item | Value |
+| --- | --- |
+| Request | `DetectionRequest { image_id, model_path?, model_name?, model_version?, image_base64?, image_path? }` |
+| Response | `DetectionResult { image_id, model_name, model_version, scores: list[float], limitations }` |
+| Validation | Non-empty `image_id`; a model path and a tensor input are required |
+| Tensor input | Base64 or file bytes interpreted as little-endian float32 |
+| Model loading | `torch.jit.load` on CPU, falling back to `torch.load` on CPU |
+| Complexity | O(p) in pixels per frame |
+| Streaming | Frame-level; no temporal stream |
+| Model lifecycle | Load once, warm up, infer, release; stage-gated |
 
 ## Metrics
 
