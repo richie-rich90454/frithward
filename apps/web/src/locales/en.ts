@@ -832,7 +832,8 @@ export const en: Record<string, string> = {
     "result.GUIDED_REVIEW_PLAIN": "{findings}",
     "result.GUIDED_REVIEW_NO_FINDINGS":
         "We did not find obvious warning signs, but that does not mean the message is safe.",
-    "result.GUIDED_REVIEW_ACTION": "Read each point slowly. You can ask someone to read it with you.",
+    "result.GUIDED_REVIEW_ACTION":
+        "Read each point slowly. You can ask someone to read it with you.",
     "result.GUIDED_CHECK_TITLE": "Check with someone you trust",
     "result.GUIDED_CHECK_PLAIN":
         "Call a family member or friend using a number you already know. Do not use a number from the message.",
@@ -864,7 +865,8 @@ export const en: Record<string, string> = {
         "Review the flagged audio segments alongside the original recording.",
     "result.DETECTION_NEXT_PROVENANCE_AUDIO":
         "Compare the recording with provenance records where available.",
-    "result.DETECTION_NEXT_REVIEW_IMAGE": "Review the flagged regions alongside the original image.",
+    "result.DETECTION_NEXT_REVIEW_IMAGE":
+        "Review the flagged regions alongside the original image.",
     "result.DETECTION_NEXT_PROVENANCE_IMAGE":
         "Compare the image with provenance records where available.",
     "result.DETECTION_NEXT_REVIEW_VIDEO": "Review the flagged frames alongside the original video.",
@@ -878,7 +880,8 @@ export const en: Record<string, string> = {
         "Detection outputs are evidence for review, not proof of authenticity.",
     "result.ANALYSIS_LIMIT_MODEL_VARIATION":
         "Model performance varies across datasets, languages, and recording conditions.",
-    "result.ANALYSIS_LIMIT_HUMAN_REVIEW": "Consequential decisions require independent human review.",
+    "result.ANALYSIS_LIMIT_HUMAN_REVIEW":
+        "Consequential decisions require independent human review.",
     "result.ANALYSIS_LIMIT_AUDIO":
         "Single-model audio scores do not establish synthesis or voice conversion.",
     "result.ANALYSIS_LIMIT_IMAGE": "Frame-level image scores do not establish manipulation.",
