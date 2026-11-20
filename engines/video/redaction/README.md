@@ -1,6 +1,6 @@
 # Video redaction engine
 
-Temporal face and license-plate redaction with per-frame regions. The engine validates the video id and returns the requested regions. The scaffold does not apply pixel changes.
+Temporal face and license-plate redaction surface. The engine validates the video id, accepts requested regions and a path, and returns an explicit `unavailable` status with no redacted regions. No pixel changes are applied.
 
 ## Intended use
 
@@ -16,8 +16,8 @@ Temporal face and license-plate redaction with per-frame regions. The engine val
 
 | Item | Value |
 | --- | --- |
-| Request | `RedactionRequest { video_id: str, regions: list[str] = [] }` |
-| Response | `RedactionResult { video_id, redacted_regions: list[str] }` |
+| Request | `RedactionRequest { video_id, regions: list[str] = [], video_path? }` |
+| Response | `RedactionResult { video_id, redacted_regions: list[str], status, reason, limitations }` |
 | Validation | `video_id` must be non-empty |
 | Complexity | O(f·p) with region masks |
 | Streaming | Chunked |
@@ -34,6 +34,6 @@ No fixed candidate. Detection models require licensed, consented data. See the d
 
 ## Limitations
 
-- The scaffold does not modify pixels.
+- No regions are applied and no redaction is claimed (`redacted_regions` is always empty).
 - Region tracking can fail on fast motion and occlusion.
 - Exported validation is the caller's responsibility.
