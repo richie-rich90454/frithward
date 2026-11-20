@@ -20,12 +20,12 @@ export function DeveloperToolsView() {
             </h1>
             <p>Local-first packages and interfaces for building with Frithward.</p>
             <Root>
-                <Trigger class="button-secondary">
+                <Trigger class="fw-button fw-button-secondary">
                     <Info class="fw-icon" /> About Frithward
                 </Trigger>
                 <Portal>
-                    <Overlay class="dialog-overlay" />
-                    <Content class="dialog-content">
+                    <Overlay class="fw-dialog-overlay" />
+                    <Content class="fw-dialog">
                         <Title>About Frithward</Title>
                         <Description>Keep people safe. Keep media honest.</Description>
                         <p>
@@ -44,7 +44,7 @@ export function DeveloperToolsView() {
                             <code>@contentauth/c2pa-node</code> SDK; without it, signature status is
                             reported as unverified rather than valid.
                         </p>
-                        <CloseButton class="button-secondary">Close</CloseButton>
+                        <CloseButton class="fw-button fw-button-secondary">Close</CloseButton>
                     </Content>
                 </Portal>
             </Root>
