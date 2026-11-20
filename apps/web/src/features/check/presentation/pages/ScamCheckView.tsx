@@ -85,10 +85,7 @@ export function ScamCheckView(props: ScamCheckViewProps) {
             >
                 <label>
                     {t("check.qrLabel")}
-                    <textarea
-                        value={qr()}
-                        onInput={(event) => setQr(event.currentTarget.value)}
-                    />
+                    <textarea value={qr()} onInput={(event) => setQr(event.currentTarget.value)} />
                 </label>
                 <button type="submit">{t("check.qrButton")}</button>
             </form>
