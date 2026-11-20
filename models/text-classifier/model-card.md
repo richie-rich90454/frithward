@@ -2,6 +2,10 @@
 
 Stage: `experimental`. Status: documentation-only placeholder; no specific model selected and no weights in this repository.
 
+## Model id
+
+`text-classifier`
+
 ## Intended use
 
 Placeholder for a future text-classification candidate (for example, routing or scam-pattern triage). Intended output is advisory input to human review.
@@ -29,6 +33,10 @@ not established in this repository.
 ## Metrics
 
 Planned: precision, recall, false-positive rate, calibration, and per-language performance. No values have been measured in this repository.
+
+## Evaluation results
+
+No evaluation has been performed for this model in this repository; no metrics are reported. The only results artifact present is `research/results/audio-detection-synthetic.json`, a synthetic harness smoke test whose scores are placeholders and not an evaluation of this model.
 
 ## Known biases
 
