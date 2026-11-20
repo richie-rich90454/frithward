@@ -268,7 +268,7 @@ export const hi: Record<string, string> = {
         "कैप्शन, सरल भाषा के सारांश और कीबोर्ड नेविगेशन की समीक्षा करें। हमें बताएँ कि कौन-से निर्देश समझने में कठिन हैं ताकि हम उन्हें अधिक लोगों के लिए फिर से लिख सकें।",
     "community.track.research.title": "शोध",
     "community.track.research.detail":
-        "प्रश्न पूछें, अध्ययن के विचार प्रस्तावित करें, और यह परीक्षण करने में मदद करें कि शैक्षिक दृष्टिकोण काम करता है या नहीं। प्रतिभागी स्वेच्छा और सहमति वाले रखें, और सार्वजनिक रिपोर्ट में उनकी पहचान कभी न बताएँ।",
+        "प्रश्न पूछें, अध्ययन के विचार प्रस्तावित करें, और यह परीक्षण करने में मदद करें कि शैक्षिक दृष्टिकोण काम करता है या नहीं। प्रतिभागी स्वेच्छा और सहमति वाले रखें, और सार्वजनिक रिपोर्ट में उनकी पहचान कभी न बताएँ।",
     "community.partner.schools.title": "स्कूल",
     "community.partner.schools.detail":
         "कक्षा सामग्री और स्रोत जाँचने व दबाव की रणनीतियों को पहचानने के छोटे सत्र।",
@@ -313,7 +313,7 @@ export const hi: Record<string, string> = {
     "patterns.payment.rationale": "अपेक्षित धन अनुरोध को ज्ञात चैनल से पुष्टि करना चाहिए।",
     "patterns.payment.detail": "पाठ में पैसे भेजने या बिल भरने की बात है।",
     "patterns.giftCard.label": "गिफ्ट कार्ड माँग",
-    "patterns.giftCard.rationale": "गिफ्ट कार्ड और प्रीपेड वाउचर पैसे एकतरफ़ा转移 का आम तरीका हैं।",
+    "patterns.giftCard.rationale": "गिफ्ट कार्ड और प्रीपेड वाउचर पैसे एकतरफ़ा हस्तांतरण का आम तरीका हैं।",
     "patterns.giftCard.detail": "पाठ में गिफ्ट कार्ड, प्रीपेड कार्ड या रीडेम कोड माँगा गया है।",
     "patterns.credential.label": "क्रेडेंशियल अनुरोध",
     "patterns.credential.rationale": "पासवर्ड और वन-टाइम कोड साझा करने पर खाते की पहुँच दे देते हैं।",
@@ -344,7 +344,7 @@ export const hi: Record<string, string> = {
     "patterns.ipHost.detail": "लिंक नामित डोमेन के बजाय संख्यात्मक IP पते की ओर इशारा करता है।",
     "patterns.embeddedCredentials.label": "छिपा गंतव्य",
     "patterns.embeddedCredentials.rationale": "क्रेडेंशियल वाला @ चिन्ह वास्तविक गंतव्य को छिपा सकता है।",
-    "patterns.embeddedCredentials.detail": "लिंक में उपयोगकर्ता नाम या पासवर्ड.emded किया गया है।",
+    "patterns.embeddedCredentials.detail": "लिंक में उपयोगकर्ता नाम या पासवर्ड एम्बेड किया गया है।",
     "patterns.shortenedLink.label": "छोटा किया गया लिंक",
     "patterns.shortenedLink.rationale": "छोटा लिंक पाठक से अंतिम गंतव्य छिपा देता है।",
     "patterns.shortenedLink.detail": "लिंक URL शॉर्टनर का उपयोग करता है।",
