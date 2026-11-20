@@ -1,9 +1,14 @@
+import { CodedError, ERROR_CODES } from "@frithward/contracts";
 import type { AssetStoragePort, StoredAsset } from "../ports/AssetStoragePort";
 
 function validateName(name: string): void {
-    if (name.trim() === "") throw new Error("Asset name must not be empty.");
+    if (name.trim() === "")
+        throw new CodedError(ERROR_CODES.ASSET_NAME_EMPTY, "Asset name must not be empty.");
     if (name.includes("/") || name.includes("\\"))
-        throw new Error("Asset name must not contain path separators.");
+        throw new CodedError(
+            ERROR_CODES.ASSET_NAME_PATH_SEPARATOR,
+            "Asset name must not contain path separators.",
+        );
 }
 
 export class StoreAssetUseCase {
