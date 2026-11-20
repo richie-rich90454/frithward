@@ -1,5 +1,10 @@
 <!doctype html>
 <!-- Offline support: public/sw.js precaches the built app shell so repeat visits work without a network. -->
+<!-- Cross-origin isolation (COOP/COEP) must be set by the host as response headers; a meta tag or a
+     service worker cannot set them. Header configs shipped: public/_headers (Netlify/Cloudflare Pages),
+     netlify.toml (Netlify), vercel.json (Vercel), infrastructure/deployment/Caddyfile (self-host), and
+     public/hosting-headers.json (exact name/value pairs for any other host). Without these headers only
+     SharedArrayBuffer-backed Whisper pthreads transcription is unavailable; all other features work. -->
 <html lang="en">
     <head>
         <meta charset="utf-8" />
