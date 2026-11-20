@@ -26,7 +26,7 @@ import { DiagramPage } from "../../web/src/features/diagrams/presentation/Diagra
 import { ChartsPage } from "../../web/src/features/charts/presentation/ChartsView.js";
 import { RuntimePage } from "../../web/src/features/runtime/presentation/pages/RuntimeView.js";
 import { ModelManagerPage } from "../../web/src/features/models/presentation/pages/ModelManagerView.js";
-import { LanguageSwitcher, useI18n } from "./i18n/index.jsx";
+import { LanguageSwitcher, useI18n } from "../../web/src/i18n/index.js";
 import { ThemeToggle } from "./theme.jsx";
 
 const NAVIGATION = [
@@ -38,7 +38,7 @@ const NAVIGATION = [
     { path: "/respond", key: "nav.respond", icon: LifeBuoy },
     { path: "/learn", key: "nav.learn", icon: GraduationCap },
     { path: "/community", key: "nav.community", icon: Users },
-    { path: "/tools", key: "page.tools.title", icon: Wrench },
+    { path: "/tools", key: "nav.tools", icon: Wrench },
 ] as const;
 
 function pageFor(pathname: string): JSX.Element {

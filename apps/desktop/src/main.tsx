@@ -5,8 +5,7 @@ import "./app.css";
 import "../../web/src/app.css";
 import { initTheme } from "./theme.jsx";
 import { DesktopApp } from "./App.jsx";
-import { LocaleProvider } from "./i18n/index.jsx";
-import { LocaleProvider as WebLocaleProvider } from "../../web/src/i18n/index.js";
+import { LocaleProvider } from "../../web/src/i18n/index.js";
 import { CaseProvider } from "../../web/src/cases/CaseProvider.js";
 
 const root = document.getElementById("root");
@@ -15,13 +14,11 @@ initTheme();
 render(
     () => (
         <LocaleProvider>
-            <WebLocaleProvider>
-                <CaseProvider>
-                    <Router>
-                        <Route path="/*" component={DesktopApp} />
-                    </Router>
-                </CaseProvider>
-            </WebLocaleProvider>
+            <CaseProvider>
+                <Router>
+                    <Route path="/*" component={DesktopApp} />
+                </Router>
+            </CaseProvider>
         </LocaleProvider>
     ),
     root,
