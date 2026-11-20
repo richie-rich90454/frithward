@@ -15,15 +15,15 @@ Experimental synthetic speech detection surface. With supplied PCM bytes the eng
 
 ## Interface
 
-| Item            | Value                                                                     |
-| --------------- | ------------------------------------------------------------------------- |
-| Request         | `DetectionRequest { audio_id, audio_base64?, audio_path?, sample_rate = 16000, sample_width = 2 }` |
-| Response        | `DetectionResult { audio_id, indicators, statistics?, method, limitations, status, reason }` |
-| Validation      | Non-empty id; positive sample rate; 1- or 2-byte mono PCM                |
-| Complexity      | O(n) in samples for feature extraction; model inference is model-specific |
-| Streaming       | Chunked with overlap and bounded memory                                   |
-| Cancellation    | `AbortSignal` checked at chunk boundaries                                 |
-| Model lifecycle | Load once, warm up, infer, release; stage-gated                           |
+| Item | Value |
+| --- | --- |
+| Request | `DetectionRequest { audio_id, audio_base64?, audio_path?, sample_rate = 16000, sample_width = 2 }` |
+| Response | `DetectionResult { audio_id, indicators, statistics?, method, limitations, status, reason }` |
+| Validation | Non-empty id; positive sample rate; 1- or 2-byte mono PCM |
+| Complexity | O(n) in samples for feature extraction; model inference is model-specific |
+| Streaming | Chunked with overlap and bounded memory |
+| Cancellation | `AbortSignal` checked at chunk boundaries |
+| Model lifecycle | Load once, warm up, infer, release; stage-gated |
 
 ## Metrics
 

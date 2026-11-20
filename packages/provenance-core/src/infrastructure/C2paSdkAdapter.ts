@@ -103,7 +103,9 @@ const NODE_SDK_SPECIFIER = ["@contentauth", "c2pa-node"].join("/");
 async function loadReader(source: SdkSource): Promise<SdkManifestReader | null> {
     let sdk: typeof import("@contentauth/c2pa-node");
     try {
-        sdk = (await import(/* @vite-ignore */ NODE_SDK_SPECIFIER)) as typeof import("@contentauth/c2pa-node");
+        sdk = (await import(
+            /* @vite-ignore */ NODE_SDK_SPECIFIER
+        )) as typeof import("@contentauth/c2pa-node");
     } catch (cause) {
         throw new C2paSdkUnavailableError(cause);
     }

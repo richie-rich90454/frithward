@@ -14,15 +14,15 @@ Rule-based text generation surface. The engine selects and reorders sentences fr
 
 ## Interface
 
-| Item            | Value                                                                   |
-| --------------- | ----------------------------------------------------------------------- |
-| Request         | `GenerationRequest { prompt: str, max_tokens: int = 256, model_path?, mode: str = "summary" }` |
-| Response        | `GenerationResult { text, tokens, status, reason, method, limitations }` |
-| Validation      | Non-empty prompt; positive token budget; mode is `summary` or `bullets` |
-| Complexity      | O(n) in prompt length; no decode steps                                  |
-| Streaming       | Token streaming                                                         |
-| Cancellation    | `AbortSignal` between tokens                                            |
-| Model lifecycle | Load once, warm up, generate, release; stage-gated                      |
+| Item | Value |
+| --- | --- |
+| Request | `GenerationRequest { prompt: str, max_tokens: int = 256, model_path?, mode: str = "summary" }` |
+| Response | `GenerationResult { text, tokens, status, reason, method, limitations }` |
+| Validation | Non-empty prompt; positive token budget; mode is `summary` or `bullets` |
+| Complexity | O(n) in prompt length; no decode steps |
+| Streaming | Token streaming |
+| Cancellation | `AbortSignal` between tokens |
+| Model lifecycle | Load once, warm up, generate, release; stage-gated |
 
 ## Metrics
 

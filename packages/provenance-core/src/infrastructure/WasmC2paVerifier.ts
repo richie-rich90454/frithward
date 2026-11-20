@@ -62,7 +62,9 @@ export function createWasmC2paVerifier(wasm: InitInput | Promise<InitInput>): C2
     return new C2paSdkAdapter(async (source) => {
         await initialize();
         if (!("buffer" in source)) {
-            throw new Error("Browser C2PA verification requires file bytes, not a filesystem path.");
+            throw new Error(
+                "Browser C2PA verification requires file bytes, not a filesystem path.",
+            );
         }
 
         let reader: WasmReader;

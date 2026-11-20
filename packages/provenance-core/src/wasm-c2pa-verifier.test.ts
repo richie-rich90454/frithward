@@ -23,7 +23,9 @@ describe("WasmC2paVerifier (real @contentauth/c2pa-wasm SDK)", () => {
         expect(result.validationFailures.map((failure) => failure.code)).toContain(
             "signingCredential.untrusted",
         );
-        expect(result.limitations.join(" ")).toContain("trust depends on the configured trust settings");
+        expect(result.limitations.join(" ")).toContain(
+            "trust depends on the configured trust settings",
+        );
     });
 
     it("returns an explicit error state, never valid, for bytes the SDK cannot parse", async () => {
@@ -33,7 +35,9 @@ describe("WasmC2paVerifier (real @contentauth/c2pa-wasm SDK)", () => {
         expect(result.signatureStatus).not.toBe("valid");
         expect(result.signatureStatus).toBe("unverified");
         expect(result.validationFailures[0]?.code).toBe("sdk.error");
-        expect(result.validationFailures[0]?.message).toContain("C2PA WASM SDK could not read this asset");
+        expect(result.validationFailures[0]?.message).toContain(
+            "C2PA WASM SDK could not read this asset",
+        );
         expect(result.limitations.join(" ")).toContain("Signature was NOT verified");
     });
 
@@ -54,7 +58,9 @@ describe("WasmC2paVerifier (real @contentauth/c2pa-wasm SDK)", () => {
         mp4.set([0x66, 0x74, 0x79, 0x70], 4);
 
         expect(detectC2paFormat(new Uint8Array([0xff, 0xd8, 0xff, 0xe0]))).toBe("image/jpeg");
-        expect(detectC2paFormat(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))).toBe("image/png");
+        expect(
+            detectC2paFormat(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])),
+        ).toBe("image/png");
         expect(detectC2paFormat(webp)).toBe("image/webp");
         expect(detectC2paFormat(mp4)).toBe("video/mp4");
         expect(detectC2paFormat(new Uint8Array([1, 2, 3]))).toBe("");

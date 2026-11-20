@@ -14,15 +14,15 @@ Experimental temporal and frame-level synthetic media detection. With supplied r
 
 ## Interface
 
-| Item            | Value                                                                          |
-| --------------- | ------------------------------------------------------------------------------ |
-| Request         | `DetectionRequest { video_id, sample_frames = 8, video_path?, frame_base64?, frames_base64?, width?, height? }` |
-| Response        | `DetectionResult { video_id, indicators, statistics?, method, limitations, status, reason }` |
-| Validation      | Non-empty video id; positive sample count; width/height required for frames     |
-| Complexity      | O(f·p) in sampled frames and pixels                                            |
-| Streaming       | Sampled frames                                                                 |
-| Cancellation    | Between frames                                                                 |
-| Model lifecycle | Load once, warm up, infer, release; stage-gated                                |
+| Item | Value |
+| --- | --- |
+| Request | `DetectionRequest { video_id, sample_frames = 8, video_path?, frame_base64?, frames_base64?, width?, height? }` |
+| Response | `DetectionResult { video_id, indicators, statistics?, method, limitations, status, reason }` |
+| Validation | Non-empty video id; positive sample count; width/height required for frames |
+| Complexity | O(f·p) in sampled frames and pixels |
+| Streaming | Sampled frames |
+| Cancellation | Between frames |
+| Model lifecycle | Load once, warm up, infer, release; stage-gated |
 
 ## Metrics
 

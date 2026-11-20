@@ -15,15 +15,15 @@ Experimental voice protection research surface. The engine validates an audio id
 
 ## Interface
 
-| Item            | Value                                                                   |
-| --------------- | ----------------------------------------------------------------------- |
-| Request         | `ProtectionRequest { audio_id, audio_base64?, audio_path? }`            |
-| Response        | `ProtectionResult { audio_id, protected, preprocessing?, status, reason, limitations }` |
-| Validation      | `audio_id` must be non-empty                                            |
-| Complexity      | Model-specific                                                          |
-| Streaming       | Chunked with bounded memory                                             |
-| Cancellation    | `AbortSignal` at chunk boundaries                                       |
-| Model lifecycle | Stage-gated; load once, warm up, infer, release                         |
+| Item | Value |
+| --- | --- |
+| Request | `ProtectionRequest { audio_id, audio_base64?, audio_path? }` |
+| Response | `ProtectionResult { audio_id, protected, preprocessing?, status, reason, limitations }` |
+| Validation | `audio_id` must be non-empty |
+| Complexity | Model-specific |
+| Streaming | Chunked with bounded memory |
+| Cancellation | `AbortSignal` at chunk boundaries |
+| Model lifecycle | Stage-gated; load once, warm up, infer, release |
 
 ## Metrics
 
