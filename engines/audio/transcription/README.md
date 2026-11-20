@@ -1,6 +1,6 @@
 # Audio transcription engine
 
-Speech-to-text engine and its FastAPI HTTP surface. The engine validates the audio id and language and returns a list of utterances. No speech model is configured, so it honestly returns one empty utterance; the API exposes `POST /transcribe` and `GET /health`.
+Speech-to-text surface with a FastAPI HTTP layer. No speech model is configured, so the engine returns no utterances and an explicit `unavailable` status with a reason; the API exposes `POST /transcribe` and `GET /health`.
 
 ## Intended use
 
@@ -16,15 +16,15 @@ Speech-to-text engine and its FastAPI HTTP surface. The engine validates the aud
 
 | Item                | Value                                                                  |
 | ------------------- | ---------------------------------------------------------------------- |
-| Request             | `TranscriptionRequest { audio_id: str, language: str }`                |
-| Response            | `list[Utterance]`, where `Utterance { start_ms, end_ms, text }`        |
+| Request             | `TranscriptionRequest { audio_id, language, audio_base64?, audio_path? }` |
+| Response            | `transcribe() -> list[Utterance]` (empty); `transcribe_detailed() -> TranscriptionResult { audio_id, language, utterances, status, reason, limitations }` |
 | Supported languages | `en`, `zh`, `es`, `fr`, `de`, `ar`, `hi`, `ja`                         |
 | Validation          | Non-empty audio id; language must be supported                         |
 | Complexity          | O(n) in samples                                                        |
 | Streaming           | Chunked with bounded memory                                            |
 | Cancellation        | `AbortSignal` at chunk boundaries                                      |
 | Model lifecycle     | Model loading is separate from inference; one model active per worker  |
-| HTTP API            | `src/api.py`: `POST /transcribe`, `GET /health`; `uvicorn src.api:app` |
+| HTTP API            | `src/api.py`: `POST /transcribe` returns `status`, `reason`, `utterances`, `limitations`; `GET /health`; `uvicorn src.api:app` |
 
 ## Metrics
 
@@ -36,6 +36,6 @@ No fixed candidate. Use licensed, consented speech data and document language co
 
 ## Limitations
 
-- The scaffold does not transcribe.
+- No speech is transcribed; an empty utterance list means unavailable, not silence.
 - Accuracy varies by language, accent, noise, and domain.
 - Speaker labels are model output and require review.
