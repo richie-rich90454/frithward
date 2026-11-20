@@ -566,4 +566,9 @@ export const zh: Record<string, string> = {
     "share.noMetadata": "未找到元数据",
     "share.couldNotRead": "无法读取文件",
     "share.redactedDownloaded": "遮盖后的文件已下载",
+    "captions.untitled": "未命名字幕",
+    "charts.seriesName": "报告值",
+    "runtime.storedFile": "已存储“{name}”（{n} 字节）。",
+    "runtime.notFound": "未找到名为“{name}”的资产。",
+    "runtime.readAsset": "已读取“{name}”。",
 };
