@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { CaptionRepository, RecognizedUtterance } from "@frithward/media-core";
+import type { LocalModelResult, ModelResolver } from "../../infrastructure/LocalModelResolver";
 import {
     CaptionStudioController,
     type CaptionGenerationRecognizer,
@@ -24,6 +25,13 @@ function fakeRecognizer(): CaptionGenerationRecognizer & {
     };
 }
 
+function stubResolver(result: LocalModelResult = {
+    url: "https://example.test/model.bin",
+    source: "user",
+}): ModelResolver & { resolve: ReturnType<typeof vi.fn> } {
+    return { resolve: vi.fn().mockResolvedValue(result) };
+}
+
 describe("CaptionStudioController.generateCaptions", () => {
     const base = {
         audio: new ArrayBuffer(4),
@@ -38,6 +46,7 @@ describe("CaptionStudioController.generateCaptions", () => {
         const controller = new CaptionStudioController({
             recognizerFactory: () => recognizer,
             repository,
+            modelResolver: stubResolver(),
         });
         const stages: string[] = [];
         controller.subscribe(() => stages.push(controller.getGenerationStatus().stage));
@@ -64,6 +73,7 @@ describe("CaptionStudioController.generateCaptions", () => {
         const controller = new CaptionStudioController({
             recognizerFactory: () => recognizer,
             repository: fakeRepository(),
+            modelResolver: stubResolver(),
         });
 
         await controller.generateCaptions({
@@ -81,6 +91,7 @@ describe("CaptionStudioController.generateCaptions", () => {
         const controller = new CaptionStudioController({
             recognizerFactory: () => recognizer,
             repository: fakeRepository(),
+            modelResolver: stubResolver(),
         });
 
         await controller.generateCaptions(base);
@@ -88,5 +99,45 @@ describe("CaptionStudioController.generateCaptions", () => {
         expect(controller.getGenerationStatus().stage).toBe("error");
         expect(controller.getGenerationStatus().message).toBe("model load failed");
         expect(controller.getError()).toBe("model load failed");
+    });
+
+    it("uses the resolver result when the model URL is blank", async () => {
+        const recognizer = fakeRecognizer();
+        const factory = vi.fn(() => recognizer);
+        const resolver = stubResolver({ url: "/models/whisper-tiny.bin", source: "bundled" });
+        const controller = new CaptionStudioController({
+            recognizerFactory: factory,
+            repository: fakeRepository(),
+            modelResolver: resolver,
+        });
+
+        await controller.generateCaptions({ ...base, modelUrl: "" });
+
+        expect(resolver.resolve).toHaveBeenCalledWith("");
+        expect(factory).toHaveBeenCalledWith({
+            modelUrl: "/models/whisper-tiny.bin",
+            wasmUrl: base.wasmUrl,
+        });
+        expect(controller.getGenerationStatus().stage).toBe("done");
+    });
+
+    it("surfaces a missing local model without starting a recognizer", async () => {
+        const recognizer = fakeRecognizer();
+        const factory = vi.fn(() => recognizer);
+        const resolver: ModelResolver = {
+            resolve: vi.fn().mockRejectedValue(new Error("No local Whisper model is available.")),
+        };
+        const controller = new CaptionStudioController({
+            recognizerFactory: factory,
+            repository: fakeRepository(),
+            modelResolver: resolver,
+        });
+
+        await controller.generateCaptions({ ...base, modelUrl: "" });
+
+        expect(factory).not.toHaveBeenCalled();
+        expect(recognizer.start).not.toHaveBeenCalled();
+        expect(controller.getGenerationStatus().stage).toBe("error");
+        expect(controller.getGenerationStatus().message).toContain("No local Whisper model");
     });
 });
