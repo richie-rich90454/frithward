@@ -36,7 +36,7 @@ const serviceUp = new Gauge({
 });
 serviceUp.set({ service: serviceName }, 1);
 
-new Gauge({
+void new Gauge({
     name: "process_uptime_seconds",
     help: "Process uptime in seconds.",
     registers: [metricsRegistry],
@@ -57,7 +57,7 @@ async function metricsMiddleware(context: Context, next: Next): Promise<void> {
 export function createApp(): Hono {
     const app = new Hono();
     app.onError(errorHandler);
-    app.use("*", metricsMiddleware);
+    app.use("*", (context, next) => Promise.resolve(metricsMiddleware(context, next)).catch(next));
     app.route("/", new IncidentRoutes(new IncidentService(incidents.repository)));
     app.get("/metrics", async (context) => {
         const body = await metricsRegistry.metrics();
