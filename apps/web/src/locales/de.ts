@@ -627,4 +627,9 @@ export const de: Record<string, string> = {
     "share.noMetadata": "Keine Metadaten gefunden",
     "share.couldNotRead": "Datei konnte nicht gelesen werden",
     "share.redactedDownloaded": "Geschwärzte Datei heruntergeladen",
+    "captions.untitled": "Unbenannte Untertitel",
+    "charts.seriesName": "Gemeldeter Wert",
+    "runtime.storedFile": "„{name}“ gespeichert ({n} Bytes).",
+    "runtime.notFound": "Kein Asset mit dem Namen „{name}“ gefunden.",
+    "runtime.readAsset": "„{name}“ gelesen.",
 };
