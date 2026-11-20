@@ -106,9 +106,8 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
             <p>
                 Local generation needs a Whisper WASM runtime supplied by you and a model: either
                 place whisper-tiny.bin in public/models/ and rebuild, or supply a model URL. No
-                model is downloaded automatically. A cross-origin-isolated page (COOP/COEP) and
-                raw 16-bit little-endian mono audio at 16 kHz are also required. No audio is
-                uploaded.
+                model is downloaded automatically. A cross-origin-isolated page (COOP/COEP) and raw
+                16-bit little-endian mono audio at 16 kHz are also required. No audio is uploaded.
             </p>
             <ul>
                 <For each={props.viewModel.segments}>
