@@ -1,7 +1,9 @@
+import { CodedError, ERROR_CODES } from "@frithward/contracts";
 import type { TranscodeRequest, TranscodeResult, TranscoderPort } from "../ports/TranscoderPort";
 
 function checkAbort(signal: AbortSignal): void {
-    if (signal.aborted) throw new Error("Transcoding was aborted.");
+    if (signal.aborted)
+        throw new CodedError(ERROR_CODES.TRANSCODE_ABORTED, "Transcoding was aborted.");
 }
 
 function failure(cause: unknown): Error {
@@ -22,7 +24,8 @@ export class WebCodecsTranscoder implements TranscoderPort {
             typeof VideoDecoder === "undefined" ||
             typeof VideoFrame === "undefined"
         ) {
-            throw new Error(
+            throw new CodedError(
+                ERROR_CODES.WEBCODECS_VIDEO_UNAVAILABLE,
                 "WebCodecs video encoding or decoding is not available in this browser.",
             );
         }
@@ -113,7 +116,8 @@ export class WebCodecsTranscoder implements TranscoderPort {
             typeof AudioDecoder === "undefined" ||
             typeof AudioData === "undefined"
         ) {
-            throw new Error(
+            throw new CodedError(
+                ERROR_CODES.WEBCODECS_AUDIO_UNAVAILABLE,
                 "WebCodecs audio encoding or decoding is not available in this browser.",
             );
         }
