@@ -1,6 +1,6 @@
 # Audio protection engine
 
-Experimental voice protection research surface. The engine validates an audio id, accepts audio bytes or a path, and returns an explicit `unavailable` status with `protected: false`. It does not apply a protection transform.
+Experimental voice protection research surface. The engine validates an audio id, accepts audio bytes or a path, and stays explicitly `unavailable` with `protected: false`. It computes a real SHA-256 hash, byte length and PCM sample count as preprocessing, but applies no protection transform.
 
 ## Intended use
 
@@ -18,7 +18,7 @@ Experimental voice protection research surface. The engine validates an audio id
 | Item            | Value                                                                   |
 | --------------- | ----------------------------------------------------------------------- |
 | Request         | `ProtectionRequest { audio_id, audio_base64?, audio_path? }`            |
-| Response        | `ProtectionResult { audio_id, protected, status, reason, limitations }` |
+| Response        | `ProtectionResult { audio_id, protected, preprocessing?, status, reason, limitations }` |
 | Validation      | `audio_id` must be non-empty                                            |
 | Complexity      | Model-specific                                                          |
 | Streaming       | Chunked with bounded memory                                             |
@@ -35,6 +35,6 @@ No fixed candidate. Training and evaluation data must be consented and licensed.
 
 ## Limitations
 
-- No protection is applied and no success is claimed (`protected` is always false).
+- No protection is applied and no success is claimed (`protected` is always false); preprocessing only hashes/validates input.
 - Consent and experimental opt-in are enforced by `VoiceProtectionPolicy` in `@frithward/media-analysis`, not by this engine.
 - Protection claims require independent evaluation and human review.
