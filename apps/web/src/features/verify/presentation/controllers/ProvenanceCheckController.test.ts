@@ -155,6 +155,36 @@ describe("ProvenanceCheckController C2PA inspection", () => {
         expect(controller.getError()).toBe("File must contain valid JSON.");
     });
 
+    it("translates C2PA summary, limitations, missing info and failures by code", async () => {
+        const coded: C2paInspectionResult = {
+            ...result,
+            summaryCode: "C2PA_SUMMARY_INVALID",
+            limitationCodes: ["C2PA_LIMIT_UNVERIFIED"],
+            missingInfoCodes: ["C2PA_MISSING_SIGNER"],
+            validationFailures: [{ code: "signature.invalid", message: "Validation failed." }],
+        };
+        const t = (key: string) => {
+            const values: Record<string, string> = {
+                "result.C2PA_SUMMARY_INVALID": "Fallo de firma ({n}).{missing}",
+                "result.C2PA_SUMMARY_MISSING_FRAGMENT": " Faltan {n} datos.",
+                "result.C2PA_LIMIT_UNVERIFIED": "Firma no verificada por el SDK.",
+                "result.C2PA_MISSING_SIGNER": "firmante",
+                "result.C2PA_VALIDATION_FAILED": "Validación fallida.",
+            };
+            return values[key] ?? key;
+        };
+        const controller = new ProvenanceCheckController({
+            inspector: { execute: async () => coded },
+            translate: t,
+        });
+        await controller.inspect("{}");
+        const view = controller.getResult();
+        expect(view?.summary).toBe("Fallo de firma (1). Faltan 1 datos.");
+        expect(view?.limitations).toEqual(["Firma no verificada por el SDK."]);
+        expect(view?.missingInfo).toEqual(["firmante"]);
+        expect(view?.validationFailures[0]?.message).toBe("Validación fallida.");
+    });
+
     it("exposes transformation history parsed from a manifest with two actions", async () => {
         const manifest = {
             signature: { issuer: "Example Studio", alg: "es256" },
