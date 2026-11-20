@@ -29,3 +29,35 @@ export const jobStatus = pgTable("job_status", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// Mirrors 0002_cases_and_reports.sql.
+export const communityReports = pgTable("community_reports", {
+    id: uuid("id").primaryKey(),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    findings: jsonb("findings").$type<unknown>().notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const incidentReports = pgTable("incident_reports", {
+    id: uuid("id").primaryKey(),
+    title: text("title").notNull(),
+    severity: text("severity").notNull(),
+    details: text("details").notNull(),
+    status: text("status").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const cases = pgTable("cases", {
+    id: uuid("id").primaryKey(),
+    kind: text("kind").notNull(),
+    title: text("title").notNull(),
+    inputs: jsonb("inputs").$type<unknown>().notNull(),
+    findings: jsonb("findings").$type<unknown>().notNull(),
+    artifacts: jsonb("artifacts").$type<unknown>().notNull(),
+    nextSteps: jsonb("next_steps").$type<unknown>().notNull(),
+    limitations: jsonb("limitations").$type<unknown>().notNull(),
+    status: text("status").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
