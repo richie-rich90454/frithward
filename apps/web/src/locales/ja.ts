@@ -606,4 +606,9 @@ export const ja: Record<string, string> = {
     "share.noMetadata": "メタデータが見つかりません",
     "share.couldNotRead": "ファイルを読み込めませんでした",
     "share.redactedDownloaded": "編集済みファイルをダウンロードしました",
+    "captions.untitled": "無題の字幕",
+    "charts.seriesName": "報告された値",
+    "runtime.storedFile": "「{name}」を保存しました ({n} バイト)。",
+    "runtime.notFound": "「{name}」というアセットは見つかりませんでした。",
+    "runtime.readAsset": "「{name}」を読み取りました。",
 };
