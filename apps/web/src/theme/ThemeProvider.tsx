@@ -113,7 +113,7 @@ export function ThemeToggle() {
             class="theme-toggle fw-button fw-button-secondary"
             data-testid="theme-toggle"
             data-theme-value={preference()}
-            aria-label={label("settings.theme", "Theme")}
+            aria-label={`${label("settings.theme", "Theme")}: ${text()}`}
             title={label("settings.theme", "Theme")}
             onClick={() => setPreference(NEXT[preference()])}
         >

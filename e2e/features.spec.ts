@@ -47,7 +47,7 @@ test.describe("real browser feature behaviour", () => {
         await page.getByLabel("Mermaid source").fill("graph TD\n  A --> B");
         await page.getByRole("button", { name: "Render", exact: true }).click();
 
-        const rendered = page.getByAltText("Rendered diagram");
+        const rendered = page.getByAltText(/Mermaid diagram/);
         await expect(rendered).toBeVisible({ timeout: 30_000 });
         const src = await rendered.getAttribute("src");
         expect(src, "rendered diagram has no data URL").toMatch(/^data:image\/svg\+xml/);
@@ -93,7 +93,7 @@ test.describe("real browser feature behaviour", () => {
         await page.getByLabel("Message text").fill("send your password urgently");
         await page.getByRole("button", { name: "Check message" }).click();
 
-        await expect(page.getByText("Credential request", { exact: true })).toBeVisible();
+        await expect(page.getByText("Credential request", { exact: true }).first()).toBeVisible();
 
         await page.getByLabel("Simplified mode (one step at a time)").check();
         await expect(page.getByText(/Step\s+1\s*\/\s*\d+/)).toBeVisible();
