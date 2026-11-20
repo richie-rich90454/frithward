@@ -18,7 +18,7 @@ Reloading while disconnected is a separate guarantee. It depends on the service 
 
 | Feature | Requirement | Honest status |
 | --- | --- | --- |
-| Caption generation | A Whisper WASM runtime URL supplied by you, plus a model: either place `whisper-tiny.bin` in `apps/web/public/models/` and rebuild, or supply a model URL. Also needs raw 16-bit little-endian mono PCM at 16 kHz and a cross-origin-isolated page (COOP/COEP) for `SharedArrayBuffer` | Stored captions are edited and exported locally; no model is downloaded automatically, and audio is never uploaded |
+| Caption generation | Default: bundled `browser-whisper` on WebGPU (Chrome/Edge 113+, Safari 18+); decodes normal uploads locally and downloads ONNX weights from Hugging Face on first use, caching them in OPFS, so one network run is needed but audio is never uploaded. Optional Advanced path: a user-supplied Whisper WASM runtime URL plus a model (place `whisper-tiny.bin` in `apps/web/public/models/` and rebuild, or supply a model URL), taking 16-bit little-endian mono PCM at 16 kHz | Stored captions are edited and exported locally; the advanced path downloads no model automatically |
 | OCR | tesseract.js worker language data. `eng.traineddata.gz` is bundled at same-origin `/tessdata`; other languages need a file placed in `apps/web/public/tessdata` and a rebuild | English OCR data is local; nothing is downloaded at runtime. Additional languages are not shipped |
 | Local model inference | Model weights and model cards | Model cards are not shipped yet; the manager inventories metadata, it does not download weights |
 
@@ -31,7 +31,7 @@ The minimum versions below are commonly cited baselines, **not** a browser matri
 | `SharedArrayBuffer` | whisper.cpp / threaded WASM transcription | Requires cross-origin isolation: `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` | Vite dev/preview and the shipped Caddyfile set these headers; configs for Netlify/Cloudflare/Vercel are also shipped. See cross-origin isolation below |
 | OPFS (Origin Private File System) | local asset storage in the media runtime | Chrome 86, Firefox 111, Safari 15.2 | Storage is per-origin in the browser |
 | WebCodecs | local audio/video transcoding | Chrome 94, Safari 16.4 | Firefox support is not assumed |
-| WebGPU | optional GPU detection/acceleration | Chrome 113 | Optional; the app must remain usable without it |
+| WebGPU | default `browser-whisper` transcription and GPU detection | Chrome 113, Safari 18+ | Required for zero-config transcription (first run downloads weights); caption editing/export and the rest of the app still work without it |
 | WebAssembly SIMD | WASM-based media and inference libraries | Modern evergreen browsers | Older browsers without SIMD cannot run the local inference path |
 
 None of these gates requires a backend or a native install. There is no server-side fallback: where an API is missing, the affected local feature is unavailable.
@@ -65,6 +65,16 @@ There is no `browserslist` / `browserslist` config in this repository, so build 
 | Windows 10/11 (x64) | Supported via PowerShell equivalents | Available from upstream | CI runs on `windows-latest`; paths need `\` separators |
 
 CI exercises format, lint, typecheck, unit tests, and E2E on all three OSes in the `check` job. Service startup on each OS is documented but not automated.
+
+## Deployment targets
+
+| Target | How it runs | Notes |
+| --- | --- | --- |
+| Browser-only static host | Build `@frithward/web` and serve `apps/web/dist` on any static host | Default path: no backend, native install, or global install. See the deployment guide. |
+| Self-hosted processes behind Caddy | Run the Hono services with local pnpm scripts behind Caddy | Services run TypeScript source via workspace-local `tsx`; there is no compiled server bundle. |
+| Optional infrastructure | Caddy, PostgreSQL 18, Garage, pgBackRest, Prometheus/otelcol/Loki | Host prerequisites installed by the operator, not project dependencies; no container runtime is used. |
+
+This describes the execution shapes present in this repository; it is not a certified support matrix. The verification notes above still apply.
 
 ## Runtime versions
 
