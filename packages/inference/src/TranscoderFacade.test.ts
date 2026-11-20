@@ -68,7 +68,9 @@ describe("TranscoderFacade", () => {
         const facade = new TranscoderFacade(primary, {
             loadFfmpeg: loadFfmpeg as unknown as () => Promise<FfmpegModule>,
         });
-        await expect(facade.transcode({ input: new ArrayBuffer(2) })).rejects.toThrow("disk on fire");
+        await expect(facade.transcode({ input: new ArrayBuffer(2) })).rejects.toThrow(
+            "disk on fire",
+        );
         expect(loadFfmpeg).not.toHaveBeenCalled();
     });
 });
