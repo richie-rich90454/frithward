@@ -4,6 +4,8 @@ import type { GuidedFlowStep, ScamAnalysis } from "@frithward/security-core";
 import { useI18n } from "../../../../i18n/index.js";
 import { ScamCheckController } from "../controllers/ScamCheckController";
 import type { CheckFindingView } from "../controllers/ScamCheckController";
+import type { ReviewedMatch } from "../../domain/ReviewedPatterns.js";
+import { translateReviewedLimitations, translateReviewedMatch } from "../patternTranslations.js";
 
 interface ScamCheckViewProps {
     initialText?: string;
@@ -11,6 +13,7 @@ interface ScamCheckViewProps {
     urlView: ReturnType<ScamCheckController["getUrlView"]>;
     qrView: ReturnType<ScamCheckController["getQrView"]>;
     error: string | null;
+    reviewedFindings: readonly ReviewedMatch[];
     guidedStep: GuidedFlowStep;
     guidedIndex: number;
     guidedTotal: number;
@@ -147,7 +150,7 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                             <For each={analysis.limitations}>{(limit) => <li>{limit}</li>}</For>
                         </ul>
                         <button type="button" onClick={props.onGenerateReport}>
-                            Generate scam report
+                            {t("check.generateReport")}
                         </button>
                     </div>
                 )}
@@ -156,7 +159,9 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                 {(view) => (
                     <div>
                         <h2>{view.summary}</h2>
-                        <p>Host: {view.hostname ?? "unknown"}</p>
+                        <p>
+                            {t("check.host")} {view.hostname ?? t("check.unknown")}
+                        </p>
                         <Findings findings={view.findings} />
                         <h2>{t("check.limitations")}</h2>
                         <ul>
@@ -169,7 +174,9 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                 {(view) => (
                     <div>
                         <h2>{view.summary}</h2>
-                        <p>Payload type: {view.payloadKind}</p>
+                        <p>
+                            {t("check.payloadType")} {view.payloadKind}
+                        </p>
                         <Findings findings={view.findings} />
                         <h2>{t("check.limitations")}</h2>
                         <ul>
@@ -177,6 +184,35 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                         </ul>
                     </div>
                 )}
+            </Show>
+            <Show when={props.analysis || props.urlView || props.qrView}>
+                <div>
+                    <h2>{t("check.reviewed.title")}</h2>
+                    <p role="note">{t("check.reviewed.intro")}</p>
+                    <Show
+                        when={props.reviewedFindings.length > 0}
+                        fallback={<p>{t("check.reviewed.none")}</p>}
+                    >
+                        <ul>
+                            <For each={props.reviewedFindings}>
+                                {(match) => {
+                                    const translated = translateReviewedMatch(t, match);
+                                    return (
+                                        <li>
+                                            <strong>{translated.label}</strong>: {translated.detail}
+                                        </li>
+                                    );
+                                }}
+                            </For>
+                        </ul>
+                    </Show>
+                    <h3>{t("check.limitations")}</h3>
+                    <ul>
+                        <For each={translateReviewedLimitations(t)}>
+                            {(limit) => <li>{limit}</li>}
+                        </For>
+                    </ul>
+                </div>
             </Show>
         </section>
     );
@@ -193,9 +229,11 @@ function readSharedText(): string {
 }
 
 export function ScamCheckPage() {
-    const controller = new ScamCheckController();
+    const { t } = useI18n();
+    const controller = new ScamCheckController({ translate: t });
     const initialText = readSharedText();
     const [analysis, setAnalysis] = createSignal(controller.getAnalysis());
+    const [reviewedFindings, setReviewedFindings] = createSignal(controller.getReviewedFindings());
     const [urlView, setUrlView] = createSignal(controller.getUrlView());
     const [qrView, setQrView] = createSignal(controller.getQrView());
     const [error, setError] = createSignal(controller.getError());
@@ -204,6 +242,7 @@ export function ScamCheckPage() {
     const [guidedComplete, setGuidedComplete] = createSignal(controller.isGuidedComplete());
     const sync = () => {
         setAnalysis(controller.getAnalysis());
+        setReviewedFindings(controller.getReviewedFindings());
         setUrlView(controller.getUrlView());
         setQrView(controller.getQrView());
         setError(controller.getError());
@@ -228,6 +267,7 @@ export function ScamCheckPage() {
         <ScamCheckView
             initialText={initialText}
             analysis={analysis()}
+            reviewedFindings={reviewedFindings()}
             urlView={urlView()}
             qrView={qrView()}
             error={error()}
