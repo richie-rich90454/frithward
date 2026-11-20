@@ -1,13 +1,31 @@
 import { Pool } from "pg";
-import { OpenAPIHono } from "@hono/zod-openapi";
-import { healthRoute } from "../../presentation/http/routes.js";
+import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import { HealthResponse } from "../../presentation/http/schemas.js";
 import { validationHook } from "../../presentation/http/validationHook.js";
+
+// The shared healthRoute schema only declares 200; declare 503 here so the
+// handler can be honest about an unavailable database without editing it.
+const healthRoute = createRoute({
+    method: "get",
+    path: "/health",
+    responses: {
+        200: {
+            description: "Service status.",
+            content: { "application/json": { schema: HealthResponse } },
+        },
+        503: {
+            description: "Database configured but unavailable.",
+            content: { "application/json": { schema: HealthResponse } },
+        },
+    },
+});
 
 export type DatabaseStatus = "connected" | "unavailable" | "not-configured";
 
 export interface DatabaseHealth {
     configured: boolean;
     check(): Promise<boolean>;
+    close(): Promise<void>;
 }
 
 export function createDatabaseHealthCheck(databaseUrl: string | undefined): DatabaseHealth {
@@ -22,6 +40,9 @@ export function createDatabaseHealthCheck(databaseUrl: string | undefined): Data
             } catch {
                 return false;
             }
+        },
+        async close(): Promise<void> {
+            await pool?.end();
         },
     };
 }
@@ -38,7 +59,11 @@ export class HealthRoutes extends OpenAPIHono {
                 : (await this.checkDatabase())
                   ? "connected"
                   : "unavailable";
-            return context.json({ status: "ok", service: "api", database }, 200);
+            const unhealthy = database === "unavailable";
+            return context.json(
+                { status: unhealthy ? "unavailable" : "ok", service: "api", database },
+                unhealthy ? 503 : 200,
+            );
         });
     }
 }
