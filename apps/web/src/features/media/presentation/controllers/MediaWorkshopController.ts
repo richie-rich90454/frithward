@@ -4,6 +4,7 @@ import { encodeWav } from "../../application/WavEncoder.js";
 import { WebCodecsTranscoder } from "../../../runtime/infrastructure/WebCodecsTranscoder.js";
 import type { TranscoderPort } from "../../../runtime/ports/TranscoderPort.js";
 import { LocalStorageCaptionRepository } from "../../../captions/infrastructure/LocalStorageCaptionRepository.js";
+import { english, interpolate, type Translator } from "../../../../i18n/translate.js";
 
 export interface MediaArtifact {
     blob: Blob;
@@ -77,6 +78,7 @@ export interface MediaWorkshopControllerOptions {
     transcoder?: TranscoderPort;
     redactor?: ImageRedactor;
     decodeAudio?: AudioDecodeFn;
+    translate?: Translator;
 }
 
 export class MediaWorkshopController {
@@ -85,6 +87,7 @@ export class MediaWorkshopController {
     private readonly transcoder: TranscoderPort;
     private readonly redactor: ImageRedactor;
     private readonly decodeAudio: AudioDecodeFn;
+    private readonly translate: Translator;
     private readonly listeners = new Set<() => void>();
     private selectedSegmentId: string | null = null;
     private error: string | null = null;
@@ -106,6 +109,7 @@ export class MediaWorkshopController {
         this.transcoder = options.transcoder ?? new WebCodecsTranscoder();
         this.redactor = options.redactor ?? new ImageRedactor();
         this.decodeAudio = options.decodeAudio ?? defaultDecodeAudio;
+        this.translate = options.translate ?? english;
     }
 
     public subscribe(listener: () => void): () => void {
@@ -162,12 +166,12 @@ export class MediaWorkshopController {
         const start = Number(input.startMs);
         const end = Number(input.endMs);
         if (!Number.isInteger(start) || !Number.isInteger(end)) {
-            this.error = "Start and end must be whole milliseconds.";
+            this.error = this.translate("media.error.wholeMs");
             this.notify();
             return;
         }
         if (input.text.trim().length === 0) {
-            this.error = "Segment text required.";
+            this.error = this.translate("media.error.segmentTextRequired");
             this.notify();
             return;
         }
@@ -182,7 +186,8 @@ export class MediaWorkshopController {
             );
             this.error = null;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Could not add segment.";
+            this.error =
+                cause instanceof Error ? cause.message : this.translate("media.error.addSegment");
         }
         this.notify();
     }
@@ -193,7 +198,8 @@ export class MediaWorkshopController {
             this.selectedSegmentId = segmentId;
             this.error = null;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Segment not found.";
+            this.error =
+                cause instanceof Error ? cause.message : this.translate("media.error.notFound");
         }
         this.notify();
     }
@@ -208,13 +214,14 @@ export class MediaWorkshopController {
             this.selectedSegmentId = input.segmentId;
             this.error = null;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Edit failed.";
+            this.error =
+                cause instanceof Error ? cause.message : this.translate("media.error.edit");
         }
         this.notify();
     }
 
     public async transcodeAudio(file: File): Promise<void> {
-        this.transcodeStatus = "Decoding audio...";
+        this.transcodeStatus = this.translate("media.status.decoding");
         this.transcodedAudio = null;
         this.decodedAudio = null;
         this.waveformData = null;
@@ -227,7 +234,7 @@ export class MediaWorkshopController {
             decoded.channels.forEach((channel, index) => {
                 samples.set(channel, index * length);
             });
-            this.transcodeStatus = "Transcoding audio...";
+            this.transcodeStatus = this.translate("media.status.transcoding");
             this.notify();
             const result = await this.transcoder.transcode({
                 config: {
@@ -250,10 +257,15 @@ export class MediaWorkshopController {
                 blob: encodeWav(decoded.channels, decoded.sampleRate),
                 fileName: "transcoded-audio.wav",
             };
-            this.transcodeStatus = `Transcoded ${result.encodedChunks} chunk(s), ${result.encodedBytes} bytes (${result.decodedChunks} decoded).`;
+            this.transcodeStatus = interpolate(this.translate("media.status.transcoded"), {
+                chunks: result.encodedChunks,
+                bytes: result.encodedBytes,
+                decoded: result.decodedChunks,
+            });
             this.error = null;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Audio transcoding failed.";
+            this.error =
+                cause instanceof Error ? cause.message : this.translate("media.error.transcode");
             this.transcodeStatus = null;
         }
         this.notify();
@@ -266,7 +278,7 @@ export class MediaWorkshopController {
         width: string;
         height: string;
     }): Promise<void> {
-        this.redactionStatus = "Redacting image...";
+        this.redactionStatus = this.translate("media.status.redacting");
         this.redactedImage = null;
         this.notify();
         try {
@@ -279,10 +291,11 @@ export class MediaWorkshopController {
             if (this.previewUrl) URL.revokeObjectURL(this.previewUrl);
             this.previewUrl = URL.createObjectURL(blob);
             this.redactedImage = { blob, fileName: "redacted-image.png" };
-            this.redactionStatus = "Redacted image ready.";
+            this.redactionStatus = this.translate("media.status.redacted");
             this.error = null;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Image redaction failed.";
+            this.error =
+                cause instanceof Error ? cause.message : this.translate("media.error.redact");
             this.redactionStatus = null;
         }
         this.notify();
