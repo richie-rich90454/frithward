@@ -685,4 +685,152 @@ export const ja: Record<string, string> = {
         "このブラウザではWebCodecsの音声エンコード/デコードを利用できません。",
     "error.DIAGRAM_SOURCE_REQUIRED": "まずMermaid図を入力してください。",
     "error.DIAGRAM_RENDER_FAILED": "図を描画できませんでした: {detail}",
+    "result.PRIVACY_GPS_LABEL": "GPS 位置",
+    "result.PRIVACY_GPS_DETAIL": "ファイルには撮影場所の GPS 座標が保存されています。",
+    "result.PRIVACY_GPS_REMEDIATION": "GPS 座標を削除するか、元のファイルを共有しないでください。",
+    "result.PRIVACY_DEVICE_LABEL": "デバイス情報",
+    "result.PRIVACY_DEVICE_DETAIL": "ファイルにはカメラやデバイスの情報が保存されています。",
+    "result.PRIVACY_DEVICE_REMEDIATION": "不要であればデバイスのメタデータを削除してください。",
+    "result.PRIVACY_TIME_LABEL": "撮影時刻",
+    "result.PRIVACY_TIME_DETAIL": "ファイルには撮影のタイムスタンプが保存されています。",
+    "result.PRIVACY_TIME_REMEDIATION":
+        "個人の行動パターンが分かるタイムスタンプを削除してください。",
+    "result.PRIVACY_EMAIL_LABEL": "メールアドレス",
+    "result.PRIVACY_EMAIL_DETAIL": "ファイルにメールアドレスが含まれています。",
+    "result.PRIVACY_EMAIL_REMEDIATION": "共有前にメタデータからメールアドレスを削除してください。",
+    "result.PRIVACY_PHONE_LABEL": "電話番号",
+    "result.PRIVACY_PHONE_DETAIL": "ファイルに電話番号が含まれています。",
+    "result.PRIVACY_PHONE_REMEDIATION": "共有前にメタデータから電話番号を削除してください。",
+    "result.PRIVACY_ADDRESS_LABEL": "住所",
+    "result.PRIVACY_ADDRESS_DETAIL": "ファイルに住所が含まれています。",
+    "result.PRIVACY_ADDRESS_REMEDIATION": "共有前にメタデータから住所を削除してください。",
+    "result.PRIVACY_NAME_LABEL": "個人名",
+    "result.PRIVACY_NAME_DETAIL": "ファイルに個人名が含まれています。",
+    "result.PRIVACY_NAME_REMEDIATION": "共有前にメタデータから個人名を削除してください。",
+    "result.PRIVACY_EXPORT_SAFE": "編集は不要です。このファイルは安全に共有できます。",
+    "result.PRIVACY_EXPORT_ACTIONS": "共有前に {n} 件の整理操作が必要です。",
+    "result.PRIVACY_EXPORT_STRIP":
+        "エクスポートしたファイルから識別可能なメタデータを削除してください。",
+    "result.PRIVACY_VIEW_SAFE":
+        "機密性の高いメタデータは見つかりませんでした。このファイルは安全に共有できます。",
+    "result.PRIVACY_VIEW_ISSUES":
+        "ファイルのメタデータに {n} 件のプライバシー上の問題が見つかりました。",
+    "result.PRIVACY_VIEW_LOW_RISK":
+        "支障となるメタデータはありません。低リスクの項目が {n} 件見つかりました。",
+    "result.PRIVACY_FORMAT_UNINSPECTED":
+        "このファイル形式は検査されませんでした。埋め込まれたメタデータを確認できませんでした。",
+    "result.PRIVACY_REDACTION_SUMMARY":
+        "{n} 件に対応しました。共有するには {file} をダウンロードしてください。",
+    "result.PRIVACY_REDACTION_NOTE":
+        "ダウンロードファイルはデコードされたピクセルから再構築されるため、埋め込まれたメタデータは引き継がれません。共有前にファイルを確認してください。",
+    "result.URL_UNREADABLE_LABEL": "読み取れないリンク",
+    "result.URL_UNREADABLE_DETAIL": "このリンクをウェブアドレスとして読み取れませんでした。",
+    "result.URL_UNREADABLE_SUMMARY": "リンクを読み取れませんでした。開かないでください。",
+    "result.URL_INSECURE_LABEL": "安全でない接続",
+    "result.URL_INSECURE_DETAIL":
+        "このリンクは http を使用しているため、接続が暗号化されていません。",
+    "result.URL_CREDENTIALS_LABEL": "隠された目的地",
+    "result.URL_CREDENTIALS_DETAIL":
+        "このリンクには認証情報や @ 記号が含まれ、実際の目的地が隠されている可能性があります。",
+    "result.URL_IP_LABEL": "数値アドレス",
+    "result.URL_IP_DETAIL": "このリンクは名前付きドメインではなく数値アドレスを指しています。",
+    "result.URL_PUNYCODE_LABEL": "エンコードされたホスト名",
+    "result.URL_PUNYCODE_DETAIL":
+        "このホスト名は punycode を使用しており、似た文字を隠す可能性があります。",
+    "result.URL_SHORTENED_LABEL": "短縮リンク",
+    "result.URL_SHORTENED_DETAIL": "目的地が短縮リンクの背後に隠されています。",
+    "result.URL_TLD_LABEL": "珍しいドメインの末尾",
+    "result.URL_TLD_DETAIL": "ドメインの末尾 .{tld} は使い捨てサイトによく使われます。",
+    "result.URL_DEEP_LABEL": "多数のサブドメイン",
+    "result.URL_DEEP_DETAIL": "このアドレスは異例に深いサブドメインの階層を持っています。",
+    "result.URL_HYPHENS_LABEL": "多数のハイフン",
+    "result.URL_HYPHENS_DETAIL":
+        "このアドレスには複数のハイフンがあり、一般的ななりすましの手法です。",
+    "result.URL_BRAND_LABEL": "類似ドメイン",
+    "result.URL_BRAND_DETAIL":
+        "このドメインは「{brand}」に似ていますが、公式のドメインではありません。",
+    "result.URL_SUMMARY_NONE":
+        "明白なリスクパターンは見つかりませんでした。リンクが安全であることは証明されません。",
+    "result.URL_SUMMARY_FOUND":
+        "{n} 件のリスク指標が見つかりました。詐欺を立証するものではありません。",
+    "result.URL_LIMIT_PATTERNS":
+        "このチェックはテキストパターンの比較のみで、実際のウェブサイトを検証できません。",
+    "result.URL_LIMIT_NEW_DOMAINS":
+        "新しく登録された、または未公開のドメインは認識されない場合があります。",
+    "result.URL_LIMIT_LOOKALIKE": "正規に見えるリンクでも有害なコンテンツを配信できます。",
+    "result.URL_LIMIT_PUNYCODE":
+        "このホスト名は punycode を使用しており、ここではデコードできませんでした。",
+    "result.URL_LIMIT_SHORTENED": "最終的な目的地が短縮リンクの背後に隠されています。",
+    "result.QR_WIFI_LABEL": "Wi-Fi 設定",
+    "result.QR_WIFI_DETAIL":
+        "このコードには Wi-Fi 設定が含まれています。信頼できないネットワークに参加すると通信が漏える可能性があります。",
+    "result.QR_VCARD_LABEL": "連絡先カード",
+    "result.QR_VCARD_DETAIL": "このコードには個人の連絡先情報が含まれています。",
+    "result.QR_CRYPTO_LABEL": "暗号通貨アドレス",
+    "result.QR_CRYPTO_DETAIL":
+        "このコードには暗号通貨アドレスが含まれています。取引は取り消せません。",
+    "result.QR_CONTACT_LABEL": "連絡操作",
+    "result.QR_CONTACT_DETAIL": "このコードはメールまたは電話の操作を開きます。",
+    "result.QR_URGENCY_DETAIL": "このコードはすぐに行動するよう促します。",
+    "result.QR_PAYMENT_DETAIL": "このコードは支払いを求めます。",
+    "result.QR_CREDENTIAL_DETAIL": "このコードは認証情報を求めます。",
+    "result.QR_SUMMARY_NONE":
+        "コードの内容に明白なリスクパターンは見られません。安全である証明にはなりません。",
+    "result.QR_SUMMARY_FOUND":
+        "{n} 件のリスク指標が見つかりました。意図を立証するものではありません。",
+    "result.QR_LIMIT_PAYLOAD":
+        "QR コードはどこまでも指せるため、内容が途中で切れたりエンコードされたりしている場合があります。",
+    "result.QR_LIMIT_AUTO_OPEN":
+        "カメラアプリで QR コードをスキャンするとリンクが自動的に開く場合があります。",
+    "result.SCAM_SUMMARY_NONE": "テキストのリスク指標は見つかりませんでした。",
+    "result.SCAM_SUMMARY_FOUND":
+        "{n} 件のリスク指標が見つかりました。詐欺を立証するものではありません。",
+    "result.SCAM_LIMIT_INTENT": "テキストのパターンだけでは意図を証明できません。",
+    "result.SCAM_LIMIT_UNCHECKED": "関連する URL、画像、通話相手は確認していません。",
+    "result.C2PA_SUMMARY_MISSING": "署名マニフェストが見つかりません。来歴は利用できません。",
+    "result.C2PA_SUMMARY_VALID":
+        "署名は有効であると主張しています。署名者 {signer}、{n} 件のアサーションがあります。{missing}",
+    "result.C2PA_SUMMARY_INVALID":
+        "署名の検証に失敗しました（{n} 件の失敗）。証拠の確認が必要です。{missing}",
+    "result.C2PA_SUMMARY_UNVERIFIED":
+        "署名はありますが検証されていません。署名者 {signer}。{missing}",
+    "result.C2PA_VALIDATION_FAILED": "検証に失敗しました。",
+    "result.C2PA_LIMIT_SIGNATURE":
+        "署名ステータスはマニフェストから取得しており、暗号による再検証は行っていません。",
+    "result.C2PA_LIMIT_TIMESTAMPS":
+        "タイムスタンプはマニフェスト由来で、実際の署名時刻を反映しない場合があります。",
+    "result.C2PA_LIMIT_ASSERTIONS":
+        "アサーションの存在のみを報告しており、その内容は検証していません。",
+    "result.C2PA_LIMIT_UNVERIFIED": "C2PA SDK で署名を検証していません",
+    "result.C2PA_LIMIT_NO_ACTIONS":
+        "c2pa.actions アサーションがなく、変更履歴を解析できませんでした。",
+    "result.C2PA_MISSING_MANIFEST": "マニフェスト",
+    "result.C2PA_MISSING_SIGNER": "署名者",
+    "result.C2PA_MISSING_TIMESTAMP": "署名タイムスタンプ",
+    "result.C2PA_MISSING_ASSERTIONS": "アサーション",
+    "result.C2PA_MISSING_HASH": "アセットハッシュ",
+    "result.VOICE_LIMIT_0": "音声保護は実験的で、独立した評価を受けていません。",
+    "result.VOICE_LIMIT_1": "保護によって悪用やになりすましを防ぐことは保証されません。",
+    "result.VOICE_LIMIT_2": "効果は言語、録音品質、攻撃手法によって異なります。",
+    "result.VOICE_LIMIT_3": "保護を適用するには話し手の同意を文書で取得する必要があります。",
+    "result.FACE_LIMIT_0": "顔保護は実験的で、独立した評価を受けていません。",
+    "result.FACE_LIMIT_1": "保護によって悪用を防ぐことは保証されません。",
+    "result.FACE_LIMIT_2": "性能は人口統計グループによって異なり、導入前に評価する必要があります。",
+    "result.FACE_LIMIT_3": "保護を適用するには写っている人物の同意を文書で取得する必要があります。",
+    "result.GPU_LIMIT_UNAVAILABLE":
+        "WebGPU が利用できないため、GPU 性能のチェックを実行できませんでした。",
+    "result.GPU_LIMIT_GENERALIZE":
+        "あるブラウザと端末の結果を他のハードウェアに一般化することはできません。",
+    "result.GPU_LIMIT_COMPUTE":
+        "1 回の compute パスは WebGPU の基本的なサポートのみを示し、性能やモデルの互換性は示しません。",
+    "result.GPU_LIMIT_METADATA":
+        "アダプターのメタデータはブラウザから提供され、プライバシーのため一部が伏せられている場合があります。",
+    "result.GPU_LIMIT_INCOMPLETE": " compute パスが完了しなかったため、サポートは未確認です。",
+    "result.GPU_ERROR_NO_WEBGPU": "このブラウザでは WebGPU を利用できません。",
+    "result.GPU_ERROR_NO_ADAPTER": "WebGPU アダプターが見つかりませんでした。",
+    "result.GPU_ERROR_COMPUTE_UNEXPECTED":
+        " compute パスは実行されましたが予期しない値が返されました。",
+    "result.OCR_LIMIT_ACCURACY": "OCR の精度は画像品質、フォント、言語の範囲によって異なります。",
+    "result.OCR_LIMIT_LOCAL":
+        "認識は同梱の言語データを使って tesseract.js でローカルに実行されます。何もダウンロードされません。",
 };
