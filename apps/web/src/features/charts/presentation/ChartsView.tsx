@@ -71,7 +71,12 @@ export function ChartsView(props: ChartsViewProps) {
                 when={props.state.dataset}
                 fallback={<p role="status">No chart to display. Add real data above.</p>}
             >
-                <div ref={setContainer} style={{ width: "100%", height: "360px" }} />
+                <div
+                    class="chart-container"
+                    data-chart
+                    ref={setContainer}
+                    style={{ width: "100%", height: "360px" }}
+                />
             </Show>
         </section>
     );
