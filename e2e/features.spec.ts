@@ -34,8 +34,8 @@ test.describe("real browser feature behaviour", () => {
 
                 expect(download.suggestedFilename()).toBe(filename);
                 const path = await download.path();
-                expect(path, `${button} produced no download file`).not.toBeNull();
-                const info = await stat(path!);
+                if (!path) throw new Error(`${button} produced no download file`);
+                const info = await stat(path);
                 expect(info.size, `${button} downloaded an empty file`).toBeGreaterThan(0);
                 await expect(page.getByRole("alert")).toHaveCount(0);
             });
@@ -51,7 +51,8 @@ test.describe("real browser feature behaviour", () => {
         await expect(rendered).toBeVisible({ timeout: 30_000 });
         const src = await rendered.getAttribute("src");
         expect(src, "rendered diagram has no data URL").toMatch(/^data:image\/svg\+xml/);
-        const svg = decodeURIComponent(src!.slice(src!.indexOf(",") + 1));
+        if (!src) throw new Error("rendered diagram has no data URL");
+        const svg = decodeURIComponent(src.slice(src.indexOf(",") + 1));
         expect(svg).toContain("<svg");
         expect(svg.length).toBeGreaterThan(50);
         await expect(page.getByRole("alert")).toHaveCount(0);
@@ -67,9 +68,9 @@ test.describe("real browser feature behaviour", () => {
         const canvas = page.locator("canvas");
         await expect(canvas.first()).toBeVisible({ timeout: 30_000 });
         const box = await canvas.first().boundingBox();
-        expect(box, "chart canvas has no box").not.toBeNull();
-        expect(box!.width).toBeGreaterThan(0);
-        expect(box!.height).toBeGreaterThan(0);
+        if (!box) throw new Error("chart canvas has no box");
+        expect(box.width).toBeGreaterThan(0);
+        expect(box.height).toBeGreaterThan(0);
         await expect(page.getByRole("alert")).toHaveCount(0);
     });
 
@@ -174,13 +175,16 @@ test("document workshop OCR recognizes a supplied image", async ({ page }) => {
         const canvas = document.createElement("canvas");
         canvas.width = 700;
         canvas.height = 200;
-        const context = canvas.getContext("2d")!;
+        const context = canvas.getContext("2d");
+        if (!context) throw new Error("2D canvas context unavailable");
         context.fillStyle = "#ffffff";
         context.fillRect(0, 0, canvas.width, canvas.height);
         context.fillStyle = "#000000";
         context.font = "bold 80px sans-serif";
         context.fillText("HELLO 12345", 20, 130);
-        return canvas.toDataURL("image/png").split(",")[1]!;
+        const encoded = canvas.toDataURL("image/png").split(",")[1];
+        if (!encoded) throw new Error("canvas encoding failed");
+        return encoded;
     });
 
     await page.locator('input[type="file"][accept="image/*"]').setInputFiles({
