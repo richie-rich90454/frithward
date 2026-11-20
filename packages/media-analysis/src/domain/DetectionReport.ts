@@ -1,6 +1,6 @@
 import { AppError } from "@frithward/contracts";
 import type { ModelEntry } from "@frithward/model-registry";
-import { analysisLimitationCode } from "./AnalysisLimitations.js";
+import { AnalysisLimitations, analysisLimitationCode } from "./AnalysisLimitations.js";
 import type { DetectionSignal } from "./DetectionSignal.js";
 
 export type AnalysisKind = "audio" | "image" | "video" | "multimodal";
