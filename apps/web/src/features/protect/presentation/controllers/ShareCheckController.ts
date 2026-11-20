@@ -17,6 +17,8 @@ import {
     type SanitizedOutputDescriptor,
 } from "@frithward/privacy-core";
 import { english, type Translator } from "../../../../i18n/translate.js";
+import { resultList, resultText } from "../../../../i18n/results.js";
+import { RESULT_CODES } from "@frithward/contracts";
 
 export interface ShareCheckOption {
     id: string;
@@ -84,6 +86,16 @@ const KIND_LABELS: Record<MetadataFindingKind, string> = {
     "pii-phone": "Phone number",
     "pii-address": "Street address",
     "pii-name": "Personal name",
+};
+
+const KIND_LABEL_CODES: Record<MetadataFindingKind, string> = {
+    "exif-gps": RESULT_CODES.PRIVACY_GPS_LABEL,
+    "exif-device": RESULT_CODES.PRIVACY_DEVICE_LABEL,
+    "exif-timestamp": RESULT_CODES.PRIVACY_TIME_LABEL,
+    "pii-email": RESULT_CODES.PRIVACY_EMAIL_LABEL,
+    "pii-phone": RESULT_CODES.PRIVACY_PHONE_LABEL,
+    "pii-address": RESULT_CODES.PRIVACY_ADDRESS_LABEL,
+    "pii-name": RESULT_CODES.PRIVACY_NAME_LABEL,
 };
 
 const LOCATION_HINTS: Record<MetadataFindingKind, RegExp> = {
@@ -258,14 +270,18 @@ export class ShareCheckController {
                 issues: result.findings.map((finding) => ({
                     id: finding.id,
                     kind: finding.kind,
-                    label: KIND_LABELS[finding.kind],
+                    label: resultText(
+                        this.translate,
+                        KIND_LABELS[finding.kind],
+                        KIND_LABEL_CODES[finding.kind],
+                    ),
                     value: valueFor(finding.kind, findings.fields),
                     where: locationFor(finding.kind, findings.fields),
-                    why: finding.detail,
-                    how: finding.remediation,
+                    why: resultText(this.translate, finding.detail, finding.detailCode),
+                    how: resultText(this.translate, finding.remediation, finding.remediationCode),
                     severity: finding.severity,
                 })),
-                remediation: [...result.remediation],
+                remediation: resultList(this.translate, result.remediation),
                 summary: this.summaryFor(result.safeToShare, result.findings.length, format),
             };
             this.exportPlan = null;
@@ -282,12 +298,22 @@ export class ShareCheckController {
 
     private summaryFor(safeToShare: boolean, findingCount: number, format: ParsedFormat): string {
         if (format === "unknown")
-            return "This file format was not inspected. No embedded metadata could be verified.";
-        if (safeToShare)
-            return findingCount === 0
-                ? this.translate("share.noMetadata")
-                : `No blocking metadata; ${findingCount} low-risk finding(s) detected.`;
-        return `${findingCount} privacy issue(s) found in the file's metadata.`;
+            return resultText(this.translate, "", RESULT_CODES.PRIVACY_FORMAT_UNINSPECTED);
+        if (safeToShare) {
+            if (findingCount === 0) return this.translate("share.noMetadata");
+            return resultText(
+                this.translate,
+                `No blocking metadata; ${findingCount} low-risk finding(s) detected.`,
+                RESULT_CODES.PRIVACY_VIEW_LOW_RISK,
+                { n: findingCount },
+            );
+        }
+        return resultText(
+            this.translate,
+            `${findingCount} privacy issue(s) found in the file's metadata.`,
+            RESULT_CODES.PRIVACY_VIEW_ISSUES,
+            { n: findingCount },
+        );
     }
 
     public planSanitizedExport(findings: readonly MetadataFinding[]): void {
@@ -302,11 +328,15 @@ export class ShareCheckController {
                 findings,
             });
             this.exportPlan = {
-                summary: plan.summary,
+                summary: resultText(this.translate, plan.summary, plan.summaryCode),
                 safeToShare: plan.safeToShare,
                 actions: plan.actions.map((action) => ({
                     kind: action.kind,
-                    description: action.description,
+                    description: resultText(
+                        this.translate,
+                        action.description,
+                        action.descriptionCode,
+                    ),
                 })),
             };
             this.error = null;
@@ -349,12 +379,17 @@ export class ShareCheckController {
                 remaining: result.findings.map((finding) => ({
                     id: finding.id,
                     kind: finding.kind,
-                    detail: finding.detail,
+                    detail: resultText(this.translate, finding.detail),
                 })),
-                summary: `${result.redactedCount} finding(s) addressed; download ${artifact.fileName} to share.`,
+                summary: resultText(
+                    this.translate,
+                    `${result.redactedCount} finding(s) addressed; download ${artifact.fileName} to share.`,
+                    RESULT_CODES.PRIVACY_REDACTION_SUMMARY,
+                    { n: result.redactedCount, file: artifact.fileName },
+                ),
                 note:
                     artifact.method === "re-encoded"
-                        ? "The download is rebuilt from decoded pixels, so embedded metadata is not carried over. Verify the file before sharing."
+                        ? resultText(this.translate, "", RESULT_CODES.PRIVACY_REDACTION_NOTE)
                         : `${artifact.label} Verify the file before sharing.`,
                 artifact,
             };
