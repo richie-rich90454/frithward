@@ -13,6 +13,18 @@ import {
     type UrlInspectionResult,
     type UrlRiskLevel,
 } from "@frithward/security-core";
+import {
+    buildReviewedInput,
+    findReviewedPatterns,
+    REVIEWED_LIMITATIONS,
+    type ReviewedMatch,
+} from "../../domain/ReviewedPatterns.js";
+import {
+    LocalStorageRecentCheckRepository,
+    type RecentCheck,
+    type RecentCheckChannel,
+    type RecentCheckRepository,
+} from "../../infrastructure/LocalStorageRecentCheckRepository.js";
 
 export interface CheckFindingView {
     id: string;
@@ -44,6 +56,19 @@ export interface ScamCheckControllerOptions {
     urlInspector?: Pick<UrlInspectionUseCase, "execute">;
     qrInspector?: Pick<QrInspectionUseCase, "execute">;
     reportUseCase?: Pick<ScamReportUseCase, "execute">;
+    recentChecks?: RecentCheckRepository;
+}
+
+/** Self-contained snapshot a Case store can consume later. */
+export interface CheckResultSnapshot {
+    channel: RecentCheckChannel;
+    input: string;
+    analysis: ScamAnalysis | null;
+    urlView: UrlCheckView | null;
+    qrView: QrCheckView | null;
+    reviewedFindings: readonly ReviewedMatch[];
+    limitations: readonly string[];
+    createdAt: string;
 }
 
 export class ScamCheckController {
@@ -51,11 +76,14 @@ export class ScamCheckController {
     private readonly urlInspector: Pick<UrlInspectionUseCase, "execute">;
     private readonly qrInspector: Pick<QrInspectionUseCase, "execute">;
     private readonly reportUseCase: Pick<ScamReportUseCase, "execute">;
+    private readonly recentChecks: RecentCheckRepository;
     private readonly listeners = new Set<() => void>();
     private currentText = "";
     private analysis: ScamAnalysis | null = null;
     private urlView: UrlCheckView | null = null;
     private qrView: QrCheckView | null = null;
+    private reviewedFindings: readonly ReviewedMatch[] = [];
+    private lastResult: CheckResultSnapshot | null = null;
     private error: string | null = null;
     private guided = new OlderAdultGuidedFlowController();
 
@@ -63,6 +91,7 @@ export class ScamCheckController {
         this.urlInspector = options.urlInspector ?? new UrlInspectionUseCase();
         this.qrInspector = options.qrInspector ?? new QrInspectionUseCase();
         this.reportUseCase = options.reportUseCase ?? new ScamReportUseCase();
+        this.recentChecks = options.recentChecks ?? new LocalStorageRecentCheckRepository();
     }
 
     public subscribe(listener: () => void): () => void {
@@ -88,14 +117,30 @@ export class ScamCheckController {
         return this.error;
     }
 
+    /** Supplementary rule-based pass; never presented as the primary analysis. */
+    public getReviewedFindings(): readonly ReviewedMatch[] {
+        return this.reviewedFindings;
+    }
+
+    public getLastResult(): CheckResultSnapshot | null {
+        return this.lastResult;
+    }
+
+    public getRecentChecks(): readonly RecentCheck[] {
+        return this.recentChecks.list();
+    }
+
     public check(text: string): void {
         this.currentText = text;
         try {
             this.analysis = this.analyzer.execute(text);
+            this.reviewedFindings = findReviewedPatterns(buildReviewedInput(text));
             this.error = null;
             this.syncGuided(this.analysis.indicators);
+            this.recordResult("message", text);
         } catch (cause) {
             this.analysis = null;
+            this.reviewedFindings = [];
             this.error = cause instanceof Error ? cause.message : "Analysis failed.";
         }
         this.notify();
@@ -104,10 +149,13 @@ export class ScamCheckController {
     public checkUrl(input: string): void {
         try {
             this.urlView = toUrlView(this.urlInspector.execute(input));
+            this.reviewedFindings = findReviewedPatterns(buildReviewedInput(input));
             this.error = null;
             this.syncGuided(this.urlView.findings);
+            this.recordResult("url", input);
         } catch (cause) {
             this.urlView = null;
+            this.reviewedFindings = [];
             this.error = cause instanceof Error ? cause.message : "Link check failed.";
         }
         this.notify();
@@ -116,10 +164,13 @@ export class ScamCheckController {
     public checkQr(input: string): void {
         try {
             this.qrView = toQrView(this.qrInspector.execute(input));
+            this.reviewedFindings = findReviewedPatterns(buildReviewedInput(input));
             this.error = null;
             this.syncGuided(this.qrView.findings);
+            this.recordResult("qr", input);
         } catch (cause) {
             this.qrView = null;
+            this.reviewedFindings = [];
             this.error = cause instanceof Error ? cause.message : "QR check failed.";
         }
         this.notify();
@@ -176,6 +227,48 @@ export class ScamCheckController {
     public guidedComplete(): void {
         this.guided.completeCurrentStep();
         this.notify();
+    }
+
+    private recordResult(channel: RecentCheckChannel, input: string): void {
+        const primary =
+            channel === "message"
+                ? {
+                      findings: this.analysis?.indicators ?? [],
+                      summary: this.analysis?.summary ?? "",
+                      limitations: this.analysis?.limitations ?? [],
+                  }
+                : channel === "url"
+                  ? {
+                        findings: this.urlView?.findings ?? [],
+                        summary: this.urlView?.summary ?? "",
+                        limitations: this.urlView?.limitations ?? [],
+                    }
+                  : {
+                        findings: this.qrView?.findings ?? [],
+                        summary: this.qrView?.summary ?? "",
+                        limitations: this.qrView?.limitations ?? [],
+                    };
+        const limitations = [...primary.limitations, ...REVIEWED_LIMITATIONS];
+        const createdAt = new Date().toISOString();
+        this.lastResult = {
+            channel,
+            input,
+            analysis: this.analysis,
+            urlView: this.urlView,
+            qrView: this.qrView,
+            reviewedFindings: this.reviewedFindings,
+            limitations,
+            createdAt,
+        };
+        this.recentChecks.save({
+            id: globalThis.crypto.randomUUID(),
+            createdAt,
+            channel,
+            input,
+            summary: primary.summary,
+            findings: [...primary.findings],
+            limitations,
+        });
     }
 
     private syncGuided(findings: readonly GuidedFinding[]): void {
