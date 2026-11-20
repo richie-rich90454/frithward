@@ -542,7 +542,7 @@ export const en: Record<string, string> = {
     "runtime.assetBytes": "{n} bytes",
     "runtime.webcodecs": "Encode and decode (WebCodecs)",
     "runtime.webcodecsIntro":
-        "Provide a raw RGBA video frame (64 by 64 pixels) to round-round it through the browser's encoder and decoder. Invalid input fails with the browser's own error.",
+        "Provide a raw RGBA video frame (64 by 64 pixels) to round-trip it through the browser's encoder and decoder. Invalid input fails with the browser's own error.",
     "runtime.videoCodec": "Video codec",
     "runtime.transcodeFile": "Transcode file",
     "runtime.transcodeResult":
