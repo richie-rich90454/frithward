@@ -2,6 +2,10 @@
 
 Stage: `experimental`. Status: reference candidate; weights are NOT distributed by Frithward. Metadata below was verified from the public `openai/whisper-tiny` repository on 2026-11-20.
 
+## Model id
+
+`whisper`
+
 ## Intended use
 
 Local speech-to-text research using consented audio the user supplies. Any transcript is a draft for human review.
@@ -29,6 +33,10 @@ None evaluated in this repository. The upstream model card lists LibriSpeech (cl
 ## Metrics
 
 Planned: word error rate and character error rate per language, plus latency and memory. No values have been measured in this repository.
+
+## Evaluation results
+
+No evaluation has been performed for this model in this repository; no metrics are reported. The only results artifact present is `research/results/audio-detection-synthetic.json`, a synthetic harness smoke test whose scores are placeholders and not an evaluation of this model.
 
 ## Known biases
 
