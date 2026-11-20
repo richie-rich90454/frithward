@@ -16,6 +16,7 @@ import {
     type PrivacyFinding,
     type SanitizedOutputDescriptor,
 } from "@frithward/privacy-core";
+import { english, type Translator } from "../../../../i18n/translate.js";
 
 export interface ShareCheckOption {
     id: string;
@@ -72,6 +73,7 @@ export interface FileSanitizer {
 
 export interface ShareCheckControllerOptions {
     sanitizer?: FileSanitizer;
+    translate?: Translator;
 }
 
 const KIND_LABELS: Record<MetadataFindingKind, string> = {
@@ -120,6 +122,7 @@ export class ShareCheckController {
     private readonly exportPlanner = new SanitizedExportUseCase();
     private readonly redactor = new RedactPrivacyUseCase();
     private readonly sanitizer: FileSanitizer;
+    private readonly translate: Translator;
     private readonly listeners = new Set<() => void>();
     private options: ShareCheckOption[] = [
         {
@@ -160,6 +163,7 @@ export class ShareCheckController {
         this.sanitizer = options.sanitizer ?? {
             sanitize: (file, sanitizeOptions) => sanitizeFile(file, sanitizeOptions),
         };
+        this.translate = options.translate ?? english;
     }
 
     public subscribe(listener: () => void): () => void {
@@ -236,7 +240,7 @@ export class ShareCheckController {
             );
         } catch (cause) {
             this.error =
-                cause instanceof Error ? cause.message : "Could not read the selected file.";
+                cause instanceof Error ? cause.message : this.translate("share.couldNotRead");
             this.notify();
         }
     }
@@ -281,7 +285,7 @@ export class ShareCheckController {
             return "This file format was not inspected. No embedded metadata could be verified.";
         if (safeToShare)
             return findingCount === 0
-                ? "No metadata tags were found in this file."
+                ? this.translate("share.noMetadata")
                 : `No blocking metadata; ${findingCount} low-risk finding(s) detected.`;
         return `${findingCount} privacy issue(s) found in the file's metadata.`;
     }
