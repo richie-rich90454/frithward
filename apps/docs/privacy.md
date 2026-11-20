@@ -31,7 +31,7 @@ Frithward is local-first. Browser processing is the default execution path, and 
 | Media objects | S3-compatible Garage bucket | Only when configured |
 | Model inventory | `ModelManager` in memory | Browser memory |
 
-The API's `DATABASE_URL` defaults to a local development DSN, and `BETTER_AUTH_SECRET` falls back to a development secret. Deployments must override both.
+The API reads `DATABASE_URL` and `BETTER_AUTH_SECRET` from the environment only — there is no built-in development DSN or hardcoded secret. `BETTER_AUTH_SECRET` is required when `NODE_ENV=production`; otherwise an ephemeral per-process secret is used.
 
 ## Metadata inspection
 
