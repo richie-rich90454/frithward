@@ -10,6 +10,27 @@ import { hi } from "../locales/hi.js";
 import { ja } from "../locales/ja.js";
 import { zh } from "../locales/zh.js";
 
+const CHECK_KEYS = [
+    "check.clipboardUnavailable",
+    "check.pasteFailed",
+    "check.fileTypeUnsupported",
+    "check.fileReadFailed",
+    "check.pasteButton",
+    "check.dropHint",
+    "check.chooseFile",
+] as const;
+
+const SCAM_INDICATOR_CODES = [
+    "SCAM_INDICATOR_URGENCY_LABEL",
+    "SCAM_INDICATOR_URGENCY_DETAIL",
+    "SCAM_INDICATOR_PAYMENT_LABEL",
+    "SCAM_INDICATOR_PAYMENT_DETAIL",
+    "SCAM_INDICATOR_CREDENTIAL_LABEL",
+    "SCAM_INDICATOR_CREDENTIAL_DETAIL",
+    "SCAM_INDICATOR_SECRECY_LABEL",
+    "SCAM_INDICATOR_SECRECY_DETAIL",
+] as const;
+
 vi.mock("./components.jsx", () => ({ LocaleProvider: () => {}, LanguageSwitcher: () => {} }));
 
 const STORAGE_KEY = "frithward.locale";
@@ -77,6 +98,16 @@ describe("locale dictionaries", () => {
             expect(Object.keys(dictionaries[locale])).toEqual(expected);
             for (const key of expected) {
                 expect(dictionaries[locale][key]?.trim()).not.toBe("");
+            }
+        }
+    });
+
+    it("has the check status keys and scam indicator codes in all eight locales", () => {
+        const dictionaries = { ar, de, en, es, fr, hi, ja, zh };
+        const keys = [...CHECK_KEYS, ...SCAM_INDICATOR_CODES.map((code) => `result.${code}`)];
+        for (const key of keys) {
+            for (const locale of LOCALES) {
+                expect(dictionaries[locale][key]?.trim(), `${locale} missing ${key}`).not.toBe("");
             }
         }
     });
