@@ -20,6 +20,8 @@ Frithward is local-first. Browser processing is the default execution path, and 
 | Data | Where it lives | Default |
 | --- | --- | --- |
 | Privacy inspection records | IndexedDB (`frithward-privacy`, `inspections` store) | Browser only |
+| Investigation cases | IndexedDB (`frithward-cases`, `cases` store), with SHA-256 artifact hashes | Browser only |
+| Scam recent checks and incident export history | `localStorage` | Browser only |
 | Caption projects | In-memory repository unless a persistent adapter is supplied | Browser memory |
 | Auth users and sessions | Postgres via Drizzle | Only when the API is deployed |
 | Scam analysis rows | Postgres `scam_analyses` table | Only when the API is deployed |
@@ -72,6 +74,8 @@ Protection is experimental. It must not be advertised as stable before independe
 ## Browser storage
 
 `IndexedDbPrivacyRepository` stores inspection records in an origin-private database. It opens the database lazily, creates the object store on upgrade, and rejects with `EXTERNAL_UNAVAILABLE` when IndexedDB is missing. There are no tracking cookies and no third-party requests in the local path.
+
+The Case store uses a separate IndexedDB database (`frithward-cases`) through Dexie. `IndexedDbCaseRepository` validates records against the shared `Case` contract and fails explicitly when IndexedDB is unavailable; provenance checks compute a SHA-256 artifact hash in the browser before saving a case. Scam recent checks and incident export history live in `localStorage`, and the browser extension keeps its own recent-check list in `browser.storage.local`. None of these stores transmits data: no file, message, or case is uploaded from the local path. The hosted `/api/cases` store is a separate, opt-in service that requires `DATABASE_URL` and a session.
 
 ## Retention and deletion
 
