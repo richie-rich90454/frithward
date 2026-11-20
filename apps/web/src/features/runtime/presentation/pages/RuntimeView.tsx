@@ -7,6 +7,7 @@ import {
     readFileBytes,
 } from "../controllers/RuntimeController";
 import type { RuntimeState } from "../controllers/RuntimeController";
+import { useI18n } from "../../../../i18n/index.js";
 
 interface RuntimeViewProps {
     state: RuntimeState;
@@ -18,6 +19,7 @@ interface RuntimeViewProps {
 }
 
 export function RuntimeView(props: RuntimeViewProps) {
+    const { t } = useI18n();
     const [name, setName] = createSignal("asset.bin");
     const [file, setFile] = createSignal<File | null>(null);
     const [codec, setCodec] = createSignal("vp8");
@@ -48,14 +50,11 @@ export function RuntimeView(props: RuntimeViewProps) {
 
     return (
         <section>
-            <h1>Runtime capabilities</h1>
-            <p>
-                These tools use browser APIs directly in this device. Nothing is uploaded by these
-                actions. Unsupported browsers report an error rather than a simulated result.
-            </p>
+            <h1>{t("runtime.title")}</h1>
+            <p>{t("runtime.intro")}</p>
 
             <h2>
-                <HardDrive class="fw-icon" /> Local file storage (OPFS)
+                <HardDrive class="fw-icon" /> {t("runtime.opfs")}
             </h2>
             <form
                 onSubmit={(event) => {
@@ -64,81 +63,85 @@ export function RuntimeView(props: RuntimeViewProps) {
                 }}
             >
                 <label>
-                    Asset name
+                    {t("runtime.assetName")}
                     <input value={name()} onInput={(event) => setName(event.currentTarget.value)} />
                 </label>
                 <label>
-                    File
+                    {t("runtime.file")}
                     <input
                         type="file"
                         onChange={(event) => setFile(event.currentTarget.files?.[0] ?? null)}
                     />
                 </label>
-                <button type="submit">Store file</button>
+                <button type="submit">{t("runtime.storeFile")}</button>
                 <button type="button" onClick={() => props.onRead(name())}>
-                    Read file
+                    {t("runtime.readFile")}
                 </button>
                 <button type="button" onClick={() => props.onRefresh()}>
-                    Refresh list
+                    {t("runtime.refreshList")}
                 </button>
             </form>
             <Show when={props.state.storageMessage}>
                 <p role="status">{props.state.storageMessage}</p>
             </Show>
             <Show when={props.state.lastReadBytes !== null}>
-                <p>Last read returned {props.state.lastReadBytes} bytes.</p>
+                <p>{t("runtime.lastRead").replace("{n}", String(props.state.lastReadBytes))}</p>
             </Show>
             <ul>
                 <For each={props.state.stored}>
                     {(asset) => (
                         <li>
-                            {asset.name} ({asset.size} bytes)
+                            {asset.name} (
+                            {t("runtime.assetBytes").replace("{n}", String(asset.size))})
                         </li>
                     )}
                 </For>
             </ul>
 
             <h2>
-                <Scissors class="fw-icon" /> Encode and decode (WebCodecs)
+                <Scissors class="fw-icon" /> {t("runtime.webcodecs")}
             </h2>
-            <p>
-                Provide a raw RGBA video frame (64 by 64 pixels) to round-trip it through the
-                browser's encoder and decoder. Invalid input fails with the browser's own error.
-            </p>
+            <p>{t("runtime.webcodecsIntro")}</p>
             <label>
-                Video codec
+                {t("runtime.videoCodec")}
                 <input value={codec()} onInput={(event) => setCodec(event.currentTarget.value)} />
             </label>
             <button type="button" onClick={transcode} disabled={file() === null}>
-                Transcode file
+                {t("runtime.transcodeFile")}
             </button>
             <Show when={props.state.transcode} keyed>
                 {(result) => (
                     <p role="status">
-                        {result.codec}: encoded {result.encodedChunks} chunk(s) (
-                        {result.encodedBytes} bytes), decoded {result.decodedChunks} chunk(s).
+                        {t("runtime.transcodeResult")
+                            .replace("{codec}", result.codec)
+                            .replace("{encoded}", String(result.encodedChunks))
+                            .replace("{bytes}", String(result.encodedBytes))
+                            .replace("{decoded}", String(result.decodedChunks))}
                     </p>
                 )}
             </Show>
 
             <h2>
-                <Cpu class="fw-icon" /> GPU capability (WebGPU)
+                <Cpu class="fw-icon" /> {t("runtime.webgpu")}
             </h2>
             <button type="button" onClick={() => props.onDetectGpu()}>
-                Detect GPU
+                {t("runtime.detectGpu")}
             </button>
             <Show when={props.state.gpu} keyed>
                 {(gpu) => (
                     <div>
                         <p role="status">
                             {gpu.available
-                                ? `Adapter: ${gpu.adapterName ?? "unspecified"}; vendor: ${gpu.vendor ?? "unspecified"}.`
-                                : "WebGPU is unavailable."}
+                                ? t("runtime.adapter")
+                                      .replace(
+                                          "{adapter}",
+                                          gpu.adapterName ?? t("runtime.unspecified"),
+                                      )
+                                      .replace("{vendor}", gpu.vendor ?? t("runtime.unspecified"))
+                                : t("runtime.webgpuUnavailable")}
                         </p>
                         <p>
-                            {gpu.computePassRan
-                                ? "A minimal compute shader ran successfully."
-                                : "No compute pass was confirmed."}
+                            {gpu.computePassRan ? t("runtime.computeRan") : t("runtime.noCompute")}
                         </p>
                         <Show when={gpu.error}>
                             <p role="alert">{gpu.error}</p>
@@ -158,7 +161,8 @@ export function RuntimeView(props: RuntimeViewProps) {
 }
 
 export function RuntimePage() {
-    const controller = createRuntimeController();
+    const { t } = useI18n();
+    const controller = createRuntimeController(t);
     const [state, setState] = createSignal(controller.getState());
     onCleanup(
         controller.subscribe(() => {
