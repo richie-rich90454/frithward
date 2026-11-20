@@ -1,10 +1,12 @@
-import { readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { readdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { defineConfig, type Plugin } from "vite";
 import solid from "vite-plugin-solid";
 
-// Relative base keeps built assets (and the emitted precache list) valid under any sub-path.
-const base = "./";
+// Absolute base keeps built asset URLs valid on deep links and under a sub-path.
+// Set VITE_BASE=/frithward/ at build time for sub-path hosting; default is root.
+const configured = process.env["VITE_BASE"] ?? "/";
+const base = `${configured.startsWith("/") ? "" : "/"}${configured}`.replace(/\/*$/, "/");
 
 // whisper.cpp uses pthreads + SharedArrayBuffer, which browsers expose only in a cross-origin isolated context.
 // COEP stays `require-corp` (not `credentialless`): every runtime asset is same-origin, so the stricter
@@ -52,37 +54,11 @@ function precacheManifest(): Plugin {
     };
 }
 
-// vite preview serves dist/index.html verbatim, so relative ./assets URLs break
-// when a deep route is opened directly. Inject a root base for HTML navigations.
-function previewSpaBase(): Plugin {
-    let outDir = "";
-    return {
-        name: "frithward-preview-spa-base",
-        apply: "serve",
-        configResolved(config) {
-            outDir = resolve(config.root, config.build.outDir);
-        },
-        configurePreviewServer(server) {
-            server.middlewares.use((req, res, next) => {
-                if (req.method !== "GET" || !(req.headers.accept ?? "").includes("text/html")) {
-                    return next();
-                }
-                const html = readFileSync(resolve(outDir, "index.html"), "utf8");
-                for (const [key, value] of Object.entries(isolationHeaders)) {
-                    res.setHeader(key, value);
-                }
-                res.setHeader("Content-Type", "text/html; charset=utf-8");
-                res.end(html.replace("<head>", '<head>\n        <base href="/" />'));
-            });
-        },
-    };
-}
-
 export default defineConfig(({ command }) => ({
-    // Dev/preview serve index.html at deep paths, where relative ./assets URLs
-    // would resolve under /tools/. Built output stays relative for sub-path hosting.
+    // Dev stays at the origin root; builds use the configured absolute base so
+    // deep links resolve assets without a host-injected <base href>.
     base: command === "serve" ? "/" : base,
-    plugins: [solid(), precacheManifest(), previewSpaBase()],
+    plugins: [solid(), precacheManifest()],
     server: {
         port: 5173,
         headers: isolationHeaders,
