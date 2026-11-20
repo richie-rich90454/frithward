@@ -1,6 +1,7 @@
 import { For, Show, createSignal, onCleanup } from "solid-js";
 import { ProvenanceController } from "./presentation/controllers/ProvenanceController";
 import type { ProvenanceResult } from "./presentation/controllers/ProvenanceController";
+import { wasmC2paVerifier } from "./infrastructure/wasmC2paVerifier.js";
 import { ThemeToggle } from "./theme.jsx";
 
 interface ProofViewProps {
@@ -20,8 +21,8 @@ function ProofView(props: ProofViewProps) {
             </header>
             <main>
                 <p>
-                    Select a media file or a C2PA manifest JSON file to inspect it in your browser.
-                    Nothing is uploaded, and no signature is verified here.
+                    Select a media file to verify its C2PA signature in your browser, or paste a
+                    manifest JSON file to inspect its claims. Nothing is uploaded.
                 </p>
                 <form class="proof-form">
                     <label>
@@ -109,7 +110,7 @@ function ProofView(props: ProofViewProps) {
 }
 
 export function ProofApp() {
-    const controller = new ProvenanceController();
+    const controller = new ProvenanceController(undefined, wasmC2paVerifier);
     const [result, setResult] = createSignal(controller.getResult());
     const [error, setError] = createSignal(controller.getError());
     onCleanup(
