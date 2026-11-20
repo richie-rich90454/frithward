@@ -64,4 +64,7 @@ export interface C2paInspectionResult {
     missingInfo: readonly string[];
     summary: string;
     limitations: readonly string[];
+    summaryCode?: string | undefined;
+    limitationCodes?: readonly (string | undefined)[] | undefined;
+    missingInfoCodes?: readonly (string | undefined)[] | undefined;
 }
