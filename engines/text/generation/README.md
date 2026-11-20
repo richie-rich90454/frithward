@@ -1,6 +1,6 @@
 # Text generation engine
 
-Text generation surface with explicit limits. The engine validates the prompt and token budget but returns an `unavailable` status and empty output because no local model is configured. A supplied `model_path` is not executed.
+Rule-based text generation surface. The engine selects and reorders sentences from the supplied prompt to produce an extractive summary or a bullet list; output is labelled `rule-based-extractive`. No language model is configured and a supplied `model_path` is not executed.
 
 ## Intended use
 
@@ -16,10 +16,10 @@ Text generation surface with explicit limits. The engine validates the prompt an
 
 | Item            | Value                                                                   |
 | --------------- | ----------------------------------------------------------------------- |
-| Request         | `GenerationRequest { prompt: str, max_tokens: int = 256, model_path? }` |
-| Response        | `GenerationResult { text, tokens, status, reason, limitations }`        |
-| Validation      | Non-empty prompt; positive token budget                                 |
-| Complexity      | O(max_tokens) decode steps                                              |
+| Request         | `GenerationRequest { prompt: str, max_tokens: int = 256, model_path?, mode: str = "summary" }` |
+| Response        | `GenerationResult { text, tokens, status, reason, method, limitations }` |
+| Validation      | Non-empty prompt; positive token budget; mode is `summary` or `bullets` |
+| Complexity      | O(n) in prompt length; no decode steps                                  |
 | Streaming       | Token streaming                                                         |
 | Cancellation    | `AbortSignal` between tokens                                            |
 | Model lifecycle | Load once, warm up, generate, release; stage-gated                      |
@@ -34,6 +34,6 @@ No fixed candidate. Training data must be licensed and documented. No training o
 
 ## Limitations
 
-- No text is generated; empty output means unavailable, not an empty answer.
-- Generated text is assistance, never verified fact.
-- Output quality and safety vary by prompt and language.
+- Output is copied and ranked from the prompt, not produced by a language model; `tokens` counts whitespace-delimited words.
+- No fluency, originality or factuality is guaranteed; generated text is assistance, never verified fact.
+- The token budget truncates real words; sentence scoring is a term-frequency heuristic.
