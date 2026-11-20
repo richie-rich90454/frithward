@@ -679,4 +679,144 @@ export const en: Record<string, string> = {
         "WebCodecs audio encoding or decoding is not available in this browser.",
     "error.DIAGRAM_SOURCE_REQUIRED": "Enter a Mermaid diagram first.",
     "error.DIAGRAM_RENDER_FAILED": "Could not render the diagram: {detail}",
+    "result.PRIVACY_GPS_LABEL": "GPS location",
+    "result.PRIVACY_GPS_DETAIL": "The file stores GPS coordinates of where it was captured.",
+    "result.PRIVACY_GPS_REMEDIATION": "Strip GPS coordinates or avoid sharing the original file.",
+    "result.PRIVACY_DEVICE_LABEL": "Device details",
+    "result.PRIVACY_DEVICE_DETAIL": "The file stores camera or device details.",
+    "result.PRIVACY_DEVICE_REMEDIATION": "Remove device metadata if it is not needed.",
+    "result.PRIVACY_TIME_LABEL": "Capture time",
+    "result.PRIVACY_TIME_DETAIL": "The file stores capture timestamps.",
+    "result.PRIVACY_TIME_REMEDIATION": "Remove timestamps that reveal personal routines.",
+    "result.PRIVACY_EMAIL_LABEL": "Email address",
+    "result.PRIVACY_EMAIL_DETAIL": "The file contains an email address.",
+    "result.PRIVACY_EMAIL_REMEDIATION": "Remove email addresses from metadata before sharing.",
+    "result.PRIVACY_PHONE_LABEL": "Phone number",
+    "result.PRIVACY_PHONE_DETAIL": "The file contains a phone number.",
+    "result.PRIVACY_PHONE_REMEDIATION": "Remove phone numbers from metadata before sharing.",
+    "result.PRIVACY_ADDRESS_LABEL": "Street address",
+    "result.PRIVACY_ADDRESS_DETAIL": "The file contains a street address.",
+    "result.PRIVACY_ADDRESS_REMEDIATION": "Remove addresses from metadata before sharing.",
+    "result.PRIVACY_NAME_LABEL": "Personal name",
+    "result.PRIVACY_NAME_DETAIL": "The file contains a personal name.",
+    "result.PRIVACY_NAME_REMEDIATION": "Remove personal names from metadata before sharing.",
+    "result.PRIVACY_EXPORT_SAFE": "No redaction required; the file is safe to share.",
+    "result.PRIVACY_EXPORT_ACTIONS": "{n} sanitization action(s) required before sharing.",
+    "result.PRIVACY_EXPORT_STRIP": "Strip identifying metadata from the exported file.",
+    "result.PRIVACY_VIEW_SAFE": "No sensitive metadata found. The file is safe to share.",
+    "result.PRIVACY_VIEW_ISSUES": "{n} privacy issue(s) found in the file's metadata.",
+    "result.PRIVACY_VIEW_LOW_RISK": "No blocking metadata; {n} low-risk finding(s) detected.",
+    "result.PRIVACY_FORMAT_UNINSPECTED":
+        "This file format was not inspected. No embedded metadata could be verified.",
+    "result.PRIVACY_REDACTION_SUMMARY": "{n} finding(s) addressed; download {file} to share.",
+    "result.PRIVACY_REDACTION_NOTE":
+        "The download is rebuilt from decoded pixels, so embedded metadata is not carried over. Verify the file before sharing.",
+    "result.URL_UNREADABLE_LABEL": "Unreadable link",
+    "result.URL_UNREADABLE_DETAIL": "The link could not be read as a web address.",
+    "result.URL_UNREADABLE_SUMMARY": "The link could not be read. Do not open it.",
+    "result.URL_INSECURE_LABEL": "Insecure connection",
+    "result.URL_INSECURE_DETAIL": "The link uses http, so the connection is not encrypted.",
+    "result.URL_CREDENTIALS_LABEL": "Hidden destination",
+    "result.URL_CREDENTIALS_DETAIL":
+        "The link contains credentials or an @ sign that can hide the real destination.",
+    "result.URL_IP_LABEL": "Numeric address",
+    "result.URL_IP_DETAIL": "The link points to a numeric address instead of a named domain.",
+    "result.URL_PUNYCODE_LABEL": "Encoded hostname",
+    "result.URL_PUNYCODE_DETAIL":
+        "The hostname uses punycode, which can hide lookalike characters.",
+    "result.URL_SHORTENED_LABEL": "Shortened link",
+    "result.URL_SHORTENED_DETAIL": "The destination is hidden behind a short link.",
+    "result.URL_TLD_LABEL": "Uncommon domain ending",
+    "result.URL_TLD_DETAIL": "The domain ending .{tld} is frequently used for throwaway sites.",
+    "result.URL_DEEP_LABEL": "Many subdomains",
+    "result.URL_DEEP_DETAIL": "The address has an unusually deep subdomain chain.",
+    "result.URL_HYPHENS_LABEL": "Many hyphens",
+    "result.URL_HYPHENS_DETAIL": "The address contains several hyphens, a common lookalike trick.",
+    "result.URL_BRAND_LABEL": "Lookalike domain",
+    "result.URL_BRAND_DETAIL": 'The domain resembles "{brand}" but is not the official domain.',
+    "result.URL_SUMMARY_NONE":
+        "No obvious risk patterns found. This does not prove the link is safe.",
+    "result.URL_SUMMARY_FOUND": "{n} risk indicator(s) found. This does not establish fraud.",
+    "result.URL_LIMIT_PATTERNS":
+        "This check compares text patterns only; it cannot verify the actual website.",
+    "result.URL_LIMIT_NEW_DOMAINS":
+        "Newly registered or unpublished domains may not be recognized.",
+    "result.URL_LIMIT_LOOKALIKE": "A legitimate-looking link can still host harmful content.",
+    "result.URL_LIMIT_PUNYCODE": "The hostname uses punycode and could not be decoded here.",
+    "result.URL_LIMIT_SHORTENED": "The final destination is hidden behind a short link.",
+    "result.QR_WIFI_LABEL": "Wi-Fi configuration",
+    "result.QR_WIFI_DETAIL":
+        "The code contains Wi-Fi settings. Joining a network you do not trust can expose your traffic.",
+    "result.QR_VCARD_LABEL": "Contact card",
+    "result.QR_VCARD_DETAIL": "The code contains personal contact details.",
+    "result.QR_CRYPTO_LABEL": "Cryptocurrency address",
+    "result.QR_CRYPTO_DETAIL":
+        "The code contains a cryptocurrency address. Transactions are irreversible.",
+    "result.QR_CONTACT_LABEL": "Contact action",
+    "result.QR_CONTACT_DETAIL": "The code opens an email or phone action.",
+    "result.QR_URGENCY_DETAIL": "The code pressures you to act quickly.",
+    "result.QR_PAYMENT_DETAIL": "The code asks for a payment.",
+    "result.QR_CREDENTIAL_DETAIL": "The code asks for credentials.",
+    "result.QR_SUMMARY_NONE":
+        "The code payload does not show obvious risk patterns. This does not prove it is safe.",
+    "result.QR_SUMMARY_FOUND": "{n} risk indicator(s) found. This does not establish intent.",
+    "result.QR_LIMIT_PAYLOAD":
+        "A QR code can point anywhere; the payload may be truncated or encoded.",
+    "result.QR_LIMIT_AUTO_OPEN": "Scanning a QR code with a camera app may auto-open the link.",
+    "result.SCAM_SUMMARY_NONE": "No text risk indicators found.",
+    "result.SCAM_SUMMARY_FOUND": "{n} risk indicator(s) found. This does not establish fraud.",
+    "result.SCAM_LIMIT_INTENT": "Text patterns alone cannot prove intent.",
+    "result.SCAM_LIMIT_UNCHECKED": "Related URLs, images, and callers were not checked.",
+    "result.C2PA_SUMMARY_MISSING": "No signature manifest found; provenance is unavailable.",
+    "result.C2PA_SUMMARY_VALID":
+        "Signature claims to be valid; signer {signer}; {n} assertion(s) present.{missing}",
+    "result.C2PA_SUMMARY_INVALID":
+        "Signature validation failed ({n} failure(s)); evidence requires review.{missing}",
+    "result.C2PA_SUMMARY_UNVERIFIED":
+        "Signature present but not verified; signer {signer}.{missing}",
+    "result.C2PA_VALIDATION_FAILED": "Validation failed.",
+    "result.C2PA_LIMIT_SIGNATURE":
+        "Signature status is taken from the manifest and was not cryptographically re-verified.",
+    "result.C2PA_LIMIT_TIMESTAMPS":
+        "Timestamps come from the manifest and may not reflect real-world signing time.",
+    "result.C2PA_LIMIT_ASSERTIONS":
+        "Assertions are reported as present but their contents were not validated.",
+    "result.C2PA_LIMIT_UNVERIFIED": "signature not verified via C2PA SDK",
+    "result.C2PA_LIMIT_NO_ACTIONS":
+        "No c2pa.actions assertion was available; no transformation history could be parsed.",
+    "result.C2PA_MISSING_MANIFEST": "manifest",
+    "result.C2PA_MISSING_SIGNER": "signer",
+    "result.C2PA_MISSING_TIMESTAMP": "signature timestamp",
+    "result.C2PA_MISSING_ASSERTIONS": "assertions",
+    "result.C2PA_MISSING_HASH": "asset hash",
+    "result.VOICE_LIMIT_0":
+        "Voice protection is experimental and has not been independently evaluated.",
+    "result.VOICE_LIMIT_1": "Protection does not guarantee prevention of misuse or impersonation.",
+    "result.VOICE_LIMIT_2":
+        "Effectiveness varies by language, recording quality, and attack method.",
+    "result.VOICE_LIMIT_3":
+        "Documented consent from the speaker is required before applying protection.",
+    "result.FACE_LIMIT_0":
+        "Face protection is experimental and has not been independently evaluated.",
+    "result.FACE_LIMIT_1": "Protection does not guarantee prevention of misuse.",
+    "result.FACE_LIMIT_2":
+        "Performance varies across demographic groups and must be evaluated before deployment.",
+    "result.FACE_LIMIT_3":
+        "Documented consent from the person depicted is required before applying protection.",
+    "result.GPU_LIMIT_UNAVAILABLE":
+        "WebGPU is unavailable, so no GPU capability check could be performed.",
+    "result.GPU_LIMIT_GENERALIZE":
+        "Results from one browser and device do not generalise to other hardware.",
+    "result.GPU_LIMIT_COMPUTE":
+        "A single compute pass only proves basic WebGPU support, not performance or model compatibility.",
+    "result.GPU_LIMIT_METADATA":
+        "Adapter metadata is reported by the browser and may be redacted for privacy.",
+    "result.GPU_LIMIT_INCOMPLETE": "The compute pass did not complete, so support is unconfirmed.",
+    "result.GPU_ERROR_NO_WEBGPU": "WebGPU is not available in this browser.",
+    "result.GPU_ERROR_NO_ADAPTER": "No WebGPU adapter was found.",
+    "result.GPU_ERROR_COMPUTE_UNEXPECTED": "The compute pass ran but returned an unexpected value.",
+    "result.OCR_LIMIT_ACCURACY":
+        "OCR accuracy depends on image quality, font and language coverage.",
+    "result.OCR_LIMIT_LOCAL":
+        "Recognition runs locally with tesseract.js using bundled language data; nothing is downloaded.",
 };
