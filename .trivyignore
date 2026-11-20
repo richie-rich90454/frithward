@@ -1,0 +1,17 @@
+# False positive: name collision with a third-party PyPI package.
+#
+# CVE-2026-0599 / GHSA-j7x9-7j54-2v3h affects pip `text-generation` (< 3.3.7),
+# i.e. Hugging Face Text Generation Inference: its VLM router fetches Markdown
+# image URLs with an unbounded blocking HTTP GET.
+#
+# Trivy matched that advisory to the first-party workspace project at
+# engines/text/generation, which happens to be named `text-generation` with
+# version 0.0.1. That project's only runtime dependency is pydantic; it has no
+# VLM router, no image fetching, and no `text-generation` dependency edge in
+# engines/text/generation/uv.lock. The vulnerable software is not installed.
+#
+# Remove this entry if a real `text-generation` dependency is ever added to
+# that engine (or the project is renamed to the Hugging Face package).
+# Review by: 2027-05-20
+CVE-2026-0599
+Expires: 2027-05-20
