@@ -26,6 +26,7 @@ import {
     type RecentCheckRepository,
 } from "../../infrastructure/LocalStorageRecentCheckRepository.js";
 import { english, type Translator } from "../../../../i18n/translate.js";
+import { resultList, resultText } from "../../../../i18n/results.js";
 
 export interface CheckFindingView {
     id: string;
@@ -137,7 +138,7 @@ export class ScamCheckController {
     public check(text: string): void {
         this.currentText = text;
         try {
-            this.analysis = this.analyzer.execute(text);
+            this.analysis = translatedAnalysis(this.translate, this.analyzer.execute(text));
             this.reviewedFindings = findReviewedPatterns(buildReviewedInput(text));
             this.error = null;
             this.syncGuided(this.analysis.indicators);
@@ -153,7 +154,7 @@ export class ScamCheckController {
 
     public checkUrl(input: string): void {
         try {
-            this.urlView = toUrlView(this.urlInspector.execute(input));
+            this.urlView = toUrlView(this.translate, this.urlInspector.execute(input));
             this.reviewedFindings = findReviewedPatterns(buildReviewedInput(input));
             this.error = null;
             this.syncGuided(this.urlView.findings);
@@ -169,7 +170,7 @@ export class ScamCheckController {
 
     public checkQr(input: string): void {
         try {
-            this.qrView = toQrView(this.qrInspector.execute(input));
+            this.qrView = toQrView(this.translate, this.qrInspector.execute(input));
             this.reviewedFindings = findReviewedPatterns(buildReviewedInput(input));
             this.error = null;
             this.syncGuided(this.qrView.findings);
@@ -289,7 +290,15 @@ export class ScamCheckController {
     }
 }
 
-function toUrlView(result: UrlInspectionResult): UrlCheckView {
+function translatedAnalysis(t: Translator, analysis: ScamAnalysis): ScamAnalysis {
+    return {
+        ...analysis,
+        summary: resultText(t, analysis.summary, analysis.summaryCode),
+        limitations: resultList(t, analysis.limitations, analysis.limitationCodes),
+    } as ScamAnalysis;
+}
+
+function toUrlView(t: Translator, result: UrlInspectionResult): UrlCheckView {
     return {
         original: result.original,
         normalizedUrl: result.normalizedUrl,
@@ -297,27 +306,27 @@ function toUrlView(result: UrlInspectionResult): UrlCheckView {
         riskLevel: result.riskLevel,
         findings: result.findings.map((finding) => ({
             id: finding.id,
-            label: finding.label,
-            detail: finding.detail,
+            label: resultText(t, finding.label, finding.labelCode),
+            detail: resultText(t, finding.detail, finding.detailCode),
             severity: finding.severity,
         })),
-        summary: result.summary,
-        limitations: [...result.limitations],
+        summary: resultText(t, result.summary, result.summaryCode),
+        limitations: resultList(t, result.limitations, result.limitationCodes),
     };
 }
 
-function toQrView(result: QrInspectionResult): QrCheckView {
+function toQrView(t: Translator, result: QrInspectionResult): QrCheckView {
     return {
         payload: result.payload,
         payloadKind: result.payloadKind,
         riskLevel: result.riskLevel,
         findings: result.findings.map((finding) => ({
             id: finding.id,
-            label: finding.label,
-            detail: finding.detail,
+            label: resultText(t, finding.label, finding.labelCode),
+            detail: resultText(t, finding.detail, finding.detailCode),
             severity: finding.severity,
         })),
-        summary: result.summary,
-        limitations: [...result.limitations],
+        summary: resultText(t, result.summary, result.summaryCode),
+        limitations: resultList(t, result.limitations, result.limitationCodes),
     };
 }
