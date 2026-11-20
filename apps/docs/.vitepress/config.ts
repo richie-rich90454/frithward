@@ -4,7 +4,9 @@ export default defineConfig({
     title: "Frithward",
     description: "Keep people safe. Keep media honest.",
     lang: "en",
+    appearance: { initialValue: "auto" },
     head: [
+        ["meta", { name: "color-scheme", content: "light dark" }],
         ["meta", { name: "theme-color", content: "#FFFFFF" }],
         [
             "meta",
