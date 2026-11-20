@@ -1,7 +1,12 @@
 import { RESULT_CODES, resultCodeForText, ScamIndicator } from "@frithward/contracts";
 
+export type CodedScamIndicator = ScamIndicator & {
+    readonly labelCode?: string;
+    readonly detailCode?: string;
+};
+
 export class ScamAnalysis {
-    public readonly indicators: readonly ScamIndicator[];
+    public readonly indicators: readonly CodedScamIndicator[];
     public readonly summary: string;
     public readonly nextSteps: readonly string[];
     public readonly nextStepCodes: readonly string[];
