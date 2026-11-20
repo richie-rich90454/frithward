@@ -13,6 +13,25 @@ describe("command shortcut", () => {
     });
 });
 
+const appSource = readFileSync(new URL("../App.tsx", import.meta.url), "utf8");
+const mainSource = readFileSync(new URL("../main.tsx", import.meta.url), "utf8");
+
+describe("CommandPalette routing", () => {
+    it("is mounted inside the Router so navigate uses Solid Router", () => {
+        expect(appSource).toContain("<Router base={ROUTER_BASE}>");
+        expect(appSource).toContain("<CommandPalette />");
+        expect(source).toContain('import { useNavigate } from "@solidjs/router"');
+        expect(source).toContain("navigate(path)");
+    });
+
+    it("has no pushState/popstate bridge in main.tsx", () => {
+        expect(mainSource).not.toContain("RouterContext");
+        expect(mainSource).not.toContain("pushState");
+        expect(mainSource).not.toContain("popstate");
+        expect(mainSource).not.toContain("CommandPalette");
+    });
+});
+
 describe("CommandPalette markup", () => {
     it("registers and cleans up the keyboard handler", () => {
         expect(source).toContain('window.addEventListener("keydown", onKeyDown)');
