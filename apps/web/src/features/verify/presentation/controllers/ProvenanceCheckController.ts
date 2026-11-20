@@ -40,18 +40,30 @@ export interface C2paInspector {
     execute(input: { manifest: unknown; id?: string }): Promise<C2paInspectionResult>;
 }
 
+export interface C2paManifestExtractor {
+    extract(bytes: Uint8Array): Promise<unknown | null>;
+}
+
+export interface ProvenanceFileInput {
+    name: string;
+    bytes: Uint8Array;
+}
+
 export interface ProvenanceCheckControllerOptions {
     inspector?: C2paInspector;
+    extractor?: C2paManifestExtractor;
 }
 
 export class ProvenanceCheckController {
     private readonly inspector: C2paInspector;
+    private readonly extractor: C2paManifestExtractor | null;
     private readonly listeners = new Set<() => void>();
     private result: ProvenanceInspectionView | null = null;
     private error: string | null = null;
 
     public constructor(options: ProvenanceCheckControllerOptions = {}) {
         this.inspector = options.inspector ?? new C2paInspectionUseCase();
+        this.extractor = options.extractor ?? null;
     }
 
     public subscribe(listener: () => void): () => void {
@@ -77,6 +89,34 @@ export class ProvenanceCheckController {
                 manifest = JSON.parse(manifestText) as unknown;
             } catch {
                 throw new Error("Manifest must be valid JSON.");
+            }
+            this.result = toView(await this.inspector.execute({ manifest }));
+            this.error = null;
+        } catch (cause) {
+            this.result = null;
+            this.error = cause instanceof Error ? cause.message : "Provenance inspection failed.";
+        }
+        this.notify();
+    }
+
+    public async inspectFile(input: ProvenanceFileInput): Promise<void> {
+        try {
+            let manifest: unknown;
+            if (isJsonFile(input)) {
+                const text = new TextDecoder().decode(input.bytes);
+                try {
+                    manifest = JSON.parse(text) as unknown;
+                } catch {
+                    throw new Error("File must contain valid JSON.");
+                }
+            } else {
+                manifest = this.extractor ? await this.extractor.extract(input.bytes) : null;
+                if (manifest === null) {
+                    this.result = unavailableView();
+                    this.error = null;
+                    this.notify();
+                    return;
+                }
             }
             this.result = toView(await this.inspector.execute({ manifest }));
             this.error = null;
@@ -117,5 +157,37 @@ function toView(result: C2paInspectionResult): ProvenanceInspectionView {
         missingInfo: [...result.missingInfo],
         summary: result.summary,
         limitations: [...result.limitations],
+    };
+}
+
+function isJsonFile(input: ProvenanceFileInput): boolean {
+    if (/\.json$/i.test(input.name.trim())) return true;
+    const sample = new TextDecoder().decode(input.bytes.subarray(0, 64)).trimStart();
+    return sample.startsWith("{") || sample.startsWith("[");
+}
+
+/** Honest fallback when no local C2PA manifest can be read from a binary asset. */
+function unavailableView(): ProvenanceInspectionView {
+    return {
+        signatureStatus: "missing",
+        signer: null,
+        signedAt: null,
+        assertions: [],
+        assetHash: null,
+        transformations: [],
+        validationFailures: [],
+        missingInfo: [
+            "embedded C2PA manifest",
+            "signer",
+            "signature timestamp",
+            "assertions",
+            "asset hash",
+        ],
+        summary:
+            "No embedded C2PA manifest could be extracted locally; provenance verification is unavailable.",
+        limitations: [
+            "Local C2PA manifest extraction from image or video files is not available in this browser.",
+            "No signature was verified. Do not treat this file as having valid provenance.",
+        ],
     };
 }
