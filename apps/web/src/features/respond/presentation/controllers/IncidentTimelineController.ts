@@ -1,4 +1,31 @@
-import { AnalyzeMessageUseCase } from "@frithward/security-core";
+/**
+ * Local structural type for the JSON downloaded from /check.
+ * Declared here so the respond feature does not import from features/check.
+ */
+export interface ImportedScamReport {
+    id: string;
+    channel: string;
+    description: string;
+    source: string;
+    evidenceSha256: string;
+    reportedAt: string;
+    status: string;
+}
+
+function isImportedScamReport(value: unknown): value is ImportedScamReport {
+    if (typeof value !== "object" || value === null) return false;
+    const report = value as Record<string, unknown>;
+    return (
+        typeof report["id"] === "string" &&
+        report["id"].trim().length > 0 &&
+        typeof report["channel"] === "string" &&
+        typeof report["description"] === "string" &&
+        typeof report["source"] === "string" &&
+        typeof report["evidenceSha256"] === "string" &&
+        typeof report["reportedAt"] === "string" &&
+        typeof report["status"] === "string"
+    );
+}
 
 export interface IncidentTimelineEntry {
     id: string;
@@ -75,7 +102,6 @@ function toHex(buffer: ArrayBuffer): string {
 }
 
 export class IncidentTimelineController {
-    private readonly analyzer = new AnalyzeMessageUseCase();
     private readonly storage: HistoryStorage | null;
     private readonly listeners = new Set<() => void>();
     private entries: IncidentTimelineEntry[] = [];
@@ -111,27 +137,43 @@ export class IncidentTimelineController {
         return this.error;
     }
 
+    // Analysis lives in the check feature; importing its report is the supported path.
     public analyze(input: { text: string; receivedAt: string }): void {
-        try {
-            const analysis = this.analyzer.execute(input.text);
-            this.entries = [
-                { id: "received", title: "Message recorded", detail: input.receivedAt },
-                ...analysis.indicators.map((indicator) => ({
-                    id: indicator.id,
-                    title: indicator.label,
-                    detail: indicator.detail,
-                })),
-                ...analysis.nextSteps.map((step, index) => ({
-                    id: `step-${index + 1}`,
-                    title: "Next step",
-                    detail: step,
-                })),
-            ];
-            this.error = null;
-        } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Could not analyze message.";
+        if (input.text.trim().length === 0) {
+            this.error = "Message text required.";
+            this.notify();
+            return;
         }
+        this.entries = [
+            { id: "received", title: "Message recorded", detail: input.receivedAt },
+            { id: "message", title: "Message text", detail: input.text },
+        ];
+        this.error = null;
         this.notify();
+    }
+
+    public async importScamReport(input: {
+        fileName: string;
+        content: ArrayBuffer;
+        report: unknown;
+    }): Promise<EvidenceItem> {
+        if (!isImportedScamReport(input.report)) throw new Error("Invalid scam check report JSON.");
+        const report = input.report;
+        const item = await this.addEvidence({
+            fileName: input.fileName,
+            content: input.content,
+            source: "Scam check report",
+        });
+        this.entries = [
+            ...this.entries,
+            {
+                id: `report-${report.id}`,
+                title: "Scam check report imported",
+                detail: `${report.id} | ${report.reportedAt} | ${report.status}`,
+            },
+        ];
+        this.notify();
+        return item;
     }
 
     public async addEvidence(input: EvidenceInput): Promise<EvidenceItem> {
