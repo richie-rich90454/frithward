@@ -10,12 +10,12 @@ Not applicable; this workstream governs datasets, not models.
 
 ## Dataset candidates
 
-| Dataset | License status | Consent status |
-| --- | --- | --- |
-| ASVspoof | review required | review required |
-| FaceForensics++ | review required | review required |
-| DFDC | review required | review required |
-| Celeb-DF | review required | review required |
+| Dataset                       | License status  | Consent status  |
+| ----------------------------- | --------------- | --------------- |
+| ASVspoof                      | review required | review required |
+| FaceForensics++               | review required | review required |
+| DFDC                          | review required | review required |
+| Celeb-DF                      | review required | review required |
 | Consented voice and face data | review required | review required |
 
 "review required" is the status until a reviewer records a decision. No dataset has been approved, downloaded, or redistributed in this repository. See `DATASET_POLICY.md` for the artifact-removal procedure.
