@@ -352,9 +352,7 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                         <h3>Voice protection result</h3>
                         <p role="status">{result.summary}</p>
                         <ul>
-                            <For each={result.limitations}>
-                                {(limit) => <li>{limit}</li>}
-                            </For>
+                            <For each={result.limitations}>{(limit) => <li>{limit}</li>}</For>
                         </ul>
                     </div>
                 )}
@@ -365,9 +363,7 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                         <h3>Face protection result</h3>
                         <p role="status">{result.summary}</p>
                         <ul>
-                            <For each={result.limitations}>
-                                {(limit) => <li>{limit}</li>}
-                            </For>
+                            <For each={result.limitations}>{(limit) => <li>{limit}</li>}</For>
                         </ul>
                     </div>
                 )}
@@ -378,9 +374,7 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                         <h3>Protected media manifest (experimental)</h3>
                         <pre>{view.manifest}</pre>
                         <ul>
-                            <For each={view.limitations}>
-                                {(limit) => <li>{limit}</li>}
-                            </For>
+                            <For each={view.limitations}>{(limit) => <li>{limit}</li>}</For>
                         </ul>
                     </div>
                 )}
