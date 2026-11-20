@@ -4,6 +4,10 @@ packages:
     - services/*
     - tools/*
     - engines/*
+overrides:
+    # image-size 1.x has published CVEs in image parsers; 2.x removes them.
+    # pptxgenjs only uses text APIs here, so the ESM major bump is safe.
+    image-size: ^2.1.0
 allowBuilds:
     # Native addon builds are opt-in here so pnpm lifecycle never hard-fails.
     # scripts/provision-c2pa.mjs retries provisioning separately and degrades honestly.
