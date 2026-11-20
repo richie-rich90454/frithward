@@ -12,6 +12,7 @@ import type {
     TranscodeConfig,
     TranscodeResult,
 } from "../../ports/TranscoderPort";
+import { english, interpolate, type Translator } from "../../../../i18n/translate.js";
 
 export interface RuntimeState {
     storageMessage: string | null;
@@ -37,11 +38,16 @@ export class RuntimeController {
         error: null,
     };
 
+    private readonly translate: Translator;
+
     public constructor(
         private readonly storeAsset: StoreAssetUseCase,
         private readonly transcodeAsset: TranscodeUseCase,
         private readonly detectGpuUseCase: DetectGpuUseCase,
-    ) {}
+        translate: Translator = english,
+    ) {
+        this.translate = translate;
+    }
 
     public subscribe(listener: () => void): () => void {
         this.listeners.add(listener);
@@ -60,7 +66,10 @@ export class RuntimeController {
             const asset = await this.storeAsset.store(name, data);
             this.state = {
                 ...this.state,
-                storageMessage: `Stored "${asset.name}" (${asset.size} bytes).`,
+                storageMessage: interpolate(this.translate("runtime.storedFile"), {
+                    name: asset.name,
+                    n: asset.size,
+                }),
                 stored: await this.storeAsset.list(),
             };
         } catch (cause) {
@@ -77,7 +86,9 @@ export class RuntimeController {
                 ...this.state,
                 lastReadBytes: data === null ? null : data.byteLength,
                 storageMessage:
-                    data === null ? `No asset named "${name}" was found.` : `Read "${name}".`,
+                    data === null
+                        ? interpolate(this.translate("runtime.notFound"), { name })
+                        : interpolate(this.translate("runtime.readAsset"), { name }),
             };
         } catch (cause) {
             this.fail(cause);
@@ -161,11 +172,12 @@ export function buildTranscodeRequest(input: {
     };
 }
 
-export function createRuntimeController(): RuntimeController {
+export function createRuntimeController(translate: Translator = english): RuntimeController {
     const storage = new OpfsStorageAdapter();
     return new RuntimeController(
         new StoreAssetUseCase(storage),
         new TranscodeUseCase(new WebCodecsTranscoder()),
         new DetectGpuUseCase(new WebGpuDetector()),
+        translate,
     );
 }
