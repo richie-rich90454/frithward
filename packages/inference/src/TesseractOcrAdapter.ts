@@ -19,14 +19,43 @@ export interface TesseractOcrResult {
     readonly confidence: number;
 }
 
+export const LOCAL_TESSDATA_PATH = "/tessdata";
+
+export interface TesseractWorkerOptions {
+    readonly langPath: string;
+    readonly gzip: true;
+}
+
+// Language data is served from apps/web/public/tessdata at the same origin.
+export function tesseractWorkerOptions(
+    langPath: string = LOCAL_TESSDATA_PATH,
+): TesseractWorkerOptions {
+    return { langPath, gzip: true };
+}
+
 export class TesseractOcrAdapter {
     private worker: Tesseract.Worker | null = null;
 
-    public constructor(private readonly language: string = "eng") {}
+    public constructor(
+        private readonly language: string = "eng",
+        private readonly langPath: string = LOCAL_TESSDATA_PATH,
+    ) {}
 
     public async start(): Promise<void> {
         if (this.worker) return;
-        this.worker = await Tesseract.createWorker(this.language);
+        try {
+            this.worker = await Tesseract.createWorker(
+                this.language,
+                1,
+                tesseractWorkerOptions(this.langPath),
+            );
+        } catch (cause) {
+            throw new Error(
+                `OCR language data is unavailable at ${this.langPath}/${this.language}.traineddata.gz. ` +
+                    "Place the file in apps/web/public/tessdata and rebuild; no data is downloaded automatically.",
+                { cause },
+            );
+        }
     }
 
     public async stop(): Promise<void> {
