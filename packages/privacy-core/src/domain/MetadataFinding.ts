@@ -18,6 +18,8 @@ export interface MetadataFinding {
     detail: string;
     remediation: string;
     severity: MetadataFindingSeverity;
+    detailCode?: string | undefined;
+    remediationCode?: string | undefined;
 }
 
 export interface MetadataPayload {
