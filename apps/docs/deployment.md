@@ -141,7 +141,7 @@ pnpm run start:docs
 
 `pnpm --filter @frithward/desktop run build` produces the desktop frontend only. Building the native Tauri bundle additionally needs `@tauri-apps/cli`, which is host tooling installed outside the project's pnpm build/test toolchain.
 
-The browser extension is built with `pnpm --filter @frithward/extension run build`. Load `apps/extension/dist/chrome-mv3` as an unpacked extension in Chrome, or `apps/extension/dist/firefox-mv2` in Firefox. Its `WEB_APP_URL` defaults to `http://localhost:4173` in `apps/extension/config.ts`; change it and rebuild for a real deployment so the "Open in Frithward" deep link (`/check#text=`) points at your web app. Analysis and recent-check history stay in the browser.
+The browser extension is built with `pnpm --filter @frithward/extension run build`. Load `apps/extension/dist/chrome-mv3` as an unpacked extension in Chrome, or `apps/extension/dist/firefox-mv2` in Firefox. Its web-app URL defaults to `http://localhost:4173` in `apps/extension/config.ts` and can be overridden at build time with `VITE_FRITHWARD_WEB_URL`; set it and rebuild for a real deployment so the "Open in Frithward" deep link (`/check#text=`) points at your web app. Analysis and recent-check history stay in the browser.
 
 ## 4. Put Caddy in front
 
