@@ -27,7 +27,7 @@ export function CommandPalette() {
     const { t } = useI18n();
     const [isOpen, setIsOpen] = createSignal(false);
     const [filter, setFilter] = createSignal("");
-    let input!: HTMLInputElement;
+    let input: HTMLInputElement | undefined;
     let previouslyFocused: HTMLElement | null = null;
 
     const visible = createMemo(() => {
@@ -101,7 +101,9 @@ export function CommandPalette() {
                     </div>
                     <p class="fw-palette-hint">{t("palette.shortcutHint")}</p>
                     <input
-                        ref={input}
+                        ref={(element) => {
+                            input = element;
+                        }}
                         type="search"
                         class="fw-palette-input"
                         aria-label={t("palette.filter")}
