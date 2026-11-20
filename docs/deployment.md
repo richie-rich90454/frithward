@@ -4,6 +4,22 @@ Frithward is self-hosted with plain processes. **Docker is intentionally not use
 
 These commands are cross-platform. Paths use `/`; on Windows use the equivalent under PowerShell (for example `.\apps\web\dist`). Run all `pnpm` commands from the repository root.
 
+## Browser-only quick start
+
+The web app runs as a static site with **no backend, no native installs, and no global installs**. Building it once needs Node.js and pnpm locally; serving and using it needs only a static file server. From the repository root:
+
+```sh
+pnpm install
+pnpm --filter @frithward/web run build
+# serve apps/web/dist with any static host, then open it in a browser
+```
+
+Serve `apps/web/dist` with any static host: `npx serve apps/web/dist` (a one-off command, not a global install), Caddy's `file_server`, or GitHub Pages. On Windows the folder is `apps\web\dist`. The same commands work in PowerShell, macOS, and Linux. Docker is intentionally not used anywhere in this repository.
+
+The optional Hono services (API, orchestrator, media/inference workers, community, incident) are for organizations that want shared or server-side processing. They are **not** part of this path: `apps/web/src` contains no `fetch()` calls, so caption editing and export, document generation, diagrams, charts, media tooling, analysis, and provenance inspection all run in the browser. Caption generation still needs a user-supplied Whisper WASM runtime plus a model (a local `whisper-tiny.bin` or a URL), and non-English OCR needs extra language data placed in `apps/web/public/tessdata`; see [compatibility.md](compatibility.md) for the exact list and browser API minimums.
+
+`e2e/browser-only.spec.ts` exercises this static build with `vite preview` and proves there are no `/api/` calls, no external requests, and browser-local persistence. Offline reloads depend on service-worker/browser caching and are not asserted by that suite.
+
 ## 1. Prerequisites
 
 | Component | Version | Notes |
