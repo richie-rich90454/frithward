@@ -1,4 +1,6 @@
+import base64
 import importlib.util
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -18,26 +20,45 @@ def test_rejects_empty_input():
         engine.recognize(engine.OcrRequest(document_id=""))
 
 
-def test_reports_unavailable_and_never_invents_text():
+def test_absent_tesseract_reports_the_exact_check(monkeypatch):
     engine = load_engine()
-    result = engine.recognize(engine.OcrRequest(document_id="d1"))
-    assert result.document_id == "d1"
+    monkeypatch.setattr(engine, "resolve_tesseract", lambda: None)
+    result = engine.recognize(engine.OcrRequest(document_id="d1", document_base64="AA=="))
     assert result.text == ""
     assert result.status == "unavailable"
-    assert result.reason
-    assert result.limitations
+    assert result.tesseract_path is None
+    assert result.check == "shutil.which('tesseract')"
+    assert "shutil.which('tesseract')" in result.reason
 
 
-def test_accepts_input_without_claiming_recognition():
+def test_present_tesseract_runs_real_subprocess(monkeypatch):
     engine = load_engine()
+    monkeypatch.setattr(engine, "resolve_tesseract", lambda: "/fake/tesseract")
+    calls = []
+
+    def fake_run(args, **kwargs):
+        calls.append(args)
+        return subprocess.CompletedProcess(args, 0, stdout=b"hello ocr", stderr=b"")
+
+    monkeypatch.setattr(engine.subprocess, "run", fake_run)
+    raw = base64.b64encode(b"fake-image-bytes").decode("ascii")
     result = engine.recognize(
-        engine.OcrRequest(document_id="d1", document_base64="AA==", language="en")
+        engine.OcrRequest(document_id="d1", document_base64=raw, language="en")
     )
-    assert result.text == ""
-    assert result.status == "unavailable"
+    assert result.status == "computed"
+    assert result.text == "hello ocr"
+    assert result.tesseract_path == "/fake/tesseract"
+    assert calls[0][0] == "/fake/tesseract"
+    assert calls[0][3] == "-l"
+    assert calls[0][4] == "en"
+    assert not Path(calls[0][1]).exists()
 
 
-def test_rejects_whitespace_id():
+def test_present_tesseract_without_bytes_stays_unavailable(monkeypatch):
     engine = load_engine()
-    with pytest.raises(ValueError):
-        engine.recognize(engine.OcrRequest(document_id="   "))
+    monkeypatch.setattr(engine, "resolve_tesseract", lambda: "/fake/tesseract")
+    result = engine.recognize(engine.OcrRequest(document_id="d1"))
+    assert result.status == "unavailable"
+    assert result.text == ""
+    assert "No document bytes" in result.reason
+    assert result.tesseract_path == "/fake/tesseract"
