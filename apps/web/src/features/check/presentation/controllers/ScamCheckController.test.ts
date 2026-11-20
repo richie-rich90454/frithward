@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import type { QrInspectionResult, ScamReport, UrlInspectionResult } from "@frithward/security-core";
+import {
+    UrlInspectionUseCase,
+    type QrInspectionResult,
+    type ScamReport,
+    type UrlInspectionResult,
+} from "@frithward/security-core";
 import { ScamCheckController } from "./ScamCheckController";
 import type {
     RecentCheck,
@@ -223,5 +228,61 @@ describe("ScamCheckController persistence", () => {
         expect(controller.getLastResult()).toBeNull();
         expect(controller.getRecentChecks()).toEqual([]);
         expect(controller.getError()).toBe("URL required.");
+    });
+});
+
+describe("ScamCheckController translated presentation", () => {
+    it("translates the URL TLD and brand details using their emitted params", () => {
+        const t = (key: string) => {
+            const values: Record<string, string> = {
+                "result.URL_TLD_DETAIL": "Dominio terminado en .{tld}",
+                "result.URL_BRAND_DETAIL": 'Parece "{brand}" pero no es el sitio oficial.',
+            };
+            return values[key] ?? key;
+        };
+        const controller = new ScamCheckController({
+            translate: t,
+            urlInspector: { execute: (url) => new UrlInspectionUseCase().execute(url) },
+            recentChecks: memoryRepository(),
+        });
+        controller.checkUrl("https://paypa1.example.xyz");
+        const details = controller.getUrlView()?.findings.map((finding) => finding.detail) ?? [];
+        expect(details).toContain("Dominio terminado en .xyz");
+        expect(details).toContain('Parece "paypal" pero no es el sitio oficial.');
+    });
+
+    it("translates analysis next steps and guided step text", () => {
+        const t = (key: string) => {
+            const values: Record<string, string> = {
+                "result.SCAM_NEXT_CONTACT_KNOWN": "Confirma por un canal conocido.",
+                "result.SCAM_NEXT_NO_SEND": "No envíes dinero.",
+                "result.SCAM_NEXT_KEEP_EVIDENCE": "Guarda el mensaje.",
+                "result.GUIDED_PAUSE_TITLE": "Detente",
+                "result.GUIDED_PAUSE_PLAIN": "No respondas ahora.",
+                "result.GUIDED_PAUSE_ACTION": "Suelta el teléfono.",
+            };
+            return values[key] ?? key;
+        };
+        const controller = new ScamCheckController({ translate: t, recentChecks: memoryRepository() });
+        controller.check("URGENT: send your password");
+        expect(controller.getAnalysis()?.nextSteps).toEqual([
+            "Confirma por un canal conocido.",
+            "No envíes dinero.",
+            "Guarda el mensaje.",
+        ]);
+        expect(controller.getGuidedStep().title).toBe("Detente");
+        expect(controller.getGuidedStep().plainLanguage).toBe("No respondas ahora.");
+        expect(controller.getGuidedStep().action).toBe("Suelta el teléfono.");
+    });
+
+    it("translates surfaced AppError messages", () => {
+        const t = (key: string) => (key === "error.URL_REQUIRED" ? "Falta la URL." : key);
+        const controller = new ScamCheckController({
+            translate: t,
+            urlInspector: { execute: () => new UrlInspectionUseCase().execute("") },
+            recentChecks: memoryRepository(),
+        });
+        controller.checkUrl("");
+        expect(controller.getError()).toBe("Falta la URL.");
     });
 });
