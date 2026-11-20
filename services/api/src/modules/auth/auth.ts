@@ -20,17 +20,21 @@ export function createAuth(databaseUrl: string) {
         throw new AppError("EXTERNAL_UNAVAILABLE", "Database URL is required for authentication.");
     const pool = new Pool({ connectionString: databaseUrl });
     const database = drizzle(pool, { schema });
+    const baseURL =
+        process.env.BETTER_AUTH_URL ?? process.env.FRITHWARD_API ?? "http://localhost:3000";
+    const origins = [process.env.CORS_ORIGIN, process.env.FRITHWARD_DOMAIN]
+        .filter((value): value is string => Boolean(value && value.trim().length > 0))
+        .map((value) => value.trim());
     return betterAuth({
         database: drizzleAdapter(database, { provider: "pg", schema }),
         secret: resolveSecret(),
+        baseURL,
+        trustedOrigins: origins.length > 0 ? origins : [baseURL],
         emailAndPassword: { enabled: true },
         advanced: {
             // The database owns uuid primary keys via gen_random_uuid(); the default
             // 32-character alphanumeric ids are not valid Postgres uuids.
             database: { generateId: "uuid" },
-            // Server-to-server callers cannot supply an Origin header, which
-            // Better Auth's form-CSRF check requires for email sign-up.
-            disableCSRFCheck: true,
         },
     });
 }

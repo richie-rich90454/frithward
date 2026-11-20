@@ -28,7 +28,8 @@ function resolvePgBin() {
     return null; // POSIX: rely on PATH.
 }
 const pgBin = resolvePgBin();
-const pg = (name) => (pgBin ? join(pgBin, process.platform === "win32" ? `${name}.exe` : name) : name);
+const pg = (name) =>
+    pgBin ? join(pgBin, process.platform === "win32" ? `${name}.exe` : name) : name;
 
 function resolvePnpm() {
     const configured = process.env.PNPM_BIN?.trim();
@@ -165,14 +166,12 @@ async function startApi(port, databaseUrl) {
         OTEL_EXPORTER_OTLP_ENDPOINT: "",
     });
     const base = `http://127.0.0.1:${port}`;
-    await waitFor(
-        async () => {
-            if (child.exitCode !== null) fail(`API service exited early (code ${child.exitCode})\n${child.log}`);
-            const response = await request("GET", `${base}/health`);
-            return response.status === 200 ? base : false;
-        },
-        "API /health",
-    );
+    await waitFor(async () => {
+        if (child.exitCode !== null)
+            fail(`API service exited early (code ${child.exitCode})\n${child.log}`);
+        const response = await request("GET", `${base}/health`);
+        return response.status === 200 ? base : false;
+    }, "API /health");
     return { child, base };
 }
 
@@ -182,14 +181,12 @@ async function startReportService(name, script, port, databaseUrl) {
         PORT: String(port),
     });
     const base = `http://127.0.0.1:${port}`;
-    await waitFor(
-        async () => {
-            if (child.exitCode !== null) fail(`${name} exited early (code ${child.exitCode})\n${child.log}`);
-            const response = await request("GET", `${base}/health`);
-            return response.status === 200 ? base : false;
-        },
-        `${name} /health`,
-    );
+    await waitFor(async () => {
+        if (child.exitCode !== null)
+            fail(`${name} exited early (code ${child.exitCode})\n${child.log}`);
+        const response = await request("GET", `${base}/health`);
+        return response.status === 200 ? base : false;
+    }, `${name} /health`);
     return { child, base };
 }
 
@@ -203,7 +200,9 @@ async function main() {
         freePort(Number(process.env.COMMUNITY_PORT ?? 35501)),
         freePort(Number(process.env.INCIDENT_PORT ?? 35502)),
     ]);
-    log(`Ports: postgres=${pgPort} api=${apiPort} community=${communityPort} incident=${incidentPort}`);
+    log(
+        `Ports: postgres=${pgPort} api=${apiPort} community=${communityPort} incident=${incidentPort}`,
+    );
 
     workDir = await mkdtemp(join(tmpdir(), "frithward-pg18-int-"));
     dataDir = join(workDir, "data");
@@ -214,37 +213,51 @@ async function main() {
 
     log("== initdb ==");
     run(pg("initdb"), [
-        "-D", dataDir,
-        "-U", "postgres",
+        "-D",
+        dataDir,
+        "-U",
+        "postgres",
         "--auth=trust",
         "--encoding=UTF8",
         "--locale=C",
-        "--pwfile", pwFile,
+        "--pwfile",
+        pwFile,
         "--no-instructions",
     ]);
 
     log("== pg_ctl start ==");
     pgStarted = true;
     // pg_ctl leaves its stdio pipes open in the Windows child, so ignore them and use -l instead.
-    run(pg("pg_ctl"), [
-        "-D", dataDir,
-        "-l", pgCtlLog,
-        "-o", `-h 127.0.0.1 -p ${pgPort}`,
-        "-w", "start",
-    ], { stdio: "ignore" });
-
-    const psqlEnv = { PGPASSWORD: PASSWORD };
-    const psqlArgs = ["-h", "127.0.0.1", "-p", String(pgPort), "-U", "postgres", "-v", "ON_ERROR_STOP=1"];
-    await waitFor(
-        () => {
-            const result = spawnSync(pg("pg_isready"), ["-h", "127.0.0.1", "-p", String(pgPort), "-U", "postgres"], { encoding: "utf8" });
-            return result.status === 0;
-        },
-        "Postgres readiness",
+    run(
+        pg("pg_ctl"),
+        ["-D", dataDir, "-l", pgCtlLog, "-o", `-h 127.0.0.1 -p ${pgPort}`, "-w", "start"],
+        { stdio: "ignore" },
     );
 
+    const psqlEnv = { PGPASSWORD: PASSWORD };
+    const psqlArgs = [
+        "-h",
+        "127.0.0.1",
+        "-p",
+        String(pgPort),
+        "-U",
+        "postgres",
+        "-v",
+        "ON_ERROR_STOP=1",
+    ];
+    await waitFor(() => {
+        const result = spawnSync(
+            pg("pg_isready"),
+            ["-h", "127.0.0.1", "-p", String(pgPort), "-U", "postgres"],
+            { encoding: "utf8" },
+        );
+        return result.status === 0;
+    }, "Postgres readiness");
+
     log(`== create database ${DATABASE} ==`);
-    run(pg("psql"), [...psqlArgs, "-d", "postgres", "-c", `create database ${DATABASE}`], { env: psqlEnv });
+    run(pg("psql"), [...psqlArgs, "-d", "postgres", "-c", `create database ${DATABASE}`], {
+        env: psqlEnv,
+    });
 
     const databaseUrl = `postgresql://postgres:${encodeURIComponent(PASSWORD)}@127.0.0.1:${pgPort}/${DATABASE}`;
     log(`DATABASE_URL=${databaseUrl}`);
@@ -255,17 +268,38 @@ async function main() {
         shell: pnpm.shell,
     });
     log(migrationOutput.trim());
-    check("db:migrate applied statements", /Applied \d+ migration statements\./.test(migrationOutput), migrationOutput.trim());
+    check(
+        "db:migrate applied statements",
+        /Applied \d+ migration statements\./.test(migrationOutput),
+        migrationOutput.trim(),
+    );
 
-    const tables = run(pg("psql"), [
-        ...psqlArgs,
-        "-d", DATABASE,
-        "-At",
-        "-c", "select table_name from information_schema.tables where table_schema='public' order by table_name",
-    ], { env: psqlEnv });
-    const tableList = tables.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const tables = run(
+        pg("psql"),
+        [
+            ...psqlArgs,
+            "-d",
+            DATABASE,
+            "-At",
+            "-c",
+            "select table_name from information_schema.tables where table_schema='public' order by table_name",
+        ],
+        { env: psqlEnv },
+    );
+    const tableList = tables
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean);
     log(`Tables in public schema: ${tableList.join(", ")}`);
-    for (const table of ["user", "session", "scam_analyses", "job_status", "community_reports", "incident_reports", "cases"]) {
+    for (const table of [
+        "user",
+        "session",
+        "scam_analyses",
+        "job_status",
+        "community_reports",
+        "incident_reports",
+        "cases",
+    ]) {
         check(`migration created table ${table}`, tableList.includes(table));
     }
 
@@ -276,43 +310,76 @@ async function main() {
 
     const health = await request("GET", `${api.base}/health`);
     check("GET /health -> 200", health.status === 200, health.raw);
-    check("GET /health reports database connected", health.body?.database === "connected", health.raw);
+    check(
+        "GET /health reports database connected",
+        health.body?.database === "connected",
+        health.raw,
+    );
     check("GET /health reports status ok", health.body?.status === "ok", health.raw);
 
     const anonymousSession = await request("GET", `${api.base}/api/auth/session`);
     if (anonymousSession.status === 200) {
         check("GET /api/auth/session -> 200", true);
-        check("GET /api/auth/session is anonymous", anonymousSession.body?.authenticated === false, anonymousSession.raw);
+        check(
+            "GET /api/auth/session is anonymous",
+            anonymousSession.body?.authenticated === false,
+            anonymousSession.raw,
+        );
     } else {
-        findings.push(`GET /api/auth/session -> ${anonymousSession.status} ${anonymousSession.raw.slice(0, 200)}`);
-        log(`  FINDING  GET /api/auth/session -> ${anonymousSession.status} ${anonymousSession.raw.slice(0, 300)}`);
+        findings.push(
+            `GET /api/auth/session -> ${anonymousSession.status} ${anonymousSession.raw.slice(0, 200)}`,
+        );
+        log(
+            `  FINDING  GET /api/auth/session -> ${anonymousSession.status} ${anonymousSession.raw.slice(0, 300)}`,
+        );
     }
     if (api.child.log.includes("Drizzle schema mismatch")) {
         const start = api.child.log.indexOf("Drizzle schema mismatch");
-        findings.push(`Better Auth Drizzle schema mismatch: ${api.child.log.slice(start, start + 700).replace(/\s+/g, " ").trim()}`);
+        findings.push(
+            `Better Auth Drizzle schema mismatch: ${api.child.log
+                .slice(start, start + 700)
+                .replace(/\s+/g, " ")
+                .trim()}`,
+        );
     }
 
     let sessionCookie = null;
     const signUp = await request("POST", `${api.base}/api/auth/sign-up/email`, {
-        body: { email: "integration@example.test", password: "Test-Password-123!", name: "Integration Tester" },
+        body: {
+            email: "integration@example.test",
+            password: "Test-Password-123!",
+            name: "Integration Tester",
+        },
+        // Better Auth checks Origin for form-CSRF; a real browser always sends it.
+        headers: { origin: api.base },
     });
     if (signUp.status === 200 && signUp.cookies.length > 0) {
         sessionCookie = signUp.cookies.map((cookie) => cookie.split(";")[0]).join("; ");
         check("POST /api/auth/sign-up/email -> 200 (session established)", true);
     } else {
         log(`  NOTE  POST /api/auth/sign-up/email -> ${signUp.status} ${signUp.raw.slice(0, 500)}`);
-        log("  NOTE  Auth cannot establish a session with the shipped schema; case CRUD is gated behind requireSession.");
+        log(
+            "  NOTE  Auth cannot establish a session with the shipped schema; case CRUD is gated behind requireSession.",
+        );
     }
 
     const caseHeaders = sessionCookie ? { cookie: sessionCookie } : {};
-    const validCase = { kind: "message", title: "Live integration case", inputs: { text: "pay now" } };
+    const validCase = {
+        kind: "message",
+        title: "Live integration case",
+        inputs: { text: "pay now" },
+    };
 
     const unauthCases = await request("GET", `${api.base}/api/cases`, { headers: caseHeaders });
     if (sessionCookie) {
         check("GET /api/cases (authenticated) -> 200", unauthCases.status === 200, unauthCases.raw);
     } else {
-        log(`  FINDING  case routes are gated by requireSession; GET /api/cases without a session -> ${unauthCases.status} ${unauthCases.raw.slice(0, 200)}`);
-        findings.push(`Case CRUD could not be exercised: Better Auth cannot establish a session with the shipped schema (GET /api/cases without session -> ${unauthCases.status}).`);
+        log(
+            `  FINDING  case routes are gated by requireSession; GET /api/cases without a session -> ${unauthCases.status} ${unauthCases.raw.slice(0, 200)}`,
+        );
+        findings.push(
+            `Case CRUD could not be exercised: Better Auth cannot establish a session with the shipped schema (GET /api/cases without session -> ${unauthCases.status}).`,
+        );
         await request("POST", `${api.base}/api/cases`, { body: validCase });
         await request("GET", `${api.base}/api/cases/not-a-real-id`);
         await request("PATCH", `${api.base}/api/cases/not-a-real-id`, { body: { title: "x" } });
@@ -321,94 +388,206 @@ async function main() {
 
     let createdCaseId = null;
     if (sessionCookie) {
-        const created = await request("POST", `${api.base}/api/cases`, { body: validCase, headers: caseHeaders });
+        const created = await request("POST", `${api.base}/api/cases`, {
+            body: validCase,
+            headers: caseHeaders,
+        });
         check("POST /api/cases -> 201", created.status === 201, created.raw);
         createdCaseId = created.body?.id;
-        check("POST /api/cases returned a uuid", typeof createdCaseId === "string" && createdCaseId.length > 0, created.raw);
+        check(
+            "POST /api/cases returned a uuid",
+            typeof createdCaseId === "string" && createdCaseId.length > 0,
+            created.raw,
+        );
         check("created case has status draft", created.body?.status === "draft", created.raw);
 
         const listed = await request("GET", `${api.base}/api/cases`, { headers: caseHeaders });
-        check("GET /api/cases lists the created case", listed.status === 200 && listed.body?.cases?.some((item) => item.id === createdCaseId), listed.raw);
+        check(
+            "GET /api/cases lists the created case",
+            listed.status === 200 && listed.body?.cases?.some((item) => item.id === createdCaseId),
+            listed.raw,
+        );
 
-        const fetched = await request("GET", `${api.base}/api/cases/${createdCaseId}`, { headers: caseHeaders });
-        check("GET /api/cases/:id -> 200 with matching id", fetched.status === 200 && fetched.body?.id === createdCaseId, fetched.raw);
+        const fetched = await request("GET", `${api.base}/api/cases/${createdCaseId}`, {
+            headers: caseHeaders,
+        });
+        check(
+            "GET /api/cases/:id -> 200 with matching id",
+            fetched.status === 200 && fetched.body?.id === createdCaseId,
+            fetched.raw,
+        );
 
         const patched = await request("PATCH", `${api.base}/api/cases/${createdCaseId}`, {
             body: { title: "Updated live integration case", status: "active" },
             headers: caseHeaders,
         });
         check("PATCH /api/cases/:id -> 200", patched.status === 200, patched.raw);
-        check("PATCH persisted title", patched.body?.title === "Updated live integration case", patched.raw);
+        check(
+            "PATCH persisted title",
+            patched.body?.title === "Updated live integration case",
+            patched.raw,
+        );
         check("PATCH persisted status", patched.body?.status === "active", patched.raw);
     }
 
     // ---- Community service ----
     log("== Community service ==");
-    services.community = await startReportService("community", "start:community", communityPort, databaseUrl);
+    services.community = await startReportService(
+        "community",
+        "start:community",
+        communityPort,
+        databaseUrl,
+    );
     const community = services.community;
     const submitted = await request("POST", `${community.base}/api/community/reports`, {
         body: {
             title: "Live community report",
             body: "Suspicious account message asking for payment",
-            findings: [{ id: "f1", kind: "pii-email", detail: "sender@example.test", remediation: "redact" }],
+            findings: [
+                {
+                    id: "f1",
+                    kind: "pii-email",
+                    detail: "sender@example.test",
+                    remediation: "redact",
+                },
+            ],
         },
     });
     check("POST /api/community/reports -> 201", submitted.status === 201, submitted.raw);
     const communityId = submitted.body?.report?.id;
-    check("community report has an id", typeof communityId === "string" && communityId.length > 0, submitted.raw);
+    check(
+        "community report has an id",
+        typeof communityId === "string" && communityId.length > 0,
+        submitted.raw,
+    );
     const communityList = await request("GET", `${community.base}/api/community/reports`);
-    check("GET /api/community/reports lists the report", communityList.status === 200 && communityList.body?.reports?.some((item) => item.id === communityId), communityList.raw);
+    check(
+        "GET /api/community/reports lists the report",
+        communityList.status === 200 &&
+            communityList.body?.reports?.some((item) => item.id === communityId),
+        communityList.raw,
+    );
 
     // ---- Incident service ----
     log("== Incident service ==");
-    services.incident = await startReportService("incident", "start:incident", incidentPort, databaseUrl);
+    services.incident = await startReportService(
+        "incident",
+        "start:incident",
+        incidentPort,
+        databaseUrl,
+    );
     const incident = services.incident;
     const incidentCreated = await request("POST", `${incident.base}/api/incident/reports`, {
         body: { title: "Live incident", severity: "high", details: "Credential phishing campaign" },
     });
     check("POST /api/incident/reports -> 201", incidentCreated.status === 201, incidentCreated.raw);
     const incidentId = incidentCreated.body?.id;
-    check("incident report has an id", typeof incidentId === "string" && incidentId.length > 0, incidentCreated.raw);
-    const incidentFetched = await request("GET", `${incident.base}/api/incident/reports/${incidentId}`);
-    check("GET /api/incident/reports/:id -> 200", incidentFetched.status === 200 && incidentFetched.body?.id === incidentId, incidentFetched.raw);
-    const incidentPatched = await request("PATCH", `${incident.base}/api/incident/reports/${incidentId}/status`, {
-        body: { status: "investigating" },
-    });
-    check("PATCH /api/incident/reports/:id/status -> 200", incidentPatched.status === 200, incidentPatched.raw);
-    check("incident status persisted", incidentPatched.body?.status === "investigating", incidentPatched.raw);
+    check(
+        "incident report has an id",
+        typeof incidentId === "string" && incidentId.length > 0,
+        incidentCreated.raw,
+    );
+    const incidentFetched = await request(
+        "GET",
+        `${incident.base}/api/incident/reports/${incidentId}`,
+    );
+    check(
+        "GET /api/incident/reports/:id -> 200",
+        incidentFetched.status === 200 && incidentFetched.body?.id === incidentId,
+        incidentFetched.raw,
+    );
+    const incidentPatched = await request(
+        "PATCH",
+        `${incident.base}/api/incident/reports/${incidentId}/status`,
+        {
+            body: { status: "investigating" },
+        },
+    );
+    check(
+        "PATCH /api/incident/reports/:id/status -> 200",
+        incidentPatched.status === 200,
+        incidentPatched.raw,
+    );
+    check(
+        "incident status persisted",
+        incidentPatched.body?.status === "investigating",
+        incidentPatched.raw,
+    );
 
     // ---- Restart all services; verify DB persistence ----
     log("== Restart all services and verify persistence ==");
     for (const key of ["api", "community", "incident"]) await stopAndWait(services[key]);
     services.api = await startApi(apiPort, databaseUrl);
-    services.community = await startReportService("community", "start:community", communityPort, databaseUrl);
-    services.incident = await startReportService("incident", "start:incident", incidentPort, databaseUrl);
+    services.community = await startReportService(
+        "community",
+        "start:community",
+        communityPort,
+        databaseUrl,
+    );
+    services.incident = await startReportService(
+        "incident",
+        "start:incident",
+        incidentPort,
+        databaseUrl,
+    );
 
     const healthAfter = await request("GET", `${services.api.base}/health`);
-    check("API /health -> 200 after restart", healthAfter.status === 200 && healthAfter.body?.database === "connected", healthAfter.raw);
+    check(
+        "API /health -> 200 after restart",
+        healthAfter.status === 200 && healthAfter.body?.database === "connected",
+        healthAfter.raw,
+    );
 
     if (sessionCookie && createdCaseId) {
-        const caseAfter = await request("GET", `${services.api.base}/api/cases/${createdCaseId}`, { headers: { cookie: sessionCookie } });
-        check("created case survives API restart", caseAfter.status === 200 && caseAfter.body?.title === "Updated live integration case", caseAfter.raw);
-        const deleted = await request("DELETE", `${services.api.base}/api/cases/${createdCaseId}`, { headers: { cookie: sessionCookie } });
+        const caseAfter = await request("GET", `${services.api.base}/api/cases/${createdCaseId}`, {
+            headers: { cookie: sessionCookie },
+        });
+        check(
+            "created case survives API restart",
+            caseAfter.status === 200 && caseAfter.body?.title === "Updated live integration case",
+            caseAfter.raw,
+        );
+        const deleted = await request("DELETE", `${services.api.base}/api/cases/${createdCaseId}`, {
+            headers: { cookie: sessionCookie },
+        });
         check("DELETE /api/cases/:id -> 204", deleted.status === 204, deleted.raw);
-        const gone = await request("GET", `${services.api.base}/api/cases/${createdCaseId}`, { headers: { cookie: sessionCookie } });
+        const gone = await request("GET", `${services.api.base}/api/cases/${createdCaseId}`, {
+            headers: { cookie: sessionCookie },
+        });
         check("GET deleted case -> 404", gone.status === 404, gone.raw);
     }
 
     const communityAfter = await request("GET", `${services.community.base}/api/community/reports`);
-    check("community report survives restart", communityAfter.status === 200 && communityAfter.body?.reports?.some((item) => item.id === communityId), communityAfter.raw);
+    check(
+        "community report survives restart",
+        communityAfter.status === 200 &&
+            communityAfter.body?.reports?.some((item) => item.id === communityId),
+        communityAfter.raw,
+    );
 
-    const incidentAfter = await request("GET", `${services.incident.base}/api/incident/reports/${incidentId}`);
-    check("incident status survives restart", incidentAfter.status === 200 && incidentAfter.body?.status === "investigating", incidentAfter.raw);
+    const incidentAfter = await request(
+        "GET",
+        `${services.incident.base}/api/incident/reports/${incidentId}`,
+    );
+    check(
+        "incident status survives restart",
+        incidentAfter.status === 200 && incidentAfter.body?.status === "investigating",
+        incidentAfter.raw,
+    );
 
     // Row counts straight from Postgres as extra evidence.
-    const counts = run(pg("psql"), [
-        ...psqlArgs,
-        "-d", DATABASE,
-        "-At",
-        "-c", "select 'cases=' || (select count(*) from cases) || ' community=' || (select count(*) from community_reports) || ' incident=' || (select count(*) from incident_reports)",
-    ], { env: psqlEnv });
+    const counts = run(
+        pg("psql"),
+        [
+            ...psqlArgs,
+            "-d",
+            DATABASE,
+            "-At",
+            "-c",
+            "select 'cases=' || (select count(*) from cases) || ' community=' || (select count(*) from community_reports) || ' incident=' || (select count(*) from incident_reports)",
+        ],
+        { env: psqlEnv },
+    );
     log(`Postgres row counts: ${counts.trim()}`);
 
     if (findings.length === 0) {
@@ -417,20 +596,25 @@ async function main() {
     }
     log(`== RESULT: ${findings.length} GENUINE BLOCKER(S) FOUND; reachable checks passed ==`);
     for (const finding of findings) log(`  - ${finding}`);
-    fail(`Integration verification incomplete: ${findings.length} genuine blocker(s) prevented full endpoint coverage (see RESULT lines above).`);
+    fail(
+        `Integration verification incomplete: ${findings.length} genuine blocker(s) prevented full endpoint coverage (see RESULT lines above).`,
+    );
 }
 
 try {
     await main();
 } catch (error) {
     console.error("\nINTEGRATION VERIFICATION FAILED:");
-    console.error(error instanceof Error ? error.stack ?? error.message : error);
+    console.error(error instanceof Error ? (error.stack ?? error.message) : error);
     for (const [name, service] of Object.entries(services)) {
-        if (service?.child?.log) console.error(`\n--- ${name} service log ---\n${service.child.log}`);
+        if (service?.child?.log)
+            console.error(`\n--- ${name} service log ---\n${service.child.log}`);
     }
     if (pgCtlLog && existsSync(pgCtlLog)) {
         try {
-            console.error(`\n--- postgres log ---\n${await (await import("node:fs/promises")).readFile(pgCtlLog, "utf8")}`);
+            console.error(
+                `\n--- postgres log ---\n${await (await import("node:fs/promises")).readFile(pgCtlLog, "utf8")}`,
+            );
         } catch {
             /* ignore */
         }
