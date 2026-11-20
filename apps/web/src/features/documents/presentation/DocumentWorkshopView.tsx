@@ -6,6 +6,7 @@ import type {
 } from "../application/DocumentGenerationController";
 import { DocumentDraftStore } from "../infrastructure/DocumentDraftStore";
 import { PdfPreview } from "./components/PdfPreview";
+import { useI18n } from "../../../i18n/index.js";
 import "./documents.css";
 
 interface DocumentWorkshopViewProps {
@@ -26,23 +27,24 @@ interface DocumentWorkshopViewProps {
 const FORMATS: readonly ExportFormat[] = ["docx", "pdf", "xlsx", "pptx"];
 
 export function DocumentWorkshopView(props: DocumentWorkshopViewProps) {
+    const { t } = useI18n();
     return (
         <section class="document-workshop">
-            <h1>Document workshop</h1>
+            <h1>{t("documents.title")}</h1>
             <Show when={props.draftSaved}>
                 <p class="document-workshop__status" role="status" aria-live="polite">
-                    Draft saved
+                    {t("draft.saved")}
                 </p>
             </Show>
             <label>
-                Title
+                {t("documents.field.title")}
                 <input
                     value={props.state.title}
                     onInput={(event) => props.onTitleChange(event.currentTarget.value)}
                 />
             </label>
             <label>
-                Sections (one "## Heading" per section)
+                {t("documents.field.sections")}
                 <textarea
                     rows={6}
                     value={props.state.sectionsText}
@@ -50,7 +52,7 @@ export function DocumentWorkshopView(props: DocumentWorkshopViewProps) {
                 />
             </label>
             <label>
-                Spreadsheet rows (comma separated, first line is the header)
+                {t("documents.field.sheet")}
                 <textarea
                     rows={4}
                     value={props.state.sheetText}
@@ -58,7 +60,7 @@ export function DocumentWorkshopView(props: DocumentWorkshopViewProps) {
                 />
             </label>
             <label>
-                Slides ("# Title" and "- bullet" per slide)
+                {t("documents.field.slides")}
                 <textarea
                     rows={4}
                     value={props.state.slidesText}
@@ -72,21 +74,21 @@ export function DocumentWorkshopView(props: DocumentWorkshopViewProps) {
                         disabled={props.state.busy}
                         onClick={() => props.onExport(format)}
                     >
-                        Export {format.toUpperCase()}
+                        {t("documents.export").replace("{format}", format.toUpperCase())}
                     </button>
                 ))}
                 <button type="button" disabled={props.state.busy} onClick={props.onPreview}>
-                    Preview PDF
+                    {t("documents.previewPdf")}
                 </button>
                 <button type="button" disabled={props.state.busy} onClick={props.onBundle}>
-                    Export bundle (ZIP)
+                    {t("documents.exportBundle")}
                 </button>
                 <button type="button" disabled={props.state.busy} onClick={props.onClear}>
-                    Clear
+                    {t("action.clear")}
                 </button>
             </div>
             <label>
-                Import DOCX
+                {t("documents.importDocx")}
                 <input
                     type="file"
                     accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -97,7 +99,7 @@ export function DocumentWorkshopView(props: DocumentWorkshopViewProps) {
                 />
             </label>
             <label>
-                Import image for OCR (English, local tesseract.js)
+                {t("documents.importOcr")}
                 <input
                     type="file"
                     accept="image/*"
@@ -117,7 +119,7 @@ export function DocumentWorkshopView(props: DocumentWorkshopViewProps) {
             <Show when={props.state.importedHtml}>
                 {(html) => (
                     <details>
-                        <summary>Imported document (HTML source)</summary>
+                        <summary>{t("documents.importedHtml")}</summary>
                         <pre>{html()}</pre>
                     </details>
                 )}
@@ -128,7 +130,8 @@ export function DocumentWorkshopView(props: DocumentWorkshopViewProps) {
 }
 
 export function DocumentWorkshopPage() {
-    const controller = new DocumentGenerationController();
+    const { t } = useI18n();
+    const controller = new DocumentGenerationController(undefined, t);
     const store = new DocumentDraftStore();
     const [state, setState] = createSignal(controller.getState());
     const [draftSaved, setDraftSaved] = createSignal(false);
