@@ -100,7 +100,8 @@ export const es: Record<string, string> = {
     "learn.quiz.q-sources.prompt":
         "Ves una foto impactante en un chat de grupo sin fecha ni ubicación. ¿Cuál es el paso más útil?",
     "learn.quiz.q-sources.option.0": "Compartirla para que otros avisen a sus amigos",
-    "learn.quiz.q-sources.option.1": "Buscar la publicación más antigua y comprobar una fuente independiente",
+    "learn.quiz.q-sources.option.1":
+        "Buscar la publicación más antigua y comprobar una fuente independiente",
     "learn.quiz.q-sources.option.2": "Suponer que es falsa porque no tiene pies de foto",
     "learn.quiz.q-sources.explanation":
         "Encontrar la publicación más antigua y una fuente independiente te da contexto. Compartir primero propaga afirmaciones no verificadas, y suponer que es falsa es igual de infundado.",
