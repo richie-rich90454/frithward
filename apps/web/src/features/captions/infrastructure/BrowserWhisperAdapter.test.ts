@@ -106,9 +106,12 @@ describe("BrowserWhisperAdapter", () => {
         let rejectCollect!: (reason?: unknown) => void;
         const cancel = vi.fn(() => rejectCollect(new Error("cancelled")));
         engine.transcribePCM.mockReturnValue({
-            collect: vi.fn(() => new Promise((_resolve, reject) => {
-                rejectCollect = reject;
-            })),
+            collect: vi.fn(
+                () =>
+                    new Promise((_resolve, reject) => {
+                        rejectCollect = reject;
+                    }),
+            ),
             cancel,
         });
         const controller = new AbortController();
