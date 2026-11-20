@@ -1,58 +1,61 @@
 import { For, Show, createSignal, onCleanup } from "solid-js";
 import { Accessibility, GraduationCap, Library, MessageSquare, Users } from "lucide-solid";
 import { REVIEWED_PATTERNS } from "../../../check/domain/ReviewedPatterns.js";
+import { translatePatternFields } from "../../../check/presentation/patternTranslations.js";
 import { CommunityPatternsController } from "../controllers/CommunityPatternsController";
+import { useI18n } from "../../../../i18n/index.js";
 import "../community.css";
 
 const TRACKS = [
     {
-        title: "Technology",
-        detail: "Help improve the local tools: report bugs, suggest clearer wording, test new browser features, or contribute code and translations to the open-source packages.",
+        titleKey: "community.track.technology.title",
+        detailKey: "community.track.technology.detail",
     },
     {
-        title: "Public safety",
-        detail: "Share non-identifying patterns you have seen in scam messages so others know what to check. Do not forward the original messages or the personal details of anyone targeted.",
+        titleKey: "community.track.publicSafety.title",
+        detailKey: "community.track.publicSafety.detail",
     },
     {
-        title: "Accessibility",
-        detail: "Review captions, plain-language summaries, and keyboard navigation. Tell us where instructions are hard to follow so we can rewrite them for more people.",
+        titleKey: "community.track.accessibility.title",
+        detailKey: "community.track.accessibility.detail",
     },
     {
-        title: "Research",
-        detail: "Ask questions, propose study ideas, and help test whether an educational approach works. Keep participants voluntary, consented, and never identify them in public write-ups.",
+        titleKey: "community.track.research.title",
+        detailKey: "community.track.research.detail",
     },
 ] as const;
 
 const PARTNERSHIPS = [
     {
         icon: GraduationCap,
-        title: "Schools",
-        detail: "Classroom materials and short sessions on checking sources and recognising pressure tactics.",
+        titleKey: "community.partner.schools.title",
+        detailKey: "community.partner.schools.detail",
     },
     {
         icon: Library,
-        title: "Libraries",
-        detail: "Public workshops on privacy settings, safe sharing, and reading media critically.",
+        titleKey: "community.partner.libraries.title",
+        detailKey: "community.partner.libraries.detail",
     },
     {
         icon: Accessibility,
-        title: "Senior centres",
-        detail: "In-person, plain-language walkthroughs of common messages and how to verify them.",
+        titleKey: "community.partner.seniorCentres.title",
+        detailKey: "community.partner.seniorCentres.detail",
     },
     {
         icon: Users,
-        title: "Universities",
-        detail: "Collaboration on research, evaluation, and open tools with clear consent and ethics review.",
+        titleKey: "community.partner.universities.title",
+        detailKey: "community.partner.universities.detail",
     },
     {
         icon: MessageSquare,
-        title: "Consumer protection groups",
-        detail: "Sharing general trend information and referral paths without exposing case details.",
+        titleKey: "community.partner.consumerGroups.title",
+        detailKey: "community.partner.consumerGroups.detail",
     },
 ] as const;
 
 export function CommunityView() {
-    const controller = new CommunityPatternsController();
+    const { t } = useI18n();
+    const controller = new CommunityPatternsController({ translate: t });
     const [state, setState] = createSignal(controller.getState());
     onCleanup(
         controller.subscribe(() => {
@@ -81,43 +84,48 @@ export function CommunityView() {
         <section class="community-view">
             <h1>
                 <Users class="fw-icon" />
-                Community
+                {t("community.title")}
             </h1>
-            <p>
-                Frithward Commons is where people help each other use these tools well. You can take
-                part without sharing anyone's private information.
-            </p>
+            <p>{t("community.intro")}</p>
 
-            <h2>Reviewed patterns</h2>
-            <p>
-                These are the transparent, rule-based signals used by Scam Check. A match is a
-                prompt to check with the sender through a known channel, not proof of fraud.
-            </p>
+            <h2>{t("community.reviewedPatterns")}</h2>
+            <p>{t("community.reviewedIntro")}</p>
             <ul class="resource-list">
                 <For each={REVIEWED_PATTERNS}>
                     {(pattern) => (
                         <li>
                             <div>
-                                <h3>{pattern.label}</h3>
-                                <p>{pattern.rationale}</p>
-                                <p class="community-view__source">
-                                    Source: Scam Check reviewed catalog
+                                <h3>
+                                    {
+                                        translatePatternFields(t, pattern.id, {
+                                            label: pattern.label,
+                                            rationale: pattern.rationale,
+                                            detail: pattern.detail,
+                                        }).label
+                                    }
+                                </h3>
+                                <p>
+                                    {
+                                        translatePatternFields(t, pattern.id, {
+                                            label: pattern.label,
+                                            rationale: pattern.rationale,
+                                            detail: pattern.detail,
+                                        }).rationale
+                                    }
                                 </p>
+                                <p class="community-view__source">{t("community.source")}</p>
                             </div>
                         </li>
                     )}
                 </For>
             </ul>
 
-            <h2>Community patterns</h2>
-            <p role="note">
-                Community submitted, not independently verified. Nothing here is uploaded or shared;
-                entries stay in this browser only. Do not include anyone's private information.
-            </p>
+            <h2>{t("community.communityPatterns")}</h2>
+            <p role="note">{t("community.communityNote")}</p>
 
             <form class="community-view__form" onSubmit={submit}>
                 <label>
-                    Title
+                    {t("community.field.title")}
                     <input
                         type="text"
                         value={title()}
@@ -126,7 +134,7 @@ export function CommunityView() {
                     />
                 </label>
                 <label>
-                    Description
+                    {t("community.field.description")}
                     <textarea
                         value={description()}
                         maxlength={600}
@@ -134,7 +142,7 @@ export function CommunityView() {
                     />
                 </label>
                 <label>
-                    Source URL (optional)
+                    {t("community.field.sourceUrl")}
                     <input
                         type="text"
                         value={sourceUrl()}
@@ -142,7 +150,7 @@ export function CommunityView() {
                         onInput={(event) => setSourceUrl(event.currentTarget.value)}
                     />
                 </label>
-                <button type="submit">Add pattern</button>
+                <button type="submit">{t("community.addPattern")}</button>
             </form>
 
             <Show when={state().error}>
@@ -153,7 +161,7 @@ export function CommunityView() {
 
             <Show
                 when={state().patterns.length > 0}
-                fallback={<p class="community-view__empty">No community patterns saved yet.</p>}
+                fallback={<p class="community-view__empty">{t("community.empty")}</p>}
             >
                 <ul class="resource-list">
                     <For each={state().patterns}>
@@ -174,11 +182,11 @@ export function CommunityView() {
                                         </p>
                                     </Show>
                                     <p class="community-view__source">
-                                        Community submitted, not independently verified
+                                        {t("community.communitySubmitted")}
                                     </p>
                                 </div>
                                 <button type="button" onClick={() => controller.remove(pattern.id)}>
-                                    Delete
+                                    {t("community.delete")}
                                 </button>
                             </li>
                         )}
@@ -186,29 +194,29 @@ export function CommunityView() {
                 </ul>
             </Show>
 
-            <h2>Contribution tracks</h2>
+            <h2>{t("community.tracks")}</h2>
             <ul class="resource-list">
                 <For each={TRACKS}>
                     {(track) => (
                         <li>
                             <div>
-                                <h3>{track.title}</h3>
-                                <p>{track.detail}</p>
+                                <h3>{t(track.titleKey)}</h3>
+                                <p>{t(track.detailKey)}</p>
                             </div>
                         </li>
                     )}
                 </For>
             </ul>
 
-            <h2>Partnership categories</h2>
+            <h2>{t("community.partnerships")}</h2>
             <ul class="resource-list">
                 <For each={PARTNERSHIPS}>
                     {(partner) => (
                         <li>
                             <partner.icon class="fw-icon" />
                             <div>
-                                <h3>{partner.title}</h3>
-                                <p>{partner.detail}</p>
+                                <h3>{t(partner.titleKey)}</h3>
+                                <p>{t(partner.detailKey)}</p>
                             </div>
                         </li>
                     )}
@@ -216,10 +224,7 @@ export function CommunityView() {
             </ul>
 
             <p role="note">
-                <strong>Privacy rule:</strong> contributors must never publish a victim's private
-                information. That includes names, addresses, phone numbers, account details, images,
-                and any identifying context, even if it was sent to you or found in a public
-                profile. Share general patterns only, and check before you post.
+                <strong>{t("community.privacyRuleStrong")}</strong> {t("community.privacyRule")}
             </p>
         </section>
     );
