@@ -7,6 +7,7 @@ interface ProofViewProps {
     result: ProvenanceResult | null;
     error: string | null;
     onVerify: (manifestText: string) => void;
+    onFile: (file: File) => void;
 }
 
 function ProofView(props: ProofViewProps) {
@@ -19,27 +20,45 @@ function ProofView(props: ProofViewProps) {
             </header>
             <main>
                 <p>
-                    Paste a C2PA manifest as JSON and inspect what it claims. This page runs in your
-                    browser and does not upload the manifest.
+                    Select a media file or a C2PA manifest JSON file to inspect it in your browser.
+                    Nothing is uploaded, and no signature is verified here.
                 </p>
-                <form
-                    class="proof-form"
-                    onSubmit={(event) => {
-                        event.preventDefault();
-                        props.onVerify(text());
-                    }}
-                >
+                <form class="proof-form">
                     <label>
-                        C2PA manifest JSON
-                        <textarea
-                            class="proof-input"
-                            value={text()}
-                            onInput={(event) => setText(event.currentTarget.value)}
-                            rows={12}
+                        File to inspect
+                        <input
+                            class="proof-file"
+                            type="file"
+                            accept="image/*,video/*,audio/*,application/json,.json"
+                            onChange={(event) => {
+                                const file = event.currentTarget.files?.[0];
+                                if (file) props.onFile(file);
+                            }}
                         />
                     </label>
-                    <button type="submit">Verify</button>
                 </form>
+
+                <details class="proof-advanced">
+                    <summary>Advanced: paste C2PA manifest JSON</summary>
+                    <form
+                        class="proof-form"
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            props.onVerify(text());
+                        }}
+                    >
+                        <label>
+                            C2PA manifest JSON
+                            <textarea
+                                class="proof-input"
+                                value={text()}
+                                onInput={(event) => setText(event.currentTarget.value)}
+                                rows={12}
+                            />
+                        </label>
+                        <button type="submit">Inspect JSON</button>
+                    </form>
+                </details>
 
                 <Show when={props.error}>
                     <p role="alert">{props.error}</p>
@@ -51,6 +70,14 @@ function ProofView(props: ProofViewProps) {
                             <h2>Result</h2>
                             <p role="status">{result.summary}</p>
                             <dl class="proof-details">
+                                <dt>Source</dt>
+                                <dd>{result.fileName ?? "Pasted JSON"}</dd>
+                                <Show when={result.sha256}>
+                                    <dt>File SHA-256</dt>
+                                    <dd>
+                                        <code class="proof-hash">{result.sha256}</code>
+                                    </dd>
+                                </Show>
                                 <dt>Signature status</dt>
                                 <dd>{result.signatureStatus}</dd>
                                 <dt>Signer</dt>
@@ -96,6 +123,9 @@ export function ProofApp() {
             result={result()}
             error={error()}
             onVerify={(manifestText) => controller.verify(manifestText)}
+            onFile={(file) => {
+                void controller.verifyFile(file);
+            }}
         />
     );
 }
