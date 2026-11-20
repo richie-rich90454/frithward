@@ -1,6 +1,6 @@
 # Image protection engine
 
-Experimental face protection research. The engine validates an image id and returns `protected: true`. It does not apply a protection transform.
+Experimental face protection research surface. The engine validates an image id, accepts image bytes or a path, and returns an explicit `unavailable` status with `protected: false`. It does not apply a protection transform.
 
 ## Intended use
 
@@ -17,8 +17,8 @@ Experimental face protection research. The engine validates an image id and retu
 
 | Item            | Value                                            |
 | --------------- | ------------------------------------------------ |
-| Request         | `ProtectionRequest { image_id: str }`            |
-| Response        | `ProtectionResult { image_id, protected: bool }` |
+| Request         | `ProtectionRequest { image_id, image_base64?, image_path? }` |
+| Response        | `ProtectionResult { image_id, protected, status, reason, limitations }` |
 | Validation      | `image_id` must be non-empty                     |
 | Complexity      | Model-specific                                   |
 | Streaming       | Frame                                            |
@@ -35,6 +35,6 @@ No fixed candidate. Training and evaluation data must be consented and licensed.
 
 ## Limitations
 
-- The scaffold returns success without transforming the image.
+- No protection is applied and no success is claimed (`protected` is always false).
 - Consent and experimental opt-in are enforced by `FaceProtectionPolicy` in `@frithward/media-analysis`.
 - Protection claims require independent evaluation.
