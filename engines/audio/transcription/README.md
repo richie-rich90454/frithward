@@ -14,16 +14,16 @@ Speech-to-text engine and its FastAPI HTTP surface. The engine validates the aud
 
 ## Interface
 
-| Item                | Value                                                                 |
-| ------------------- | --------------------------------------------------------------------- |
-| Request             | `TranscriptionRequest { audio_id: str, language: str }`               |
-| Response            | `list[Utterance]`, where `Utterance { start_ms, end_ms, text }`       |
-| Supported languages | `en`, `zh`, `es`, `fr`, `de`, `ar`, `hi`, `ja`                        |
-| Validation          | Non-empty audio id; language must be supported                        |
-| Complexity          | O(n) in samples                                                       |
-| Streaming           | Chunked with bounded memory                                           |
-| Cancellation        | `AbortSignal` at chunk boundaries                                     |
-| Model lifecycle     | Model loading is separate from inference; one model active per worker |
+| Item                | Value                                                                  |
+| ------------------- | ---------------------------------------------------------------------- |
+| Request             | `TranscriptionRequest { audio_id: str, language: str }`                |
+| Response            | `list[Utterance]`, where `Utterance { start_ms, end_ms, text }`        |
+| Supported languages | `en`, `zh`, `es`, `fr`, `de`, `ar`, `hi`, `ja`                         |
+| Validation          | Non-empty audio id; language must be supported                         |
+| Complexity          | O(n) in samples                                                        |
+| Streaming           | Chunked with bounded memory                                            |
+| Cancellation        | `AbortSignal` at chunk boundaries                                      |
+| Model lifecycle     | Model loading is separate from inference; one model active per worker  |
 | HTTP API            | `src/api.py`: `POST /transcribe`, `GET /health`; `uvicorn src.api:app` |
 
 ## Metrics
