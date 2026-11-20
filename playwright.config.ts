@@ -2,7 +2,12 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
     testDir: "./e2e",
-    timeout: 30000,
+    timeout: 60000,
+    expect: {
+        // The 13 MB JS bundle + ~26 MB WASM assets need longer than the 5 s
+        // default when several workers load the app at once on a cold cache.
+        timeout: 15000,
+    },
     use: {
         baseURL: "http://127.0.0.1:4173",
     },
