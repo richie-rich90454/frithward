@@ -1,9 +1,11 @@
 import { Show, createEffect, createSignal, onCleanup } from "solid-js";
 import { PdfRenderController } from "../../application/PdfRenderController";
+import { useI18n } from "../../../../i18n/index.js";
 
 type Status = "idle" | "loading" | "ready" | "error";
 
 export function PdfPreview(props: { pdf: ArrayBuffer }) {
+    const { t } = useI18n();
     const controller = new PdfRenderController();
     const [canvas, setCanvas] = createSignal<HTMLCanvasElement>();
     const [status, setStatus] = createSignal<Status>("idle");
@@ -21,12 +23,12 @@ export function PdfPreview(props: { pdf: ArrayBuffer }) {
             .then((result) => {
                 if (cancelled) return;
                 setStatus("ready");
-                setDetail(`${result.pageCount} page(s)`);
+                setDetail(t("pdf.pages").replace("{n}", String(result.pageCount)));
             })
             .catch((cause: unknown) => {
                 if (cancelled) return;
                 setStatus("error");
-                setDetail(cause instanceof Error ? cause.message : "Could not render the PDF.");
+                setDetail(cause instanceof Error ? cause.message : t("pdf.error.render"));
             });
         onCleanup(() => {
             cancelled = true;
@@ -35,9 +37,9 @@ export function PdfPreview(props: { pdf: ArrayBuffer }) {
 
     return (
         <section>
-            <h2>PDF preview</h2>
+            <h2>{t("pdf.title")}</h2>
             <Show when={status() === "loading"}>
-                <p role="status">Rendering&hellip;</p>
+                <p role="status">{t("pdf.rendering")}</p>
             </Show>
             <Show when={status() === "error"}>
                 <p role="alert">{detail()}</p>
