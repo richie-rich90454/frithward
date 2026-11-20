@@ -56,6 +56,19 @@ pnpm run test:e2e       # Playwright end-to-end and axe-core accessibility check
 
 Install the Playwright browsers once with `pnpm exec playwright install` before the first end-to-end run.
 
+### Use it in a browser only
+
+No backend, native install, or global install is needed to run the web app. From the repository root:
+
+```sh
+pnpm install
+pnpm --filter @frithward/web run build
+# serve apps/web/dist with any static host (for example `npx serve apps/web/dist`,
+# Caddy file_server, or GitHub Pages), then open it in a browser
+```
+
+On Windows the folder is `apps\web\dist`. The optional Hono services are for organizations that want shared processing; they are not part of this path because `apps/web/src` makes no `fetch()` calls. Building still needs Node.js 26 and pnpm locally. Caption generation needs a user-supplied Whisper WASM runtime plus a model (a local `whisper-tiny.bin` or a URL); English OCR data is bundled, other languages need a local file. See [compatibility.md](docs/compatibility.md) for details and browser API minimums. `e2e/browser-only.spec.ts` verifies static-only operation; offline reloads via service worker/cache are not asserted there.
+
 ## Architecture
 
 The dependency direction is inward. Each package separates five layers:
