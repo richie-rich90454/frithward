@@ -34,7 +34,7 @@ Security is defense in depth with a minimal network surface. The project priorit
 
 `services/api` uses `better-auth` with the Drizzle Postgres adapter. The schema defines `user`, `session`, and `scam_analyses` tables. Today only `GET /api/auth/session` is mounted, and it reports whether a database is configured. The better-auth handlers are not yet exposed.
 
-`BETTER_AUTH_SECRET` must be set in deployed environments. The code falls back to `frithward-local-dev-secret`, which is only acceptable for local development. Sessions are stored server-side in Postgres.
+`BETTER_AUTH_SECRET` must be set in production (`NODE_ENV=production`); there is no hardcoded fallback secret. In development, when it is unset, an ephemeral per-process secret is generated, so sessions do not survive a restart. `DATABASE_URL` also comes from the environment only — there is no built-in development DSN. Sessions are stored server-side in Postgres.
 
 ## Storage
 
