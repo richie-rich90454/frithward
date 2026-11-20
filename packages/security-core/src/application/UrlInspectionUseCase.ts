@@ -128,8 +128,8 @@ function registrableDomain(labels: readonly string[]): string {
 function withCodes(findings: readonly UrlFinding[]): UrlFinding[] {
     return findings.map((finding) => ({
         ...finding,
-        labelCode: resultCodeForText(finding.label),
-        detailCode: resultCodeForText(finding.detail),
+        labelCode: finding.labelCode ?? resultCodeForText(finding.label),
+        detailCode: finding.detailCode ?? resultCodeForText(finding.detail),
     }));
 }
 
@@ -240,6 +240,8 @@ export class UrlInspectionUseCase {
                 label: "Uncommon domain ending",
                 detail: `The domain ending .${tld} is frequently used for throwaway sites.`,
                 severity: "medium",
+                detailCode: RESULT_CODES.URL_TLD_DETAIL,
+                detailParams: { tld },
             });
         }
         if (labels.length >= 4) {
@@ -281,6 +283,8 @@ export class UrlInspectionUseCase {
                     label: "Lookalike domain",
                     detail: `The domain resembles "${brand}" but is not the official domain.`,
                     severity: "high",
+                    detailCode: RESULT_CODES.URL_BRAND_DETAIL,
+                    detailParams: { brand },
                 });
             }
         }
