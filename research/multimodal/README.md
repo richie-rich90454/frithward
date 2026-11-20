@@ -10,8 +10,8 @@ Synchronization models are under consideration, but no specific candidate or mod
 
 ## Dataset candidates
 
-| Dataset | License status | Consent status |
-| --- | --- | --- |
+| Dataset                             | License status  | Consent status  |
+| ----------------------------------- | --------------- | --------------- |
 | Task-specific, documented per study | review required | review required |
 
 No dataset has been selected, approved, or downloaded in this repository.
