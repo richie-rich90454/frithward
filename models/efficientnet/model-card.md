@@ -52,6 +52,6 @@ No weights, training configuration, or measured results are present. Frame-level
 
 ## Version history
 
-| Version | Date | Change |
-| --- | --- | --- |
+| Version  | Date       | Change                                        |
+| -------- | ---------- | --------------------------------------------- |
 | card-0.1 | 2026-11-20 | Initial documentation-only card; no artifact. |
