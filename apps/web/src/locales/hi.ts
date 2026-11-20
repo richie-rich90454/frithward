@@ -589,4 +589,9 @@ export const hi: Record<string, string> = {
     "share.noMetadata": "कोई मेटाडेटा नहीं मिला",
     "share.couldNotRead": "फ़ाइल नहीं पढ़ी जा सकी",
     "share.redactedDownloaded": "छिपी हुई फ़ाइल डाउनलोड हुई",
+    "captions.untitled": "बिना शीर्षक कैप्शन",
+    "charts.seriesName": "बताया गया मान",
+    "runtime.storedFile": "«{name}» स्टोर किया गया ({n} बाइट)।",
+    "runtime.notFound": "«{name}» नाम का कोई एसेट नहीं मिला।",
+    "runtime.readAsset": "«{name}» पढ़ा गया।",
 };
