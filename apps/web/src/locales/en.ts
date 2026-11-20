@@ -48,6 +48,16 @@ export const en: Record<string, string> = {
     "check.guidedBack": "Previous step",
     "check.guidedDone": "Mark this step done",
     "check.guidedComplete": "You have completed all the steps.",
+    "check.clipboardUnavailable":
+        "Clipboard access is unavailable in this browser. Use the file option instead.",
+    "check.pasteFailed":
+        "Clipboard permission was denied. Allow access or paste into the box manually.",
+    "check.fileTypeUnsupported": "Only .txt, .eml, and .json files are supported.",
+    "check.fileReadFailed": "Could not read that file. Please try again.",
+    "check.pasteButton": "Paste from clipboard",
+    "check.dropHint":
+        "Drop a .txt, .eml, or .json file here to check its text locally. Nothing is uploaded.",
+    "check.chooseFile": "Choose a text file (.txt, .eml, .json)",
     "protect.title": "Share check",
     "protect.intro": "Select the metadata that would be shared, then check whether it is safe.",
     "protect.button": "Check share",
@@ -824,6 +834,14 @@ export const en: Record<string, string> = {
         "Contact the person through a known channel to confirm the request.",
     "result.SCAM_NEXT_NO_SEND": "Do not send money, codes, or credentials.",
     "result.SCAM_NEXT_KEEP_EVIDENCE": "Keep the original message as evidence.",
+    "result.SCAM_INDICATOR_URGENCY_LABEL": "Urgency pressure",
+    "result.SCAM_INDICATOR_URGENCY_DETAIL": "The message pressures you to act quickly.",
+    "result.SCAM_INDICATOR_PAYMENT_LABEL": "Payment request",
+    "result.SCAM_INDICATOR_PAYMENT_DETAIL": "The message asks for a payment.",
+    "result.SCAM_INDICATOR_CREDENTIAL_LABEL": "Credential request",
+    "result.SCAM_INDICATOR_CREDENTIAL_DETAIL": "The message asks for credentials.",
+    "result.SCAM_INDICATOR_SECRECY_LABEL": "Secrecy request",
+    "result.SCAM_INDICATOR_SECRECY_DETAIL": "The message asks you to keep it secret.",
     "result.GUIDED_PAUSE_TITLE": "Stop and breathe",
     "result.GUIDED_PAUSE_PLAIN":
         "Do not click, reply, or pay anything right now. It is okay to take your time.",
