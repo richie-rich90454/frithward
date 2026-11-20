@@ -4,10 +4,7 @@ version = "0.1.0"
 description = "Typed Python client for the Frithward API"
 requires-python = ">=3.12"
 license = "Apache-2.0"
-dependencies = [
-    "httpx>=0.28.1",
-    "pydantic>=2.14.4",
-]
+dependencies = ["httpx>=0.28.1", "pydantic>=2.14.4"]
 
 [build-system]
 requires = ["hatchling"]
