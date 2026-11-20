@@ -1,3 +1,5 @@
+import { CodedError, ERROR_CODES } from "@frithward/contracts";
+
 export interface OcrRequest {
     image: ArrayBuffer;
     language: string;
@@ -37,8 +39,10 @@ export class OcrController {
         language: string,
         signal?: AbortSignal,
     ): Promise<OcrRecognition> {
-        if (image.byteLength === 0) throw new Error("The selected image is empty.");
-        if (language.trim().length === 0) throw new Error("An OCR language is required.");
+        if (image.byteLength === 0)
+            throw new CodedError(ERROR_CODES.OCR_IMAGE_EMPTY, "The selected image is empty.");
+        if (language.trim().length === 0)
+            throw new CodedError(ERROR_CODES.OCR_LANGUAGE_REQUIRED, "An OCR language is required.");
         const result = await this.port.recognize({
             image,
             language,
