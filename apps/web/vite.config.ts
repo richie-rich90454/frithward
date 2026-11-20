@@ -1,7 +1,10 @@
-import { readdirSync, writeFileSync } from "node:fs";
+import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { defineConfig, type Plugin } from "vite";
 import solid from "vite-plugin-solid";
+
+// Relative base keeps built assets (and the emitted precache list) valid under any sub-path.
+const base = "./";
 
 // whisper.cpp uses pthreads + SharedArrayBuffer, which browsers expose only in a cross-origin isolated context.
 // COEP stays `require-corp` (not `credentialless`): every runtime asset is same-origin, so the stricter
@@ -36,8 +39,10 @@ function precacheManifest(): Plugin {
             outDir = resolve(config.root, config.build.outDir);
         },
         closeBundle() {
-            const files = listOutputFiles(outDir, "")
-                .filter((file) => file !== "/sw.js" && file !== "/precache-manifest.json")
+            const files = listOutputFiles(outDir, ".")
+                .filter(
+                    (file) => !file.endsWith("/sw.js") && !file.endsWith("/precache-manifest.json"),
+                )
                 .sort();
             writeFileSync(
                 resolve(outDir, "precache-manifest.json"),
@@ -47,8 +52,37 @@ function precacheManifest(): Plugin {
     };
 }
 
-export default defineConfig({
-    plugins: [solid(), precacheManifest()],
+// vite preview serves dist/index.html verbatim, so relative ./assets URLs break
+// when a deep route is opened directly. Inject a root base for HTML navigations.
+function previewSpaBase(): Plugin {
+    let outDir = "";
+    return {
+        name: "frithward-preview-spa-base",
+        apply: "serve",
+        configResolved(config) {
+            outDir = resolve(config.root, config.build.outDir);
+        },
+        configurePreviewServer(server) {
+            server.middlewares.use((req, res, next) => {
+                if (req.method !== "GET" || !(req.headers.accept ?? "").includes("text/html")) {
+                    return next();
+                }
+                const html = readFileSync(resolve(outDir, "index.html"), "utf8");
+                for (const [key, value] of Object.entries(isolationHeaders)) {
+                    res.setHeader(key, value);
+                }
+                res.setHeader("Content-Type", "text/html; charset=utf-8");
+                res.end(html.replace("<head>", '<head>\n        <base href="/" />'));
+            });
+        },
+    };
+}
+
+export default defineConfig(({ command }) => ({
+    // Dev/preview serve index.html at deep paths, where relative ./assets URLs
+    // would resolve under /tools/. Built output stays relative for sub-path hosting.
+    base: command === "serve" ? "/" : base,
+    plugins: [solid(), precacheManifest(), previewSpaBase()],
     server: {
         port: 5173,
         headers: isolationHeaders,
@@ -56,4 +90,4 @@ export default defineConfig({
     preview: {
         headers: isolationHeaders,
     },
-});
+}));
