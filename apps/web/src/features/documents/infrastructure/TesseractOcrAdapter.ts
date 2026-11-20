@@ -1,3 +1,4 @@
+import { CodedError, ERROR_CODES } from "@frithward/contracts";
 import Tesseract from "tesseract.js";
 import type { OcrPort, OcrRequest, OcrResult } from "../application/OcrController.js";
 
@@ -26,7 +27,10 @@ export class TesseractOcrAdapter implements OcrPort {
 
     public async recognize(request: OcrRequest): Promise<OcrResult> {
         if (typeof Worker === "undefined")
-            throw new Error("OCR requires Web Workers, which this browser does not support.");
+            throw new CodedError(
+                ERROR_CODES.OCR_WORKERS_UNAVAILABLE,
+                "OCR requires Web Workers, which this browser does not support.",
+            );
         if (request.signal?.aborted) throw new DOMException("Aborted", "AbortError");
         if (!this.worker || this.language !== request.language) {
             await this.stop();
@@ -49,9 +53,12 @@ export class TesseractOcrAdapter implements OcrPort {
         try {
             return await Tesseract.createWorker(language, 1, tesseractWorkerOptions(this.langPath));
         } catch (cause) {
-            throw new Error(
-                `OCR language data is unavailable at ${this.langPath}/${language}.traineddata.gz. ` +
+            const path = `${this.langPath}/${language}.traineddata.gz`;
+            throw new CodedError(
+                ERROR_CODES.OCR_LANGUAGE_DATA_UNAVAILABLE,
+                `OCR language data is unavailable at ${path}. ` +
                     "Place the file in apps/web/public/tessdata and rebuild; no data is downloaded automatically.",
+                { path },
                 { cause },
             );
         }
