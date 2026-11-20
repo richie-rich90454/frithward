@@ -1,5 +1,6 @@
-import { For, Show, createSignal, onCleanup } from "solid-js";
+import { For, Show, createMemo, createSignal, onCleanup } from "solid-js";
 import { ScanSearch } from "lucide-solid";
+import type { Case } from "@frithward/contracts";
 import type { GuidedFlowStep, ScamAnalysis } from "@frithward/security-core";
 import { useI18n } from "../../../../i18n/index.js";
 import { useCases } from "../../../../cases/CaseProvider.js";
@@ -8,8 +9,12 @@ import { checkResultToCaseInput } from "../toCaseInput.js";
 import type { CheckFindingView } from "../controllers/ScamCheckController";
 import type { ReviewedMatch } from "../../domain/ReviewedPatterns.js";
 import { translateReviewedLimitations, translateReviewedMatch } from "../patternTranslations.js";
+import { Watchlist } from "../Watchlist.js";
+import { ReportButtons } from "../../../reports/index.js";
+import { normalizeCase } from "../../../../cases/IndexedDbCaseRepository.js";
+import { addToWatchlist } from "../../infrastructure/WatchlistStore.js";
 
-const SAVED_MESSAGE = "Saved to cases";
+const FILE_PATTERN = /\.(txt|eml|json)$/i;
 
 interface ScamCheckViewProps {
     initialText?: string;
@@ -28,6 +33,7 @@ interface ScamCheckViewProps {
     onCheckUrl: (input: string) => void;
     onCheckQr: (input: string) => void;
     onGenerateReport: () => void;
+    reportCase: Case | null;
     onGuidedNext: () => void;
     onGuidedBack: () => void;
     onGuidedComplete: () => void;
@@ -50,9 +56,75 @@ export function ScamCheckView(props: ScamCheckViewProps) {
     const [url, setUrl] = createSignal("");
     const [qr, setQr] = createSignal("");
     const [simplified, setSimplified] = createSignal(false);
+    const [clipboardError, setClipboardError] = createSignal<string | null>(null);
+    const [fileError, setFileError] = createSignal<string | null>(null);
+    const [dragging, setDragging] = createSignal(false);
+    const [watchlistStatus, setWatchlistStatus] = createSignal("");
     const { t } = useI18n();
+
+    const addToWatch = (value: string) => {
+        addToWatchlist({
+            id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`,
+            label: value,
+            kind: "domain",
+            createdAt: new Date().toISOString(),
+        });
+        setWatchlistStatus(t("watchlist.added"));
+    };
+
+    const pasteFromClipboard = async () => {
+        setClipboardError(null);
+        if (!navigator.clipboard?.readText) {
+            setClipboardError(
+                "Clipboard access is unavailable in this browser. Use the file option instead.",
+            );
+            return;
+        }
+        try {
+            setText(await navigator.clipboard.readText());
+        } catch {
+            setClipboardError(
+                "Clipboard permission was denied. Allow access or paste into the box manually.",
+            );
+        }
+    };
+
+    const readFile = async (file: File | undefined) => {
+        setFileError(null);
+        if (!file) return;
+        if (!FILE_PATTERN.test(file.name)) {
+            setFileError("Only .txt, .eml, and .json files are supported.");
+            return;
+        }
+        try {
+            const content = await file.text();
+            setText(content);
+            props.onCheck(content);
+        } catch {
+            setFileError("Could not read that file. Please try again.");
+        }
+    };
+
     return (
-        <section>
+        <section
+            onDragOver={(event) => {
+                if (!event.dataTransfer?.types.includes("Files")) return;
+                event.preventDefault();
+                setDragging(true);
+            }}
+            onDragLeave={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                    setDragging(false);
+                }
+            }}
+            onDrop={(event) => {
+                if (!event.dataTransfer?.types.includes("Files")) return;
+                event.preventDefault();
+                setDragging(false);
+                void readFile(event.dataTransfer.files[0]);
+            }}
+            style={dragging() ? { outline: "2px dashed var(--fw-accent)" } : undefined}
+        >
             <h1>
                 <ScanSearch class="fw-icon" />
                 {t("check.title")}
@@ -71,7 +143,17 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                     />
                 </label>
                 <button type="submit">{t("check.button")}</button>
+                <button
+                    type="button"
+                    style={{ "min-height": "44px" }}
+                    onClick={() => void pasteFromClipboard()}
+                >
+                    Paste from clipboard
+                </button>
             </form>
+            <Show when={clipboardError()}>
+                <p role="alert">{clipboardError()}</p>
+            </Show>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -100,6 +182,24 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                 </label>
                 <button type="submit">{t("check.qrButton")}</button>
             </form>
+            <p role="note">
+                Drop a .txt, .eml, or .json file here to check its text locally. Nothing is
+                uploaded.
+            </p>
+            <label>
+                Choose a text file (.txt, .eml, .json)
+                <input
+                    type="file"
+                    accept=".txt,.eml,.json"
+                    onChange={(event) => {
+                        void readFile(event.currentTarget.files?.[0]);
+                        event.currentTarget.value = "";
+                    }}
+                />
+            </label>
+            <Show when={fileError()}>
+                <p role="alert">{fileError()}</p>
+            </Show>
             <p role="note">{t("check.heuristicNote")}</p>
             <label class="check-option">
                 <input
@@ -146,7 +246,7 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                 <p role="alert">{props.saveError}</p>
             </Show>
             <Show when={props.saved}>
-                <p role="status">{SAVED_MESSAGE}</p>
+                <p role="status">{t("cases.saved")}</p>
             </Show>
             <Show when={props.analysis} keyed>
                 {(analysis) => (
@@ -179,6 +279,16 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                         <ul>
                             <For each={view.limitations}>{(limit) => <li>{limit}</li>}</For>
                         </ul>
+                        <button
+                            type="button"
+                            style={{ "min-height": "44px" }}
+                            onClick={() => addToWatch(view.normalizedUrl ?? view.original)}
+                        >
+                            {t("watchlist.add")}
+                        </button>
+                        <Show when={watchlistStatus()}>
+                            <p role="status">{watchlistStatus()}</p>
+                        </Show>
                     </div>
                 )}
             </Show>
@@ -226,6 +336,15 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                     </ul>
                 </div>
             </Show>
+            <Show when={props.reportCase} keyed>
+                {(caseData) => (
+                    <div>
+                        <h2>{t("respond.export")}</h2>
+                        <ReportButtons caseData={caseData} />
+                    </div>
+                )}
+            </Show>
+            <Watchlist />
         </section>
     );
 }
@@ -233,6 +352,9 @@ export function ScamCheckView(props: ScamCheckViewProps) {
 function readSharedText(): string {
     if (typeof window === "undefined") return "";
     try {
+        const query = new URLSearchParams(window.location.search);
+        const shared = query.get("text") ?? query.get("url");
+        if (shared) return shared;
         const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ""));
         return fragment.get("text") ?? "";
     } catch {
@@ -292,6 +414,14 @@ export function ScamCheckPage() {
         link.click();
         URL.revokeObjectURL(url);
     };
+    const reportCase = createMemo<Case | null>(() => {
+        analysis();
+        urlView();
+        qrView();
+        const result = controller.getLastResult();
+        return result ? normalizeCase(checkResultToCaseInput(result)) : null;
+    });
+
     return (
         <ScamCheckView
             initialText={initialText}
@@ -319,6 +449,7 @@ export function ScamCheckPage() {
                 if (!controller.getError()) void persist();
             }}
             onGenerateReport={() => void generateReport()}
+            reportCase={reportCase()}
             onGuidedNext={() => controller.guidedNext()}
             onGuidedBack={() => controller.guidedBack()}
             onGuidedComplete={() => controller.guidedComplete()}
