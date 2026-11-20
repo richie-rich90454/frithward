@@ -1,7 +1,10 @@
 // Frithward offline app shell. Plain JS: runs in the SW scope, no bundler involved.
 const CACHE_NAME = "frithward-shell-v1";
-const MANIFEST_URL = "/precache-manifest.json";
-const SHELL_FALLBACK = "/index.html";
+// Resolve every URL against the registration scope so the app works under any sub-path.
+const SCOPE = new URL(self.registration.scope);
+const MANIFEST_URL = new URL("precache-manifest.json", SCOPE).href;
+const SHELL_FALLBACK = new URL("index.html", SCOPE).href;
+const ROOT_URL = SCOPE.href;
 
 self.addEventListener("install", (event) => {
     event.waitUntil(
@@ -14,7 +17,7 @@ self.addEventListener("install", (event) => {
                     const data = await response.json();
                     if (Array.isArray(data)) {
                         manifest = data.filter(
-                            (url) => typeof url === "string" && url.startsWith("/"),
+                            (url) => typeof url === "string" && url.startsWith("./"),
                         );
                     }
                 }
@@ -22,7 +25,14 @@ self.addEventListener("install", (event) => {
                 // Keep the core shell even when the manifest is unavailable.
             }
 
-            const urls = [...new Set(["/", SHELL_FALLBACK, MANIFEST_URL, ...manifest])];
+            const urls = [
+                ...new Set([
+                    ROOT_URL,
+                    SHELL_FALLBACK,
+                    MANIFEST_URL,
+                    ...manifest.map((url) => new URL(url, SCOPE).href),
+                ]),
+            ];
             // addAll() aborts on the first failure; add() per URL keeps a partial cache useful.
             await Promise.allSettled(urls.map((url) => cache.add(url)));
             await self.skipWaiting();
@@ -66,7 +76,7 @@ self.addEventListener("fetch", (event) => {
                     const cached =
                         (await cache.match(request)) ||
                         (await cache.match(SHELL_FALLBACK)) ||
-                        (await cache.match("/"));
+                        (await cache.match(ROOT_URL));
                     return cached || Response.error();
                 }
             })(),
