@@ -1,4 +1,6 @@
 import { AppError } from "@frithward/contracts";
+import { BrowserWhisper } from "browser-whisper";
+import { BrowserWhisperAdapter } from "../../../../../../../packages/media-core/src/infrastructure/browser/BrowserWhisperAdapter.js";
 import {
     CaptionProject,
     CaptionStudioController as MediaCaptionStudioController,
@@ -18,9 +20,13 @@ export interface CaptionGenerationRecognizer extends SpeechRecognitionPort {
 
 export interface CaptionGenerationInput {
     audio: ArrayBuffer;
+    /** Local whisper.cpp model URL. Only used together with wasmUrl on the opt-in WASM path. */
     modelUrl?: string;
-    wasmUrl: string;
+    /** Local Whisper WASM runtime URL. Supplying it opts into the legacy WASM path. */
+    wasmUrl?: string;
     language: string;
+    /** MIME type of the uploaded audio, used by the WebGPU path to decode the file. */
+    mimeType?: string;
     signal?: AbortSignal;
 }
 
@@ -37,11 +43,21 @@ export interface CaptionGenerationStatus {
     message: string | null;
 }
 
+export interface CaptionBrowserWhisperFactoryInput {
+    language: string;
+    mimeType?: string;
+    signal: AbortSignal;
+    onStatus: (stage: string) => void;
+}
+
 export interface CaptionStudioControllerOptions {
+    /** Optional legacy whisper.cpp/WASM recognizer, used only when wasmUrl is supplied. */
     recognizerFactory?: (input: {
         modelUrl: string;
         wasmUrl: string;
     }) => CaptionGenerationRecognizer;
+    /** Default local WebGPU recognizer factory; injectable for tests. */
+    browserWhisperFactory?: (input: CaptionBrowserWhisperFactoryInput) => CaptionGenerationRecognizer;
     repository?: CaptionRepository;
     modelResolver?: ModelResolver;
 }
@@ -53,6 +69,9 @@ export class CaptionStudioController {
     private readonly modelResolver: ModelResolver;
     private readonly recognizerFactory: NonNullable<
         CaptionStudioControllerOptions["recognizerFactory"]
+    >;
+    private readonly browserWhisperFactory: NonNullable<
+        CaptionStudioControllerOptions["browserWhisperFactory"]
     >;
     private readonly listeners = new Set<() => void>();
     private viewModel: CaptionStudioViewModel;
@@ -72,6 +91,18 @@ export class CaptionStudioController {
             options.recognizerFactory ??
             ((input) =>
                 new WhisperWasmAdapter({ modelUrl: input.modelUrl, wasmUrl: input.wasmUrl }));
+        this.browserWhisperFactory =
+            options.browserWhisperFactory ??
+            ((input) => {
+                const whisper = new BrowserWhisper({ language: input.language });
+                return new BrowserWhisperAdapter({
+                    engine: whisper,
+                    language: input.language,
+                    signal: input.signal,
+                    onStatus: input.onStatus,
+                    ...(input.mimeType ? { fileType: input.mimeType } : {}),
+                });
+            });
         this.controller = new MediaCaptionStudioController({
             project: this.project,
             editor: new EditSubtitleUseCase(this.repository),
@@ -124,14 +155,26 @@ export class CaptionStudioController {
 
         let recognizer: CaptionGenerationRecognizer | null = null;
         try {
-            this.setGeneration("loading model", "Loading speech model...");
-            const model = await this.modelResolver.resolve(input.modelUrl);
-            if (abort.signal.aborted)
-                throw new AppError("CANCELLED", "Caption generation cancelled.");
-            recognizer = this.recognizerFactory({
-                modelUrl: model.url,
-                wasmUrl: input.wasmUrl,
-            });
+            if (input.wasmUrl) {
+                // Opt-in legacy path: user-supplied WASM runtime + model, no auto download.
+                this.setGeneration("loading model", "Loading speech model...");
+                const model = await this.modelResolver.resolve(input.modelUrl);
+                if (abort.signal.aborted)
+                    throw new AppError("CANCELLED", "Caption generation cancelled.");
+                recognizer = this.recognizerFactory({
+                    modelUrl: model.url,
+                    wasmUrl: input.wasmUrl,
+                });
+            } else {
+                // Default path: local WebGPU transcription, no user-supplied assets.
+                this.setGeneration("loading model", "Preparing WebGPU transcription...");
+                recognizer = this.browserWhisperFactory({
+                    language: input.language,
+                    ...(input.mimeType ? { mimeType: input.mimeType } : {}),
+                    signal: abort.signal,
+                    onStatus: (stage) => this.onRecognitionStatus(stage),
+                });
+            }
             await recognizer.start?.();
             if (abort.signal.aborted)
                 throw new AppError("CANCELLED", "Caption generation cancelled.");
@@ -175,12 +218,19 @@ export class CaptionStudioController {
         const { file, ...rest } = input;
         await this.generateCaptions({
             audio: await file.arrayBuffer(),
+            mimeType: file.type,
             ...rest,
         });
     }
 
     public cancelGeneration(): void {
         this.generationAbort?.abort();
+    }
+
+    private onRecognitionStatus(stage: string): void {
+        if (stage === "loading") this.setGeneration("loading model", "Loading speech model...");
+        else if (stage === "decoding" || stage === "transcribing")
+            this.setGeneration("transcribing", "Transcribing audio...");
     }
 
     private setGeneration(stage: CaptionGenerationStage, message: string): void {
