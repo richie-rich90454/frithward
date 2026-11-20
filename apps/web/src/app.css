@@ -26,6 +26,7 @@ h2 {
     padding-inline-end: max(32px, env(safe-area-inset-right));
     padding-block-end: max(32px, env(safe-area-inset-bottom));
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 24px;
 }
 
@@ -35,6 +36,7 @@ h2 {
     justify-content: space-between;
     gap: 24px;
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .app-shell header p {
@@ -49,6 +51,7 @@ h2 {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .app-shell nav a {
