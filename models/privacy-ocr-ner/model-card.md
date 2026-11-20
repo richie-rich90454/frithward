@@ -52,6 +52,6 @@ No model has been selected. Redaction remains the user's responsibility; automat
 
 ## Version history
 
-| Version | Date | Change |
-| --- | --- | --- |
+| Version  | Date       | Change                                     |
+| -------- | ---------- | ------------------------------------------ |
 | card-0.1 | 2026-11-20 | Initial documentation-only candidate card. |
