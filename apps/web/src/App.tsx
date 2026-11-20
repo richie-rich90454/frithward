@@ -29,6 +29,10 @@ import { RuntimePage } from "./features/runtime/presentation/pages/RuntimeView";
 import { ModelManagerPage } from "./features/models/presentation/pages/ModelManagerView";
 import { LanguageSwitcher, useI18n } from "./i18n/index.js";
 import { ThemeToggle } from "./theme/ThemeProvider.js";
+import { CommandPalette } from "./palette/CommandPalette.js";
+import { getRouterBase } from "./offline/base.js";
+
+const ROUTER_BASE = getRouterBase();
 
 const NAVIGATION = [
     { path: "/", labelKey: "nav.home", icon: Home },
@@ -64,6 +68,13 @@ function pageFor(pathname: string): JSX.Element {
 function Shell() {
     const location = useLocation();
     const { t } = useI18n();
+    const routePath = () => {
+        const pathname = location.pathname;
+        if (ROUTER_BASE && pathname.toLowerCase().startsWith(ROUTER_BASE.toLowerCase())) {
+            return pathname.slice(ROUTER_BASE.length) || "/";
+        }
+        return pathname;
+    };
     return (
         <div class="app-shell">
             <header>
@@ -87,17 +98,18 @@ function Shell() {
                 </nav>
             </header>
             <main>
-                <Show when={location.pathname} keyed={false}>
-                    {pageFor(location.pathname)}
+                <Show when={routePath()} keyed={false}>
+                    {pageFor(routePath())}
                 </Show>
             </main>
+            <CommandPalette />
         </div>
     );
 }
 
 export function App() {
     return (
-        <Router>
+        <Router base={ROUTER_BASE}>
             <Route path="/*" component={Shell} />
         </Router>
     );
