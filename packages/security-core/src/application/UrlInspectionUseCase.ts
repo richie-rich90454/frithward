@@ -1,4 +1,4 @@
-import { AppError } from "@frithward/contracts";
+import { AppError, RESULT_CODES, resultCodeForText } from "@frithward/contracts";
 import type { UrlFinding, UrlInspectionResult, UrlRiskLevel } from "../domain/UrlInspection.js";
 
 const BRAND_NAMES = [
@@ -125,6 +125,18 @@ function registrableDomain(labels: readonly string[]): string {
     return labels.slice(-2).join(".");
 }
 
+function withCodes(findings: readonly UrlFinding[]): UrlFinding[] {
+    return findings.map((finding) => ({
+        ...finding,
+        labelCode: resultCodeForText(finding.label),
+        detailCode: resultCodeForText(finding.detail),
+    }));
+}
+
+function summaryCodeFor(summary: string): string {
+    return resultCodeForText(summary) ?? RESULT_CODES.URL_SUMMARY_FOUND;
+}
+
 function dedupe(findings: readonly UrlFinding[]): UrlFinding[] {
     const seen = new Set<string>();
     return findings.filter((finding) => {
@@ -146,21 +158,26 @@ export class UrlInspectionUseCase {
         try {
             parsed = new URL(candidate);
         } catch {
+            const unreadableLimitations = [
+                "A malformed link cannot be checked against known patterns.",
+            ];
             return {
                 original,
                 normalizedUrl: null,
                 hostname: null,
                 riskLevel: "high",
-                findings: [
+                findings: withCodes([
                     {
                         id: "unparseable-url",
                         label: "Unreadable link",
                         detail: "The link could not be read as a web address.",
                         severity: "high",
                     },
-                ],
+                ]),
                 summary: "The link could not be read. Do not open it.",
-                limitations: ["A malformed link cannot be checked against known patterns."],
+                limitations: unreadableLimitations,
+                summaryCode: RESULT_CODES.URL_UNREADABLE_SUMMARY,
+                limitationCodes: unreadableLimitations.map(resultCodeForText),
             };
         }
 
@@ -283,9 +300,11 @@ export class UrlInspectionUseCase {
             normalizedUrl: parsed.toString(),
             hostname,
             riskLevel,
-            findings: dedupe(findings),
+            findings: withCodes(dedupe(findings)),
             summary,
             limitations,
+            summaryCode: summaryCodeFor(summary),
+            limitationCodes: limitations.map(resultCodeForText),
         };
     }
 }
