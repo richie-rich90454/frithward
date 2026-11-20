@@ -84,12 +84,18 @@ export class MediaProtectionController {
         };
         this.exporter = options.exporter ?? new ProtectedMediaExporter();
         // Experimental opt-in is explicit; documented consent is still enforced by each use case.
-        this.voiceUseCase = new ProtectVoiceUseCase(this.voicePort, new VoiceProtectionPolicy({
-            allowExperimentalProtection: true,
-        }));
-        this.faceUseCase = new ProtectFaceUseCase(this.facePort, new FaceProtectionPolicy({
-            allowExperimentalProtection: true,
-        }));
+        this.voiceUseCase = new ProtectVoiceUseCase(
+            this.voicePort,
+            new VoiceProtectionPolicy({
+                allowExperimentalProtection: true,
+            }),
+        );
+        this.faceUseCase = new ProtectFaceUseCase(
+            this.facePort,
+            new FaceProtectionPolicy({
+                allowExperimentalProtection: true,
+            }),
+        );
     }
 
     public subscribe(listener: () => void): () => void {
