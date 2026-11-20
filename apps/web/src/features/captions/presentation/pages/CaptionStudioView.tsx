@@ -1,8 +1,23 @@
-import { For, Show, createSignal, onCleanup } from "solid-js";
+import { For, Show, createSignal, onCleanup, onMount } from "solid-js";
 import { Captions } from "lucide-solid";
 import type { CaptionStudioViewModel } from "@frithward/media-core";
 import type { CaptionGenerationStage } from "../controllers/CaptionStudioController";
 import { CaptionStudioController } from "../controllers/CaptionStudioController";
+import "./captions.css";
+
+// Solid's JSX types restrict capture to "user"/"environment"; pass the requested
+// "microphone" hint through to the DOM unchanged.
+const microphoneCapture = "microphone" as unknown as "user";
+
+function isEditableTarget(target: EventTarget | null): boolean {
+    if (!(target instanceof HTMLElement)) return false;
+    return (
+        target.isContentEditable ||
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.tagName === "SELECT"
+    );
+}
 
 interface CaptionStudioViewProps {
     viewModel: CaptionStudioViewModel;
@@ -52,8 +67,47 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
             (segment) => segment.id === props.viewModel.selectedSegmentId,
         );
 
+    onMount(() => {
+        const onKeyDown = (event: KeyboardEvent) => {
+            const modifier = event.ctrlKey || event.metaKey;
+            const key = event.key.toLowerCase();
+            if (modifier && key === "z") {
+                event.preventDefault();
+                if (event.shiftKey) props.onRedo();
+                else props.onUndo();
+                return;
+            }
+            if (modifier && key === "y") {
+                event.preventDefault();
+                props.onRedo();
+                return;
+            }
+            if (
+                (event.key === "Delete" || event.key === "Backspace") &&
+                !modifier &&
+                !event.altKey &&
+                !isEditableTarget(event.target)
+            ) {
+                const selectedId = props.viewModel.selectedSegmentId;
+                if (selectedId) {
+                    event.preventDefault();
+                    props.onRemoveSegment(selectedId);
+                }
+            }
+        };
+        window.addEventListener("keydown", onKeyDown);
+        onCleanup(() => window.removeEventListener("keydown", onKeyDown));
+    });
+
     return (
-        <section>
+        <section
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={(event) => {
+                event.preventDefault();
+                const file = event.dataTransfer?.files?.[0];
+                if (file) setAudioFile(file);
+            }}
+        >
             <h1>
                 <Captions class="fw-icon" />
                 Caption studio
@@ -74,11 +128,24 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     });
                 }}
             >
+                <p>
+                    Drag and drop an audio or video file here, or choose one below. Files are
+                    decoded locally with WebCodecs.
+                </p>
                 <label>
                     Audio or video file (decoded locally with WebCodecs)
                     <input
                         type="file"
+                        accept="audio/*,video/*"
+                        onChange={(event) => setAudioFile(event.currentTarget.files?.[0] ?? null)}
+                    />
+                </label>
+                <label>
+                    Record audio
+                    <input
+                        type="file"
                         accept="audio/*"
+                        capture={microphoneCapture}
                         onChange={(event) => setAudioFile(event.currentTarget.files?.[0] ?? null)}
                     />
                 </label>
@@ -140,7 +207,7 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                 your own Whisper WASM runtime and a 16-bit mono 16 kHz .bin model under Advanced
                 (that path needs a cross-origin-isolated page).
             </p>
-            <div>
+            <div class="caption-studio-actions">
                 <button type="button" onClick={props.onUndo} disabled={!props.canUndo}>
                     Undo
                 </button>
@@ -154,6 +221,10 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     Export SRT
                 </button>
             </div>
+            <p class="caption-studio-shortcuts">
+                Keyboard: Ctrl/Cmd+Z undo / Ctrl/Cmd+Shift+Z redo / Ctrl+Y redo. Delete removes the
+                selected caption when no text field is focused.
+            </p>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -224,82 +295,92 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                 </label>
                 <button type="submit">Replace all</button>
             </form>
-            <ul>
-                <For each={props.viewModel.segments}>
-                    {(segment) => {
-                        const [start, setStart] = createSignal(String(segment.startMs));
-                        const [end, setEnd] = createSignal(String(segment.endMs));
-                        return (
-                            <li>
-                                <button
-                                    type="button"
-                                    aria-pressed={segment.id === props.viewModel.selectedSegmentId}
-                                    onClick={() => {
-                                        props.onSelect(segment.id);
-                                        setDraft(segment.text);
-                                    }}
-                                >
-                                    {segment.text}
-                                </button>
-                                <label>
-                                    Start (ms)
-                                    <input
-                                        type="number"
-                                        value={start()}
-                                        onInput={(event) => setStart(event.currentTarget.value)}
-                                    />
-                                </label>
-                                <label>
-                                    End (ms)
-                                    <input
-                                        type="number"
-                                        value={end()}
-                                        onInput={(event) => setEnd(event.currentTarget.value)}
-                                    />
-                                </label>
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        props.onRetimeSegment({
-                                            segmentId: segment.id,
-                                            startMs: Number(start()),
-                                            endMs: Number(end()),
-                                        })
-                                    }
-                                >
-                                    Apply retime
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => props.onRemoveSegment(segment.id)}
-                                >
-                                    Remove
-                                </button>
-                            </li>
-                        );
-                    }}
-                </For>
-            </ul>
-            <Show when={selectedSegment()} keyed>
-                {(segment) => (
-                    <form
-                        onSubmit={(event) => {
-                            event.preventDefault();
-                            if (draft().trim().length === 0) return;
-                            props.onApplyEdit({ segmentId: segment.id, text: draft() });
+            <div class="caption-studio-editor">
+                <ul>
+                    <For each={props.viewModel.segments}>
+                        {(segment) => {
+                            const [start, setStart] = createSignal(String(segment.startMs));
+                            const [end, setEnd] = createSignal(String(segment.endMs));
+                            return (
+                                <li>
+                                    <button
+                                        type="button"
+                                        aria-pressed={
+                                            segment.id === props.viewModel.selectedSegmentId
+                                        }
+                                        onClick={() => {
+                                            props.onSelect(segment.id);
+                                            setDraft(segment.text);
+                                        }}
+                                    >
+                                        {segment.text}
+                                    </button>
+                                    <div class="caption-studio-timings">
+                                        <label>
+                                            Start (ms)
+                                            <input
+                                                type="number"
+                                                value={start()}
+                                                onInput={(event) =>
+                                                    setStart(event.currentTarget.value)
+                                                }
+                                            />
+                                        </label>
+                                        <label>
+                                            End (ms)
+                                            <input
+                                                type="number"
+                                                value={end()}
+                                                onInput={(event) =>
+                                                    setEnd(event.currentTarget.value)
+                                                }
+                                            />
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                props.onRetimeSegment({
+                                                    segmentId: segment.id,
+                                                    startMs: Number(start()),
+                                                    endMs: Number(end()),
+                                                })
+                                            }
+                                        >
+                                            Apply retime
+                                        </button>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => props.onRemoveSegment(segment.id)}
+                                    >
+                                        Remove
+                                    </button>
+                                </li>
+                            );
                         }}
-                    >
-                        <label>
-                            Caption text
-                            <input
-                                value={draft()}
-                                onInput={(event) => setDraft(event.currentTarget.value)}
-                            />
-                        </label>
-                        <button type="submit">Save caption</button>
-                    </form>
-                )}
-            </Show>
+                    </For>
+                </ul>
+                <Show when={selectedSegment()} keyed>
+                    {(segment) => (
+                        <form
+                            onSubmit={(event) => {
+                                event.preventDefault();
+                                if (draft().trim().length === 0) return;
+                                props.onApplyEdit({ segmentId: segment.id, text: draft() });
+                            }}
+                        >
+                            <label>
+                                Caption text
+                                <input
+                                    value={draft()}
+                                    onInput={(event) => setDraft(event.currentTarget.value)}
+                                />
+                            </label>
+                            <button type="submit">Save caption</button>
+                        </form>
+                    )}
+                </Show>
+            </div>
             <Show when={props.error}>
                 <p role="alert">{props.error}</p>
             </Show>
@@ -330,6 +411,7 @@ export function CaptionStudioPage() {
             setGenerationMessage(status.message);
         }),
     );
+    onMount(() => void controller.hydrate());
     return (
         <CaptionStudioView
             viewModel={viewModel()}
