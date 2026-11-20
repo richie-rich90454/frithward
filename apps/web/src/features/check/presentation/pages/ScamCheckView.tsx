@@ -75,17 +75,13 @@ export function ScamCheckView(props: ScamCheckViewProps) {
     const pasteFromClipboard = async () => {
         setClipboardError(null);
         if (!navigator.clipboard?.readText) {
-            setClipboardError(
-                "Clipboard access is unavailable in this browser. Use the file option instead.",
-            );
+            setClipboardError(t("check.clipboardUnavailable"));
             return;
         }
         try {
             setText(await navigator.clipboard.readText());
         } catch {
-            setClipboardError(
-                "Clipboard permission was denied. Allow access or paste into the box manually.",
-            );
+            setClipboardError(t("check.pasteFailed"));
         }
     };
 
@@ -93,7 +89,7 @@ export function ScamCheckView(props: ScamCheckViewProps) {
         setFileError(null);
         if (!file) return;
         if (!FILE_PATTERN.test(file.name)) {
-            setFileError("Only .txt, .eml, and .json files are supported.");
+            setFileError(t("check.fileTypeUnsupported"));
             return;
         }
         try {
@@ -101,7 +97,7 @@ export function ScamCheckView(props: ScamCheckViewProps) {
             setText(content);
             props.onCheck(content);
         } catch {
-            setFileError("Could not read that file. Please try again.");
+            setFileError(t("check.fileReadFailed"));
         }
     };
 
@@ -148,7 +144,7 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                     style={{ "min-height": "44px" }}
                     onClick={() => void pasteFromClipboard()}
                 >
-                    Paste from clipboard
+                    {t("check.pasteButton")}
                 </button>
             </form>
             <Show when={clipboardError()}>
@@ -182,12 +178,9 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                 </label>
                 <button type="submit">{t("check.qrButton")}</button>
             </form>
-            <p role="note">
-                Drop a .txt, .eml, or .json file here to check its text locally. Nothing is
-                uploaded.
-            </p>
+            <p role="note">{t("check.dropHint")}</p>
             <label>
-                Choose a text file (.txt, .eml, .json)
+                {t("check.chooseFile")}
                 <input
                     type="file"
                     accept=".txt,.eml,.json"
