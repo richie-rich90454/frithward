@@ -1,0 +1,92 @@
+.fw-theme-toggle {
+    min-inline-size: var(--fw-touch-min);
+    min-block-size: var(--fw-touch-min);
+    padding-inline: var(--fw-space-3);
+    background: var(--fw-color-surface-secondary);
+    color: var(--fw-color-text);
+    border: 1px solid var(--fw-color-border);
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.fw-shell {
+    --fw-shell-pad: var(--fw-layout-pad);
+    padding-inline: var(--fw-shell-pad);
+    padding-block: var(--fw-shell-pad);
+    padding-inline-start: max(var(--fw-shell-pad), env(safe-area-inset-inline-start, 0px));
+    padding-inline-end: max(var(--fw-shell-pad), env(safe-area-inset-inline-end, 0px));
+    padding-block-start: max(var(--fw-shell-pad), env(safe-area-inset-block-start, 0px));
+    padding-block-end: max(var(--fw-shell-pad), env(safe-area-inset-block-end, 0px));
+}
+
+.fw-shell header {
+    height: auto;
+    flex-wrap: wrap;
+}
+
+.proof-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fw-space-3);
+    max-inline-size: 100%;
+}
+
+.proof-input {
+    inline-size: 100%;
+    max-inline-size: 100%;
+    min-block-size: 240px;
+    resize: vertical;
+}
+
+.proof-details {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--fw-space-2) var(--fw-space-4);
+    margin: 0;
+}
+
+.proof-details dt {
+    font-weight: 600;
+}
+
+.proof-details dd {
+    margin-inline-start: 0;
+    overflow-wrap: anywhere;
+}
+
+.proof-list {
+    padding-inline-start: var(--fw-space-6);
+}
+
+.fw-shell img,
+.fw-shell video,
+.fw-shell canvas,
+.fw-shell svg,
+.fw-shell code {
+    max-width: 100%;
+}
+
+.fw-shell main {
+    text-align: start;
+}
+
+@media (max-width: 900px) {
+    .fw-shell {
+        --fw-shell-pad: var(--fw-space-6);
+    }
+}
+
+@media (max-width: 640px) {
+    .fw-shell {
+        --fw-shell-pad: var(--fw-space-4);
+    }
+
+    .proof-details {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--fw-space-1);
+    }
+
+    .proof-details dt {
+        margin-block-start: var(--fw-space-2);
+    }
+}
