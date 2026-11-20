@@ -57,7 +57,7 @@ export function DiagramView(props: DiagramViewProps) {
             <Show when={props.svg}>
                 {(svg) => (
                     <img
-                        alt="Rendered diagram"
+                        alt={`Mermaid diagram: ${props.source.trim().replace(/\s+/g, " ").slice(0, 80)}${props.source.trim().length > 80 ? "..." : ""}`}
                         src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg())}`}
                     />
                 )}
