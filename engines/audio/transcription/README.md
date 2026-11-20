@@ -1,6 +1,6 @@
 # Audio transcription engine
 
-Streaming speech-to-text. The engine validates the audio id and language and returns a list of utterances. The scaffold returns one empty utterance.
+Speech-to-text engine and its FastAPI HTTP surface. The engine validates the audio id and language and returns a list of utterances. No speech model is configured, so it honestly returns one empty utterance; the API exposes `POST /transcribe` and `GET /health`.
 
 ## Intended use
 
@@ -24,6 +24,7 @@ Streaming speech-to-text. The engine validates the audio id and language and ret
 | Streaming           | Chunked with bounded memory                                           |
 | Cancellation        | `AbortSignal` at chunk boundaries                                     |
 | Model lifecycle     | Model loading is separate from inference; one model active per worker |
+| HTTP API            | `src/api.py`: `POST /transcribe`, `GET /health`; `uvicorn src.api:app` |
 
 ## Metrics
 
