@@ -108,8 +108,10 @@ jobs:
                   scan-type: fs
                   scan-ref: .
                   trivy-config: infrastructure/security/trivy.yaml
+                  version: v0.76.2
+                  scanners: vuln,secret,misconfig
                   format: table
-                  exit-code: 0 # report-only in CI: findings stay visible without permanently red builds
+                  exit-code: 1
             - name: Generate SBOM (Syft)
               uses: anchore/sbom-action@v0
               with:
