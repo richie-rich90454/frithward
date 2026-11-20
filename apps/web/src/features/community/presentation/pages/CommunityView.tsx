@@ -1,5 +1,8 @@
-import { For } from "solid-js";
+import { For, Show, createSignal, onCleanup } from "solid-js";
 import { Accessibility, GraduationCap, Library, MessageSquare, Users } from "lucide-solid";
+import { REVIEWED_PATTERNS } from "../../../check/domain/ReviewedPatterns.js";
+import { CommunityPatternsController } from "../controllers/CommunityPatternsController";
+import "../community.css";
 
 const TRACKS = [
     {
@@ -49,8 +52,33 @@ const PARTNERSHIPS = [
 ] as const;
 
 export function CommunityView() {
+    const controller = new CommunityPatternsController();
+    const [state, setState] = createSignal(controller.getState());
+    onCleanup(
+        controller.subscribe(() => {
+            setState(controller.getState());
+        }),
+    );
+    const [title, setTitle] = createSignal("");
+    const [description, setDescription] = createSignal("");
+    const [sourceUrl, setSourceUrl] = createSignal("");
+
+    const submit = (event: SubmitEvent) => {
+        event.preventDefault();
+        const added = controller.add({
+            title: title(),
+            description: description(),
+            sourceUrl: sourceUrl(),
+        });
+        if (added) {
+            setTitle("");
+            setDescription("");
+            setSourceUrl("");
+        }
+    };
+
     return (
-        <section>
+        <section class="community-view">
             <h1>
                 <Users class="fw-icon" />
                 Community
@@ -59,6 +87,104 @@ export function CommunityView() {
                 Frithward Commons is where people help each other use these tools well. You can take
                 part without sharing anyone's private information.
             </p>
+
+            <h2>Reviewed patterns</h2>
+            <p>
+                These are the transparent, rule-based signals used by Scam Check. A match is a
+                prompt to check with the sender through a known channel, not proof of fraud.
+            </p>
+            <ul class="resource-list">
+                <For each={REVIEWED_PATTERNS}>
+                    {(pattern) => (
+                        <li>
+                            <div>
+                                <h3>{pattern.label}</h3>
+                                <p>{pattern.rationale}</p>
+                                <p class="community-view__source">
+                                    Source: Scam Check reviewed catalog
+                                </p>
+                            </div>
+                        </li>
+                    )}
+                </For>
+            </ul>
+
+            <h2>Community patterns</h2>
+            <p role="note">
+                Community submitted, not independently verified. Nothing here is uploaded or shared;
+                entries stay in this browser only. Do not include anyone's private information.
+            </p>
+
+            <form class="community-view__form" onSubmit={submit}>
+                <label>
+                    Title
+                    <input
+                        type="text"
+                        value={title()}
+                        maxlength={120}
+                        onInput={(event) => setTitle(event.currentTarget.value)}
+                    />
+                </label>
+                <label>
+                    Description
+                    <textarea
+                        value={description()}
+                        maxlength={600}
+                        onInput={(event) => setDescription(event.currentTarget.value)}
+                    />
+                </label>
+                <label>
+                    Source URL (optional)
+                    <input
+                        type="text"
+                        value={sourceUrl()}
+                        maxlength={500}
+                        onInput={(event) => setSourceUrl(event.currentTarget.value)}
+                    />
+                </label>
+                <button type="submit">Add pattern</button>
+            </form>
+
+            <Show when={state().error}>
+                <p role="alert" class="community-view__error">
+                    {state().error}
+                </p>
+            </Show>
+
+            <Show
+                when={state().patterns.length > 0}
+                fallback={<p class="community-view__empty">No community patterns saved yet.</p>}
+            >
+                <ul class="resource-list">
+                    <For each={state().patterns}>
+                        {(pattern) => (
+                            <li>
+                                <div>
+                                    <h3>{pattern.title}</h3>
+                                    <p>{pattern.description}</p>
+                                    <Show when={pattern.sourceUrl}>
+                                        <p class="community-view__source">
+                                            <a
+                                                href={pattern.sourceUrl ?? ""}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {pattern.sourceUrl}
+                                            </a>
+                                        </p>
+                                    </Show>
+                                    <p class="community-view__source">
+                                        Community submitted, not independently verified
+                                    </p>
+                                </div>
+                                <button type="button" onClick={() => controller.remove(pattern.id)}>
+                                    Delete
+                                </button>
+                            </li>
+                        )}
+                    </For>
+                </ul>
+            </Show>
 
             <h2>Contribution tracks</h2>
             <ul class="resource-list">
