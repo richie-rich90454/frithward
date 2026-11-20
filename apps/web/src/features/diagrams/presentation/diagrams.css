@@ -1,0 +1,49 @@
+@media (max-width: 640px) {
+    .diagram-workshop {
+        display: flex;
+        flex-direction: column;
+        gap: var(--fw-space-3);
+    }
+
+    .diagram-workshop label {
+        display: flex;
+        flex-direction: column;
+        gap: var(--fw-space-1);
+        width: 100%;
+    }
+
+    .diagram-workshop textarea,
+    .diagram-workshop button {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-height: 44px;
+    }
+
+    .diagram-workshop textarea {
+        resize: vertical;
+        white-space: pre;
+        overflow-x: auto;
+    }
+
+    .diagram-workshop__actions {
+        display: flex;
+        flex-direction: column;
+        gap: var(--fw-space-2);
+    }
+
+    .diagram-workshop img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .diagram-workshop .code-highlight,
+    .diagram-workshop pre {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    .diagram-workshop__status {
+        color: var(--fw-color-success);
+    }
+}
