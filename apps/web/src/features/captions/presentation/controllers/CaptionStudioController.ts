@@ -18,6 +18,7 @@ import type {
 } from "@frithward/media-core";
 import { LocalStorageCaptionRepository } from "../../infrastructure/LocalStorageCaptionRepository.js";
 import { LocalModelResolver, type ModelResolver } from "../../infrastructure/LocalModelResolver.js";
+import { english, interpolate, type Translator } from "../../../../i18n/translate.js";
 
 export interface CaptionGenerationRecognizer extends SpeechRecognitionPort {
     start?(): Promise<void>;
@@ -72,6 +73,7 @@ export interface CaptionStudioControllerOptions {
     ) => CaptionGenerationRecognizer;
     repository?: CaptionRepository;
     modelResolver?: ModelResolver;
+    translate?: Translator;
 }
 
 export class CaptionStudioController {
@@ -80,6 +82,7 @@ export class CaptionStudioController {
     private readonly project: CaptionProject;
     private readonly repository: CaptionRepository;
     private readonly modelResolver: ModelResolver;
+    private readonly translate: Translator;
     private readonly recognizerFactory: NonNullable<
         CaptionStudioControllerOptions["recognizerFactory"]
     >;
@@ -96,9 +99,10 @@ export class CaptionStudioController {
     private redoStack: SegmentSnapshot[][] = [];
 
     public constructor(options: CaptionStudioControllerOptions = {}) {
+        this.translate = options.translate ?? english;
         this.project = new CaptionProject({
             id: "caption-studio",
-            title: "Untitled captions",
+            title: this.translate("captions.untitled"),
             language: "en",
         });
         this.repository = options.repository ?? new LocalStorageCaptionRepository();
@@ -157,7 +161,10 @@ export class CaptionStudioController {
             await this.controller.applyEdit(input);
             this.error = null;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Edit failed.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("captions.error.editFailed");
         }
         this.commitUndoIfChanged(before);
         this.refresh();
@@ -182,7 +189,10 @@ export class CaptionStudioController {
             );
             this.error = null;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Could not add segment.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("captions.error.addSegment");
             this.refresh();
             return;
         }
@@ -197,7 +207,10 @@ export class CaptionStudioController {
             this.project.removeSegment(id);
             this.error = null;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Could not remove segment.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("captions.error.removeSegment");
             this.refresh();
             return;
         }
@@ -221,7 +234,10 @@ export class CaptionStudioController {
             });
             this.error = null;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Could not retime segment.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("captions.error.retimeSegment");
         }
         this.commitUndoIfChanged(before);
         this.refresh();
@@ -237,7 +253,7 @@ export class CaptionStudioController {
 
     public async replaceAll(from: string, to: string): Promise<void> {
         if (from.length === 0) {
-            this.error = "Enter text to replace.";
+            this.error = this.translate("captions.error.enterText");
             this.refresh();
             return;
         }
@@ -255,7 +271,10 @@ export class CaptionStudioController {
             }
             this.error = null;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Replace failed.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("captions.error.replaceFailed");
         }
         this.commitUndoIfChanged(before);
         this.refresh();
@@ -265,7 +284,10 @@ export class CaptionStudioController {
         try {
             return new ExportSubtitlesUseCase().execute({ project: this.project, format });
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Export failed.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("captions.error.exportFailed");
             this.refresh();
             throw cause;
         }
@@ -311,7 +333,10 @@ export class CaptionStudioController {
                 })),
             );
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Could not load captions.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("captions.error.loadFailed");
             this.refresh();
         }
     }
@@ -330,17 +355,23 @@ export class CaptionStudioController {
         try {
             if (input.wasmUrl) {
                 // Opt-in legacy path: user-supplied WASM runtime + model, no auto download.
-                this.setGeneration("loading model", "Loading speech model...");
+                this.setGeneration("loading model", this.translate("captions.status.loadingModel"));
                 const model = await this.modelResolver.resolve(input.modelUrl);
                 if (abort.signal.aborted)
-                    throw new AppError("CANCELLED", "Caption generation cancelled.");
+                    throw new AppError(
+                        "CANCELLED",
+                        this.translate("captions.error.generationCancelled"),
+                    );
                 recognizer = this.recognizerFactory({
                     modelUrl: model.url,
                     wasmUrl: input.wasmUrl,
                 });
             } else {
                 // Default path: local WebGPU transcription, no user-supplied assets.
-                this.setGeneration("loading model", "Preparing WebGPU transcription...");
+                this.setGeneration(
+                    "loading model",
+                    this.translate("captions.status.preparingWebgpu"),
+                );
                 recognizer = this.browserWhisperFactory({
                     language: input.language,
                     ...(input.mimeType ? { mimeType: input.mimeType } : {}),
@@ -350,9 +381,12 @@ export class CaptionStudioController {
             }
             await recognizer.start?.();
             if (abort.signal.aborted)
-                throw new AppError("CANCELLED", "Caption generation cancelled.");
+                throw new AppError(
+                    "CANCELLED",
+                    this.translate("captions.error.generationCancelled"),
+                );
 
-            this.setGeneration("transcribing", "Transcribing audio...");
+            this.setGeneration("transcribing", this.translate("captions.status.transcribing"));
             this.project.language = input.language;
             const generate = new GenerateCaptionsUseCase(recognizer, this.repository);
             await generate.execute({
@@ -363,15 +397,18 @@ export class CaptionStudioController {
 
             const count = this.project.segmentCount;
             this.error = null;
-            this.setGeneration("done", `${count} caption${count === 1 ? "" : "s"} generated.`);
+            this.setGeneration(
+                "done",
+                interpolate(this.translate("captions.status.generated"), { n: count }),
+            );
         } catch (cause) {
             const cancelled =
                 abort.signal.aborted || (cause instanceof AppError && cause.code === "CANCELLED");
             const message = cancelled
-                ? "Caption generation cancelled."
+                ? this.translate("captions.error.generationCancelled")
                 : cause instanceof Error
                   ? cause.message
-                  : "Caption generation failed.";
+                  : this.translate("captions.error.generationFailed");
             this.error = cancelled ? null : message;
             this.setGeneration(cancelled ? "cancelled" : "error", message);
         } finally {
@@ -402,9 +439,10 @@ export class CaptionStudioController {
     }
 
     private onRecognitionStatus(stage: string): void {
-        if (stage === "loading") this.setGeneration("loading model", "Loading speech model...");
+        if (stage === "loading")
+            this.setGeneration("loading model", this.translate("captions.status.loadingModel"));
         else if (stage === "decoding" || stage === "transcribing")
-            this.setGeneration("transcribing", "Transcribing audio...");
+            this.setGeneration("transcribing", this.translate("captions.status.transcribing"));
     }
 
     private setGeneration(stage: CaptionGenerationStage, message: string): void {
@@ -479,7 +517,10 @@ export class CaptionStudioController {
 
     private persist(): void {
         void this.repository.save(this.project).catch((cause: unknown) => {
-            this.error = cause instanceof Error ? cause.message : "Could not save captions.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("captions.error.saveFailed");
             this.refresh();
         });
     }
