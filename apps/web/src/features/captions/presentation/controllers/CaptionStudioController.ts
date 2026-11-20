@@ -1,6 +1,6 @@
 import { AppError } from "@frithward/contracts";
 import { BrowserWhisper } from "browser-whisper";
-import { BrowserWhisperAdapter } from "../../../../../../../packages/media-core/src/infrastructure/browser/BrowserWhisperAdapter.js";
+import { BrowserWhisperAdapter } from "../../infrastructure/BrowserWhisperAdapter.js";
 import {
     CaptionProject,
     CaptionStudioController as MediaCaptionStudioController,
