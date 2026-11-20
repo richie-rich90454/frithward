@@ -1,6 +1,6 @@
 # Document extraction engine
 
-Typed field extraction from OCR text. The engine validates a document id and returns a field map. The scaffold returns an empty map.
+Typed field extraction surface. The engine validates a document id, accepts text or document bytes/path, and returns an explicit `unavailable` status with an empty field map because no parser or model is configured.
 
 ## Intended use
 
@@ -16,8 +16,8 @@ Typed field extraction from OCR text. The engine validates a document id and ret
 
 | Item | Value |
 | --- | --- |
-| Request | `ExtractionRequest { document_id: str }` |
-| Response | `ExtractionResult { document_id, fields: dict[str, str] }` |
+| Request | `ExtractionRequest { document_id, text?, document_base64?, document_path? }` |
+| Response | `ExtractionResult { document_id, fields: dict[str, str], status, reason, limitations }` |
 | Validation | `document_id` must be non-empty |
 | Complexity | O(n) in text length |
 | Streaming | Per page |
@@ -35,5 +35,5 @@ No fixed candidate. Training data must be licensed and consented. See the datase
 ## Limitations
 
 - Output quality depends on OCR quality.
-- The scaffold performs no extraction.
+- No fields are extracted; an empty map means unavailable, not that no fields exist.
 - Extracted fields must be reviewed before use.
