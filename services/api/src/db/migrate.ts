@@ -7,9 +7,12 @@ export interface SqlExecutor {
     query(text: string): Promise<unknown>;
 }
 
-const MIGRATION_FILE = fileURLToPath(
-    new URL("../../../../infrastructure/database/0001_init.sql", import.meta.url),
-);
+export const MIGRATION_FILES = [
+    fileURLToPath(new URL("../../../../infrastructure/database/0001_init.sql", import.meta.url)),
+    fileURLToPath(
+        new URL("../../../../infrastructure/database/0002_cases_and_reports.sql", import.meta.url),
+    ),
+];
 
 /** Splits the idempotent DDL file into individual statements. */
 export function migrationStatements(sql: string): string[] {
@@ -29,11 +32,11 @@ export async function migrate(connectionString?: string): Promise<number> {
     const url = connectionString ?? process.env.DATABASE_URL;
     if (!url || url.trim().length === 0)
         throw new AppError("EXTERNAL_UNAVAILABLE", "DATABASE_URL is required to migrate.");
-    const sql = await readFile(MIGRATION_FILE, "utf8");
+    const migrations = await Promise.all(MIGRATION_FILES.map((file) => readFile(file, "utf8")));
     const client = new Client({ connectionString: url });
     await client.connect();
     try {
-        return await runMigrations(client, sql);
+        return await runMigrations(client, migrations.join("\n"));
     } finally {
         await client.end();
     }
