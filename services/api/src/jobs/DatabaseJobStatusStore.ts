@@ -83,7 +83,6 @@ export class DatabaseJobStatusStore implements JobStatusStore {
     }
 
     private assertJobId(jobId: string): void {
-        if (jobId.trim().length === 0)
-            throw new AppError("VALIDATION_FAILED", "Job id required.");
+        if (jobId.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Job id required.");
     }
 }
