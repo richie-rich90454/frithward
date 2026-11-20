@@ -68,4 +68,15 @@ describe("locale dictionaries", () => {
             expect(Object.keys(dictionaries[locale]).sort()).toEqual(expected);
         }
     });
+
+    it("keeps keys in the same order with no empty translations across all locales", () => {
+        const dictionaries = { ar, de, en, es, fr, hi, ja, zh };
+        const expected = Object.keys(en);
+        for (const locale of LOCALES) {
+            expect(Object.keys(dictionaries[locale])).toEqual(expected);
+            for (const key of expected) {
+                expect(dictionaries[locale][key]?.trim()).not.toBe("");
+            }
+        }
+    });
 });
