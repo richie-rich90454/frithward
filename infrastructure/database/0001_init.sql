@@ -1,4 +1,4 @@
-create table if not exists user (
+create table if not exists "user" (
   id uuid primary key default gen_random_uuid(),
   email text not null unique,
   created_at timestamp with time zone not null default now()
