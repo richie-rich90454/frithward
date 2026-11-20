@@ -4,6 +4,7 @@ import { DiagramRenderer } from "../application/DiagramRenderer";
 import { DiagramDraftStore } from "../infrastructure/DiagramDraftStore";
 import { useThemeVersion } from "./useThemeVersion";
 import { useI18n } from "../../../i18n/index.js";
+import { translatedError } from "../../../i18n/errors.js";
 import "./diagrams.css";
 
 interface DiagramViewProps {
@@ -126,7 +127,7 @@ export function DiagramPage() {
         } catch (cause) {
             if (!disposed) {
                 setSvg(null);
-                setError(cause instanceof Error ? cause.message : t("diagrams.error.render"));
+                setError(translatedError(cause, t, "diagrams.error.render"));
             }
         } finally {
             if (!disposed) setBusy(false);
