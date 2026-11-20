@@ -2,12 +2,14 @@ import {
     AnalyzeMessageUseCase,
     OlderAdultGuidedFlowController,
     QrInspectionUseCase,
+    ScamReportUseCase,
     UrlInspectionUseCase,
     type GuidedFinding,
     type GuidedFlowStep,
     type QrInspectionResult,
     type QrPayloadKind,
     type ScamAnalysis,
+    type ScamReport,
     type UrlInspectionResult,
     type UrlRiskLevel,
 } from "@frithward/security-core";
@@ -41,13 +43,16 @@ export interface QrCheckView {
 export interface ScamCheckControllerOptions {
     urlInspector?: Pick<UrlInspectionUseCase, "execute">;
     qrInspector?: Pick<QrInspectionUseCase, "execute">;
+    reportUseCase?: Pick<ScamReportUseCase, "execute">;
 }
 
 export class ScamCheckController {
     private readonly analyzer = new AnalyzeMessageUseCase();
     private readonly urlInspector: Pick<UrlInspectionUseCase, "execute">;
     private readonly qrInspector: Pick<QrInspectionUseCase, "execute">;
+    private readonly reportUseCase: Pick<ScamReportUseCase, "execute">;
     private readonly listeners = new Set<() => void>();
+    private currentText = "";
     private analysis: ScamAnalysis | null = null;
     private urlView: UrlCheckView | null = null;
     private qrView: QrCheckView | null = null;
@@ -57,6 +62,7 @@ export class ScamCheckController {
     public constructor(options: ScamCheckControllerOptions = {}) {
         this.urlInspector = options.urlInspector ?? new UrlInspectionUseCase();
         this.qrInspector = options.qrInspector ?? new QrInspectionUseCase();
+        this.reportUseCase = options.reportUseCase ?? new ScamReportUseCase();
     }
 
     public subscribe(listener: () => void): () => void {
@@ -83,6 +89,7 @@ export class ScamCheckController {
     }
 
     public check(text: string): void {
+        this.currentText = text;
         try {
             this.analysis = this.analyzer.execute(text);
             this.error = null;
@@ -116,6 +123,28 @@ export class ScamCheckController {
             this.error = cause instanceof Error ? cause.message : "QR check failed.";
         }
         this.notify();
+    }
+
+    public async generateReport(): Promise<ScamReport | null> {
+        if (this.currentText.trim().length === 0) {
+            this.error = "Check a message before generating a report.";
+            this.notify();
+            return null;
+        }
+        try {
+            const report = await this.reportUseCase.execute({
+                channel: "message",
+                description: this.currentText,
+                source: "Local scam check",
+            });
+            this.error = null;
+            this.notify();
+            return report;
+        } catch (cause) {
+            this.error = cause instanceof Error ? cause.message : "Could not generate a report.";
+            this.notify();
+            return null;
+        }
     }
 
     public getGuidedStep(): GuidedFlowStep {
