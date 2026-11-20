@@ -1,6 +1,6 @@
 # Image processing engine
 
-Deterministic resize geometry from caller-supplied source dimensions. The engine computes an aspect-preserving target box within the supplied bounds, capped at scale 1.0. No pixels are decoded or transformed; if source dimensions are absent it reports that explicitly.
+Deterministic resize geometry from caller-supplied source dimensions. The engine computes an aspect-preserving target box within the supplied bounds, capped at scale 1.0. When raw RGB24 pixel bytes are supplied it also performs a real stdlib operation: `grayscale` (integer Rec.601 luma) or `crop` (top-left to the computed box). No image file formats are decoded; if source dimensions are absent it reports that explicitly.
 
 ## Intended use
 
@@ -15,8 +15,8 @@ Deterministic resize geometry from caller-supplied source dimensions. The engine
 
 | Item | Value |
 | --- | --- |
-| Request | `ResizeRequest { image_id: str, max_width: int = 2048, max_height: int = 2048, source_width: int \| None, source_height: int \| None }` |
-| Response | `ResizeResult { image_id, width, height, scale, status, detail, limitations }` |
+| Request | `ResizeRequest { image_id: str, max_width: int = 2048, max_height: int = 2048, source_width: int \| None, source_height: int \| None, pixels_base64?: str, operation: str = "none" }` |
+| Response | `ResizeResult { image_id, width, height, scale, status, detail, pixel_operation, output_base64?, output_width?, output_height?, limitations }` |
 | Validation | Non-empty id; positive bounds; supply both source dimensions or neither |
 | Complexity | O(1) in supplied metadata |
 | Streaming | Row streaming with bounded memory |
@@ -33,6 +33,6 @@ None. This is deterministic image processing.
 
 ## Limitations
 
-- No pixels are resized or cropped; only target geometry is computed.
-- Scaling never enlarges beyond the source.
+- Geometry is always computed; pixels are changed only when RGB24 bytes and `operation` are supplied.
+- Scaling never enlarges beyond the source. No PNG/JPEG decoding is performed.
 - Resampling behavior must be documented by the caller.
