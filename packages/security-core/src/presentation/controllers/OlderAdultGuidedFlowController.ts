@@ -12,7 +12,7 @@ export interface GuidedFlowStep {
     titleCode: string;
     plainLanguage: string;
     plainLanguageCode: string;
-    plainLanguageParams?: Readonly<Record<string, string | number>>;
+    plainLanguageParams?: Readonly<Record<string, string | number>> | undefined;
     action: string;
     actionCode: string;
     completed: boolean;
