@@ -10,8 +10,8 @@ No fixed candidate is established in this repository. Any future candidate requi
 
 ## Dataset candidates
 
-| Dataset | License status | Consent status |
-| --- | --- | --- |
+| Dataset                   | License status  | Consent status  |
+| ------------------------- | --------------- | --------------- |
 | Consented voice data only | review required | review required |
 
 No non-consensual voice data may be used. No such dataset has been approved or downloaded in this repository.
