@@ -1,6 +1,7 @@
 import {
     InspectPrivacyUseCase,
     MetadataInspectionUseCase,
+    RedactPrivacyUseCase,
     SanitizedExportUseCase,
     type MetadataFinding,
     type MetadataFindingKind,
@@ -47,6 +48,13 @@ export interface SanitizedExportPlanView {
     actions: readonly ExportActionView[];
 }
 
+export interface RedactionResultView {
+    redactedCount: number;
+    remaining: readonly { id: string; kind: string; detail: string }[];
+    summary: string;
+    note: string;
+}
+
 const KIND_LABELS: Record<MetadataFindingKind, string> = {
     "exif-gps": "GPS location",
     "exif-device": "Device details",
@@ -79,6 +87,7 @@ export class ShareCheckController {
     private readonly inspector = new InspectPrivacyUseCase();
     private readonly metadataInspector = new MetadataInspectionUseCase();
     private readonly exportPlanner = new SanitizedExportUseCase();
+    private readonly redactor = new RedactPrivacyUseCase();
     private readonly listeners = new Set<() => void>();
     private options: ShareCheckOption[] = [
         {
@@ -112,6 +121,7 @@ export class ShareCheckController {
     private currentFindings: readonly MetadataFinding[] = [];
     private metadataView: MetadataInspectionView | null = null;
     private exportPlan: SanitizedExportPlanView | null = null;
+    private redaction: RedactionResultView | null = null;
 
     public subscribe(listener: () => void): () => void {
         this.listeners.add(listener);
@@ -142,6 +152,10 @@ export class ShareCheckController {
 
     public getExportPlan(): SanitizedExportPlanView | null {
         return this.exportPlan;
+    }
+
+    public getRedaction(): RedactionResultView | null {
+        return this.redaction;
     }
 
     public toggle(optionId: string): void {
@@ -196,9 +210,11 @@ export class ShareCheckController {
                     : `${result.findings.length} privacy issue(s) found in the supplied fields.`,
             };
             this.exportPlan = null;
+            this.redaction = null;
             this.error = null;
         } catch (cause) {
             this.metadataView = null;
+            this.redaction = null;
             this.currentFindings = [];
             this.error = cause instanceof Error ? cause.message : "Metadata inspection failed.";
         }
@@ -229,6 +245,44 @@ export class ShareCheckController {
             this.exportPlan = null;
             this.error =
                 cause instanceof Error ? cause.message : "Could not plan a sanitized export.";
+        }
+        this.notify();
+    }
+
+    public executeRedaction(): void {
+        if (!this.currentPayload) {
+            this.error = "Inspect metadata before executing redaction.";
+            this.notify();
+            return;
+        }
+        const findings = new Map<string, PrivacyFinding>();
+        for (const finding of this.currentFindings) {
+            findings.set(finding.id, finding);
+        }
+        for (const option of this.options.filter((entry) => entry.selected)) {
+            findings.set(option.id, {
+                id: option.id,
+                kind: option.kind,
+                detail: option.detail,
+                remediation: option.remediation,
+            });
+        }
+        try {
+            const result = this.redactor.execute({ findings: [...findings.values()] });
+            this.redaction = {
+                redactedCount: result.redactedCount,
+                remaining: result.findings.map((finding) => ({
+                    id: finding.id,
+                    kind: finding.kind,
+                    detail: finding.detail,
+                })),
+                summary: `Redaction descriptor: ${result.redactedCount} finding(s) removed, ${result.findings.length} retained.`,
+                note: "RedactPrivacyUseCase returns a descriptor only. It does not rewrite file bytes; apply the actions in an exporter and verify the output before sharing.",
+            };
+            this.error = null;
+        } catch (cause) {
+            this.redaction = null;
+            this.error = cause instanceof Error ? cause.message : "Redaction failed.";
         }
         this.notify();
     }
