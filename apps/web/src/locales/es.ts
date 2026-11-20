@@ -697,4 +697,168 @@ export const es: Record<string, string> = {
         "La codificación o decodificación de audio con WebCodecs no está disponible en este navegador.",
     "error.DIAGRAM_SOURCE_REQUIRED": "Introduzca primero un diagrama Mermaid.",
     "error.DIAGRAM_RENDER_FAILED": "No se pudo renderizar el diagrama: {detail}",
+    "result.PRIVACY_GPS_LABEL": "Ubicación GPS",
+    "result.PRIVACY_GPS_DETAIL":
+        "El archivo guarda las coordenadas GPS del lugar donde se capturó.",
+    "result.PRIVACY_GPS_REMEDIATION":
+        "Elimine las coordenadas GPS o evite compartir el archivo original.",
+    "result.PRIVACY_DEVICE_LABEL": "Detalles del dispositivo",
+    "result.PRIVACY_DEVICE_DETAIL": "El archivo guarda detalles de la cámara o del dispositivo.",
+    "result.PRIVACY_DEVICE_REMEDIATION":
+        "Elimine los metadatos del dispositivo si no son necesarios.",
+    "result.PRIVACY_TIME_LABEL": "Hora de captura",
+    "result.PRIVACY_TIME_DETAIL": "El archivo guarda las marcas de tiempo de captura.",
+    "result.PRIVACY_TIME_REMEDIATION":
+        "Elimine las marcas de tiempo que revelan sus rutinas personales.",
+    "result.PRIVACY_EMAIL_LABEL": "Dirección de correo",
+    "result.PRIVACY_EMAIL_DETAIL": "El archivo contiene una dirección de correo electrónico.",
+    "result.PRIVACY_EMAIL_REMEDIATION":
+        "Elimine las direcciones de correo de los metadatos antes de compartir.",
+    "result.PRIVACY_PHONE_LABEL": "Número de teléfono",
+    "result.PRIVACY_PHONE_DETAIL": "El archivo contiene un número de teléfono.",
+    "result.PRIVACY_PHONE_REMEDIATION":
+        "Elimine los números de teléfono de los metadatos antes de compartir.",
+    "result.PRIVACY_ADDRESS_LABEL": "Dirección postal",
+    "result.PRIVACY_ADDRESS_DETAIL": "El archivo contiene una dirección postal.",
+    "result.PRIVACY_ADDRESS_REMEDIATION":
+        "Elimine las direcciones de los metadatos antes de compartir.",
+    "result.PRIVACY_NAME_LABEL": "Nombre personal",
+    "result.PRIVACY_NAME_DETAIL": "El archivo contiene un nombre personal.",
+    "result.PRIVACY_NAME_REMEDIATION":
+        "Elimine los nombres personales de los metadatos antes de compartir.",
+    "result.PRIVACY_EXPORT_SAFE": "No se requiere ocultación; el archivo es seguro para compartir.",
+    "result.PRIVACY_EXPORT_ACTIONS":
+        "Se requieren {n} acción(es) de saneamiento antes de compartir.",
+    "result.PRIVACY_EXPORT_STRIP": "Elimine los metadatos identificables del archivo exportado.",
+    "result.PRIVACY_VIEW_SAFE":
+        "No se encontraron metadatos sensibles. El archivo es seguro para compartir.",
+    "result.PRIVACY_VIEW_ISSUES":
+        "Se encontraron {n} problema(s) de privacidad en los metadatos del archivo.",
+    "result.PRIVACY_VIEW_LOW_RISK":
+        "Sin metadatos bloqueantes; se detectaron {n} hallazgo(s) de bajo riesgo.",
+    "result.PRIVACY_FORMAT_UNINSPECTED":
+        "No se inspeccionó este formato de archivo. No se pudieron verificar los metadatos incrustados.",
+    "result.PRIVACY_REDACTION_SUMMARY":
+        "Se atendieron {n} hallazgo(s); descargue {file} para compartir.",
+    "result.PRIVACY_REDACTION_NOTE":
+        "La descarga se reconstruye a partir de píxeles decodificados, por lo que no se conservan los metadatos incrustados. Verifique el archivo antes de compartir.",
+    "result.URL_UNREADABLE_LABEL": "Enlace ilegible",
+    "result.URL_UNREADABLE_DETAIL": "El enlace no se pudo leer como dirección web.",
+    "result.URL_UNREADABLE_SUMMARY": "No se pudo leer el enlace. No lo abra.",
+    "result.URL_INSECURE_LABEL": "Conexión insegura",
+    "result.URL_INSECURE_DETAIL": "El enlace usa http, por lo que la conexión no está cifrada.",
+    "result.URL_CREDENTIALS_LABEL": "Destino oculto",
+    "result.URL_CREDENTIALS_DETAIL":
+        "El enlace contiene credenciales o una arroba que puede ocultar el destino real.",
+    "result.URL_IP_LABEL": "Dirección numérica",
+    "result.URL_IP_DETAIL":
+        "El enlace apunta a una dirección numérica en lugar de un dominio con nombre.",
+    "result.URL_PUNYCODE_LABEL": "Nombre de host codificado",
+    "result.URL_PUNYCODE_DETAIL":
+        "El nombre de host usa punycode, que puede ocultar caracteres similares.",
+    "result.URL_SHORTENED_LABEL": "Enlace acortado",
+    "result.URL_SHORTENED_DETAIL": "El destino está oculto tras un enlace corto.",
+    "result.URL_TLD_LABEL": "Terminación de dominio poco común",
+    "result.URL_TLD_DETAIL": "La terminación .{tld} se usa con frecuencia en sitios desechables.",
+    "result.URL_DEEP_LABEL": "Muchos subdominios",
+    "result.URL_DEEP_DETAIL": "La dirección tiene una cadena de subdominios inusualmente profunda.",
+    "result.URL_HYPHENS_LABEL": "Muchos guiones",
+    "result.URL_HYPHENS_DETAIL":
+        "La dirección contiene varios guiones, un truco común de suplantación.",
+    "result.URL_BRAND_LABEL": "Dominio similar",
+    "result.URL_BRAND_DETAIL": 'El dominio se parece a "{brand}" pero no es el dominio oficial.',
+    "result.URL_SUMMARY_NONE":
+        "No se encontraron patrones de riesgo evidentes. Esto no prueba que el enlace sea seguro.",
+    "result.URL_SUMMARY_FOUND":
+        "Se encontraron {n} indicador(es) de riesgo. Esto no establece fraude.",
+    "result.URL_LIMIT_PATTERNS":
+        "Esta comprobación solo compara patrones de texto; no puede verificar el sitio web real.",
+    "result.URL_LIMIT_NEW_DOMAINS":
+        "Es posible que no se reconozcan dominios recién registrados o no publicados.",
+    "result.URL_LIMIT_LOOKALIKE":
+        "Un enlace de aspecto legítimo aún puede alojar contenido dañino.",
+    "result.URL_LIMIT_PUNYCODE": "El nombre de host usa punycode y no se pudo decodificar aquí.",
+    "result.URL_LIMIT_SHORTENED": "El destino final está oculto tras un enlace corto.",
+    "result.QR_WIFI_LABEL": "Configuración de Wi-Fi",
+    "result.QR_WIFI_DETAIL":
+        "El código contiene ajustes de Wi-Fi. Unirse a una red en la que no confía puede exponer su tráfico.",
+    "result.QR_VCARD_LABEL": "Tarjeta de contacto",
+    "result.QR_VCARD_DETAIL": "El código contiene datos personales de contacto.",
+    "result.QR_CRYPTO_LABEL": "Dirección de criptomoneda",
+    "result.QR_CRYPTO_DETAIL":
+        "El código contiene una dirección de criptomoneda. Las transacciones son irreversibles.",
+    "result.QR_CONTACT_LABEL": "Acción de contacto",
+    "result.QR_CONTACT_DETAIL": "El código abre una acción de correo o teléfono.",
+    "result.QR_URGENCY_DETAIL": "El código le presiona para actuar rápidamente.",
+    "result.QR_PAYMENT_DETAIL": "El código solicita un pago.",
+    "result.QR_CREDENTIAL_DETAIL": "El código solicita credenciales.",
+    "result.QR_SUMMARY_NONE":
+        "El contenido del código no muestra patrones de riesgo evidentes. Esto no prueba que sea seguro.",
+    "result.QR_SUMMARY_FOUND":
+        "Se encontraron {n} indicador(es) de riesgo. Esto no establece intención.",
+    "result.QR_LIMIT_PAYLOAD":
+        "Un código QR puede apuntar a cualquier lugar; el contenido puede estar truncado o codificado.",
+    "result.QR_LIMIT_AUTO_OPEN":
+        "Escanear un código QR con la cámara puede abrir el enlace automáticamente.",
+    "result.SCAM_SUMMARY_NONE": "No se encontraron indicadores de riesgo en el texto.",
+    "result.SCAM_SUMMARY_FOUND":
+        "Se encontraron {n} indicador(es) de riesgo. Esto no establece fraude.",
+    "result.SCAM_LIMIT_INTENT": "Los patrones de texto por sí solos no pueden probar la intención.",
+    "result.SCAM_LIMIT_UNCHECKED":
+        "No se comprobaron las URL, imágenes ni llamadores relacionados.",
+    "result.C2PA_SUMMARY_MISSING":
+        "No se encontró un manifiesto de firma; la procedencia no está disponible.",
+    "result.C2PA_SUMMARY_VALID":
+        "La firma afirma ser válida; firmante {signer}; {n} aserción(es) presente(s).{missing}",
+    "result.C2PA_SUMMARY_INVALID":
+        "La validación de la firma falló ({n} fallo(s)); la evidencia requiere revisión.{missing}",
+    "result.C2PA_SUMMARY_UNVERIFIED":
+        "Hay una firma presente pero no verificada; firmante {signer}.{missing}",
+    "result.C2PA_VALIDATION_FAILED": "La validación falló.",
+    "result.C2PA_LIMIT_SIGNATURE":
+        "El estado de la firma se toma del manifiesto y no se volvió a verificar criptográficamente.",
+    "result.C2PA_LIMIT_TIMESTAMPS":
+        "Las marcas de tiempo provienen del manifiesto y pueden no reflejar la hora real de firma.",
+    "result.C2PA_LIMIT_ASSERTIONS":
+        "Solo se informa de que las aserciones están presentes; no se validó su contenido.",
+    "result.C2PA_LIMIT_UNVERIFIED": "firma no verificada mediante el SDK de C2PA",
+    "result.C2PA_LIMIT_NO_ACTIONS":
+        "No había ninguna aserción c2pa.actions disponible; no se pudo analizar el historial de transformaciones.",
+    "result.C2PA_MISSING_MANIFEST": "manifiesto",
+    "result.C2PA_MISSING_SIGNER": "firmante",
+    "result.C2PA_MISSING_TIMESTAMP": "marca de tiempo de la firma",
+    "result.C2PA_MISSING_ASSERTIONS": "aserciones",
+    "result.C2PA_MISSING_HASH": "hash del recurso",
+    "result.VOICE_LIMIT_0":
+        "La protección de voz es experimental y no ha sido evaluada de forma independiente.",
+    "result.VOICE_LIMIT_1": "La protección no garantiza prevenir el mal uso ni la suplantación.",
+    "result.VOICE_LIMIT_2":
+        "La eficacia varía según el idioma, la calidad de la grabación y el método de ataque.",
+    "result.VOICE_LIMIT_3":
+        "Se requiere el consentimiento documentado del hablante antes de aplicar la protección.",
+    "result.FACE_LIMIT_0":
+        "La protección facial es experimental y no ha sido evaluada de forma independiente.",
+    "result.FACE_LIMIT_1": "La protección no garantiza prevenir el mal uso.",
+    "result.FACE_LIMIT_2":
+        "El rendimiento varía entre grupos demográficos y debe evaluarse antes del despliegue.",
+    "result.FACE_LIMIT_3":
+        "Se requiere el consentimiento documentado de la persona mostrada antes de aplicar la protección.",
+    "result.GPU_LIMIT_UNAVAILABLE":
+        "WebGPU no está disponible, por lo que no se pudo realizar ninguna comprobación de GPU.",
+    "result.GPU_LIMIT_GENERALIZE":
+        "Los resultados de un navegador y un dispositivo no se generalizan a otro hardware.",
+    "result.GPU_LIMIT_COMPUTE":
+        "Un solo paso de computación solo demuestra compatibilidad básica con WebGPU, no rendimiento ni compatibilidad con modelos.",
+    "result.GPU_LIMIT_METADATA":
+        "El navegador informa de los metadatos del adaptador y pueden estar ocultos por privacidad.",
+    "result.GPU_LIMIT_INCOMPLETE":
+        "El paso de computación no se completó, por lo que no se confirmó la compatibilidad.",
+    "result.GPU_ERROR_NO_WEBGPU": "WebGPU no está disponible en este navegador.",
+    "result.GPU_ERROR_NO_ADAPTER": "No se encontró ningún adaptador WebGPU.",
+    "result.GPU_ERROR_COMPUTE_UNEXPECTED":
+        "El paso de computación se ejecutó pero devolvió un valor inesperado.",
+    "result.OCR_LIMIT_ACCURACY":
+        "La precisión del OCR depende de la calidad de la imagen, la fuente y la cobertura del idioma.",
+    "result.OCR_LIMIT_LOCAL":
+        "El reconocimiento se ejecuta localmente con tesseract.js usando datos de idioma incluidos; no se descarga nada.",
 };
