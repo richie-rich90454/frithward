@@ -11,6 +11,7 @@ export interface QrFinding {
     severity: UrlRiskLevel;
     labelCode?: string | undefined;
     detailCode?: string | undefined;
+    detailParams?: Readonly<Record<string, string | number>> | undefined;
 }
 
 export interface QrInspectionResult {
@@ -91,6 +92,7 @@ export class QrInspectionUseCase {
                     severity: finding.severity,
                     labelCode: finding.labelCode,
                     detailCode: finding.detailCode,
+                    detailParams: finding.detailParams,
                 })),
             );
             limitations.push(...urlResult.limitations);
