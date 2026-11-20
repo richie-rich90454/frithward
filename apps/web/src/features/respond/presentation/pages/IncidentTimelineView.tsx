@@ -1,5 +1,7 @@
 import { For, Show, createSignal, onCleanup } from "solid-js";
 import { CalendarClock } from "lucide-solid";
+import type { Case } from "@frithward/contracts";
+import { ReportButtons } from "../../../reports/index.js";
 import { IncidentTimelineController } from "../controllers/IncidentTimelineController";
 import { useI18n } from "../../../../i18n/index.js";
 import { useCases } from "../../../../cases/CaseProvider.js";
@@ -9,8 +11,6 @@ import type {
     IncidentTimelineEntry,
     ReportHistoryEntry,
 } from "../controllers/IncidentTimelineController";
-
-const SAVED_MESSAGE = "Saved to cases";
 
 interface IncidentTimelineViewProps {
     entries: readonly IncidentTimelineEntry[];
@@ -35,6 +35,35 @@ interface IncidentTimelineViewProps {
 }
 
 const tabular = { "font-variant-numeric": "tabular-nums" };
+
+function caseFromEvidence(item: EvidenceItem, history: readonly ReportHistoryEntry[]): Case {
+    const now = new Date().toISOString();
+    const collected = new Date(item.collectedAt);
+    const latest = history.at(-1);
+    return {
+        id: globalThis.crypto?.randomUUID?.() ?? "00000000-0000-4000-8000-000000000000",
+        kind: "evidence",
+        createdAt: Number.isNaN(collected.getTime()) ? now : collected.toISOString(),
+        updatedAt: now,
+        title: item.fileName || item.source || "Evidence",
+        inputs: { fileName: item.fileName, source: item.source, collectedAt: item.collectedAt },
+        findings: latest
+            ? [
+                  {
+                      label: "Report exported",
+                      severity: "low",
+                      detail: `${latest.summary} (${latest.sha256})`,
+                  },
+              ]
+            : [],
+        artifacts: [{ kind: "evidence", name: item.fileName, hash: item.sha256 }],
+        nextSteps: [],
+        limitations: [
+            "A hash confirms the bytes at collection time; it does not verify the file's origin or contents.",
+        ],
+        status: "active",
+    };
+}
 
 export function IncidentTimelineView(props: IncidentTimelineViewProps) {
     const { t } = useI18n();
@@ -142,7 +171,7 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                 <p role="alert">{props.saveError}</p>
             </Show>
             <Show when={props.saved}>
-                <p role="status">{SAVED_MESSAGE}</p>
+                <p role="status">{t("cases.saved")}</p>
             </Show>
             <Show when={props.entries.length > 0}>
                 <ol>
@@ -216,6 +245,14 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                 <button type="button" onClick={() => void exportReport()}>
                     {t("respond.export")}
                 </button>
+            </Show>
+            <Show when={props.evidence.length > 0}>
+                <ReportButtons
+                    caseData={caseFromEvidence(
+                        props.evidence[props.evidence.length - 1]!,
+                        props.history,
+                    )}
+                />
             </Show>
 
             <h2>{t("respond.importTitle")}</h2>
