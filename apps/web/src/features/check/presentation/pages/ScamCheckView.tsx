@@ -2,10 +2,14 @@ import { For, Show, createSignal, onCleanup } from "solid-js";
 import { ScanSearch } from "lucide-solid";
 import type { GuidedFlowStep, ScamAnalysis } from "@frithward/security-core";
 import { useI18n } from "../../../../i18n/index.js";
+import { useCases } from "../../../../cases/CaseProvider.js";
 import { ScamCheckController } from "../controllers/ScamCheckController";
+import { checkResultToCaseInput } from "../toCaseInput.js";
 import type { CheckFindingView } from "../controllers/ScamCheckController";
 import type { ReviewedMatch } from "../../domain/ReviewedPatterns.js";
 import { translateReviewedLimitations, translateReviewedMatch } from "../patternTranslations.js";
+
+const SAVED_MESSAGE = "Saved to cases";
 
 interface ScamCheckViewProps {
     initialText?: string;
@@ -13,6 +17,8 @@ interface ScamCheckViewProps {
     urlView: ReturnType<ScamCheckController["getUrlView"]>;
     qrView: ReturnType<ScamCheckController["getQrView"]>;
     error: string | null;
+    saveError: string | null;
+    saved: boolean;
     reviewedFindings: readonly ReviewedMatch[];
     guidedStep: GuidedFlowStep;
     guidedIndex: number;
@@ -136,6 +142,12 @@ export function ScamCheckView(props: ScamCheckViewProps) {
             <Show when={props.error}>
                 <p role="alert">{props.error}</p>
             </Show>
+            <Show when={props.saveError}>
+                <p role="alert">{props.saveError}</p>
+            </Show>
+            <Show when={props.saved}>
+                <p role="status">{SAVED_MESSAGE}</p>
+            </Show>
             <Show when={props.analysis} keyed>
                 {(analysis) => (
                     <div>
@@ -231,6 +243,7 @@ function readSharedText(): string {
 export function ScamCheckPage() {
     const { t } = useI18n();
     const controller = new ScamCheckController({ translate: t });
+    const { saveCase } = useCases();
     const initialText = readSharedText();
     const [analysis, setAnalysis] = createSignal(controller.getAnalysis());
     const [reviewedFindings, setReviewedFindings] = createSignal(controller.getReviewedFindings());
@@ -240,6 +253,8 @@ export function ScamCheckPage() {
     const [guidedStep, setGuidedStep] = createSignal(controller.getGuidedStep());
     const [guidedIndex, setGuidedIndex] = createSignal(controller.getGuidedIndex());
     const [guidedComplete, setGuidedComplete] = createSignal(controller.isGuidedComplete());
+    const [saveError, setSaveError] = createSignal<string | null>(null);
+    const [saved, setSaved] = createSignal(false);
     const sync = () => {
         setAnalysis(controller.getAnalysis());
         setReviewedFindings(controller.getReviewedFindings());
@@ -252,6 +267,20 @@ export function ScamCheckPage() {
     };
     onCleanup(controller.subscribe(sync));
     if (initialText) controller.check(initialText);
+
+    const persist = async (): Promise<void> => {
+        const result = controller.getLastResult();
+        if (!result) return;
+        setSaveError(null);
+        setSaved(false);
+        try {
+            await saveCase(checkResultToCaseInput(result));
+            setSaved(true);
+        } catch (cause) {
+            setSaveError(cause instanceof Error ? cause.message : t("verify.saveCaseFailed"));
+        }
+    };
+
     const generateReport = async () => {
         const report = await controller.generateReport();
         if (!report) return;
@@ -271,13 +300,24 @@ export function ScamCheckPage() {
             urlView={urlView()}
             qrView={qrView()}
             error={error()}
+            saveError={saveError()}
+            saved={saved()}
             guidedStep={guidedStep()}
             guidedIndex={guidedIndex()}
             guidedTotal={controller.getGuidedSteps().length}
             guidedComplete={guidedComplete()}
-            onCheck={(text) => controller.check(text)}
-            onCheckUrl={(input) => controller.checkUrl(input)}
-            onCheckQr={(input) => controller.checkQr(input)}
+            onCheck={(text) => {
+                controller.check(text);
+                if (!controller.getError()) void persist();
+            }}
+            onCheckUrl={(input) => {
+                controller.checkUrl(input);
+                if (!controller.getError()) void persist();
+            }}
+            onCheckQr={(input) => {
+                controller.checkQr(input);
+                if (!controller.getError()) void persist();
+            }}
             onGenerateReport={() => void generateReport()}
             onGuidedNext={() => controller.guidedNext()}
             onGuidedBack={() => controller.guidedBack()}
