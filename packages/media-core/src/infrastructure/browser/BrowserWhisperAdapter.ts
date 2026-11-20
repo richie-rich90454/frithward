@@ -53,7 +53,10 @@ export interface BrowserWhisperEngine {
     /** Decodes a real audio/video File via WebCodecs/mediabunny. */
     transcribe(file: File, options?: BrowserWhisperTranscribeOptions): BrowserWhisperStream;
     /** Consumes already-decoded 16-kHz mono Float32 samples. */
-    transcribePCM(samples: Float32Array, options?: BrowserWhisperTranscribeOptions): BrowserWhisperStream;
+    transcribePCM(
+        samples: Float32Array,
+        options?: BrowserWhisperTranscribeOptions,
+    ): BrowserWhisperStream;
     dispose(): void;
 }
 
