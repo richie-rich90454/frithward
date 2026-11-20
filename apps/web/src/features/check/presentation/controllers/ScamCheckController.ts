@@ -27,6 +27,7 @@ import {
 } from "../../infrastructure/LocalStorageRecentCheckRepository.js";
 import { english, type Translator } from "../../../../i18n/translate.js";
 import { resultList, resultText } from "../../../../i18n/results.js";
+import { translatedError } from "../../../../i18n/errors.js";
 
 export interface CheckFindingView {
     id: string;
@@ -146,8 +147,7 @@ export class ScamCheckController {
         } catch (cause) {
             this.analysis = null;
             this.reviewedFindings = [];
-            this.error =
-                cause instanceof Error ? cause.message : this.translate("check.error.analysis");
+            this.error = translatedError(cause, this.translate, "check.error.analysis");
         }
         this.notify();
     }
@@ -162,8 +162,7 @@ export class ScamCheckController {
         } catch (cause) {
             this.urlView = null;
             this.reviewedFindings = [];
-            this.error =
-                cause instanceof Error ? cause.message : this.translate("check.error.link");
+            this.error = translatedError(cause, this.translate, "check.error.link");
         }
         this.notify();
     }
@@ -178,7 +177,7 @@ export class ScamCheckController {
         } catch (cause) {
             this.qrView = null;
             this.reviewedFindings = [];
-            this.error = cause instanceof Error ? cause.message : this.translate("check.error.qr");
+            this.error = translatedError(cause, this.translate, "check.error.qr");
         }
         this.notify();
     }
@@ -199,21 +198,18 @@ export class ScamCheckController {
             this.notify();
             return report;
         } catch (cause) {
-            this.error =
-                cause instanceof Error
-                    ? cause.message
-                    : this.translate("check.error.generateReport");
+            this.error = translatedError(cause, this.translate, "check.error.generateReport");
             this.notify();
             return null;
         }
     }
 
     public getGuidedStep(): GuidedFlowStep {
-        return this.guided.currentStep;
+        return translateGuidedStep(this.translate, this.guided.currentStep);
     }
 
     public getGuidedSteps(): readonly GuidedFlowStep[] {
-        return this.guided.steps;
+        return this.guided.steps.map((step) => translateGuidedStep(this.translate, step));
     }
 
     public getGuidedIndex(): number {
@@ -294,8 +290,23 @@ function translatedAnalysis(t: Translator, analysis: ScamAnalysis): ScamAnalysis
     return {
         ...analysis,
         summary: resultText(t, analysis.summary, analysis.summaryCode),
+        nextSteps: resultList(t, analysis.nextSteps, analysis.nextStepCodes),
         limitations: resultList(t, analysis.limitations, analysis.limitationCodes),
     } as ScamAnalysis;
+}
+
+function translateGuidedStep(t: Translator, step: GuidedFlowStep): GuidedFlowStep {
+    return {
+        ...step,
+        title: resultText(t, step.title, step.titleCode),
+        plainLanguage: resultText(
+            t,
+            step.plainLanguage,
+            step.plainLanguageCode,
+            step.plainLanguageParams,
+        ),
+        action: resultText(t, step.action, step.actionCode),
+    };
 }
 
 function toUrlView(t: Translator, result: UrlInspectionResult): UrlCheckView {
@@ -307,7 +318,7 @@ function toUrlView(t: Translator, result: UrlInspectionResult): UrlCheckView {
         findings: result.findings.map((finding) => ({
             id: finding.id,
             label: resultText(t, finding.label, finding.labelCode),
-            detail: resultText(t, finding.detail, finding.detailCode),
+            detail: resultText(t, finding.detail, finding.detailCode, finding.detailParams),
             severity: finding.severity,
         })),
         summary: resultText(t, result.summary, result.summaryCode),
@@ -323,7 +334,7 @@ function toQrView(t: Translator, result: QrInspectionResult): QrCheckView {
         findings: result.findings.map((finding) => ({
             id: finding.id,
             label: resultText(t, finding.label, finding.labelCode),
-            detail: resultText(t, finding.detail, finding.detailCode),
+            detail: resultText(t, finding.detail, finding.detailCode, finding.detailParams),
             severity: finding.severity,
         })),
         summary: resultText(t, result.summary, result.summaryCode),
