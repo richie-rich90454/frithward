@@ -1,0 +1,50 @@
+@media (max-width: 640px) {
+    .document-workshop {
+        display: flex;
+        flex-direction: column;
+        gap: var(--fw-space-3);
+    }
+
+    .document-workshop label {
+        display: flex;
+        flex-direction: column;
+        gap: var(--fw-space-1);
+        width: 100%;
+    }
+
+    .document-workshop input,
+    .document-workshop textarea,
+    .document-workshop button {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-height: 44px;
+    }
+
+    .document-workshop textarea {
+        resize: vertical;
+        white-space: pre;
+        overflow-x: auto;
+    }
+
+    .document-workshop__actions {
+        display: flex;
+        flex-direction: column;
+        gap: var(--fw-space-2);
+    }
+
+    .document-workshop canvas,
+    .document-workshop img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .document-workshop pre {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    .document-workshop__status {
+        color: var(--fw-color-success);
+    }
+}
