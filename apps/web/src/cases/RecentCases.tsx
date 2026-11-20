@@ -1,6 +1,7 @@
 import { For } from "solid-js";
 import type { Case } from "@frithward/contracts";
-import { relativeTime } from "./relativeTime.js";
+import { useI18n } from "../i18n/index.js";
+import { relativeTimeLocalized } from "./relativeTime.js";
 
 export interface RecentCasesProps {
     cases: readonly Case[];
@@ -8,10 +9,11 @@ export interface RecentCasesProps {
 }
 
 export function RecentCases(props: RecentCasesProps) {
+    const { t } = useI18n();
     return (
-        <section class="recent-cases" aria-label="Recent cases">
+        <section class="recent-cases" aria-label={t("cases.recent")}>
             {props.cases.length === 0 ? (
-                <p class="recent-cases__empty">No cases saved yet</p>
+                <p class="recent-cases__empty">{t("cases.empty")}</p>
             ) : (
                 <ul class="recent-cases__list">
                     <For each={props.cases}>
@@ -28,7 +30,7 @@ export function RecentCases(props: RecentCasesProps) {
                                         {record.kind.charAt(0).toUpperCase() + record.kind.slice(1)}{" "}
                                         ·{" "}
                                         <time datetime={record.updatedAt}>
-                                            {relativeTime(record.updatedAt)}
+                                            {relativeTimeLocalized(record.updatedAt, t)}
                                         </time>
                                     </span>
                                 </button>
