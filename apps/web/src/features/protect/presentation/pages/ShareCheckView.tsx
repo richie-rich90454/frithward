@@ -108,14 +108,18 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                                 <input
                                     value={row.key}
                                     placeholder="GPSPosition"
-                                    onInput={(event) => updateRow(index(), { key: event.currentTarget.value })}
+                                    onInput={(event) =>
+                                        updateRow(index(), { key: event.currentTarget.value })
+                                    }
                                 />
                             </label>
                             <label>
                                 {t("protect.fieldValue")}
                                 <input
                                     value={row.value}
-                                    onInput={(event) => updateRow(index(), { value: event.currentTarget.value })}
+                                    onInput={(event) =>
+                                        updateRow(index(), { value: event.currentTarget.value })
+                                    }
                                 />
                             </label>
                         </div>
@@ -171,7 +175,9 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                         <h3>Sanitized export plan</h3>
                         <p>{plan.summary}</p>
                         <ul>
-                            <For each={plan.actions}>{(action) => <li>{action.description}</li>}</For>
+                            <For each={plan.actions}>
+                                {(action) => <li>{action.description}</li>}
+                            </For>
                         </ul>
                         <p role="note">{t("protect.planNote")}</p>
                     </div>
