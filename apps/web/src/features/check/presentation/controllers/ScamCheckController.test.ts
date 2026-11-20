@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import type { QrInspectionResult, UrlInspectionResult } from "@frithward/security-core";
+import type {
+    QrInspectionResult,
+    ScamReport,
+    UrlInspectionResult,
+} from "@frithward/security-core";
 import { ScamCheckController } from "./ScamCheckController";
 
 const urlResult: UrlInspectionResult = {
@@ -92,5 +96,51 @@ describe("ScamCheckController QR inspection", () => {
         controller.checkQr("");
         expect(controller.getQrView()).toBeNull();
         expect(controller.getError()).toBe("QR payload required.");
+    });
+});
+
+describe("ScamCheckController report generation", () => {
+    const report: ScamReport = {
+        id: "report-1",
+        channel: "message",
+        description: "send your password urgently",
+        source: "Local scam check",
+        evidenceSha256: "a".repeat(64),
+        reportedAt: "2026-01-01T00:00:00.000Z",
+        status: "open",
+    };
+
+    it("generates a typed report from the checked message", async () => {
+        const execute = vi.fn(async () => report);
+        const controller = new ScamCheckController({ reportUseCase: { execute } });
+        controller.check("send your password urgently");
+        await expect(controller.generateReport()).resolves.toEqual(report);
+        expect(execute).toHaveBeenCalledWith({
+            channel: "message",
+            description: "send your password urgently",
+            source: "Local scam check",
+        });
+        expect(controller.getError()).toBeNull();
+    });
+
+    it("does not fabricate a report before a message is checked", async () => {
+        const execute = vi.fn(async () => report);
+        const controller = new ScamCheckController({ reportUseCase: { execute } });
+        await expect(controller.generateReport()).resolves.toBeNull();
+        expect(execute).not.toHaveBeenCalled();
+        expect(controller.getError()).toContain("Check a message");
+    });
+
+    it("surfaces report errors without returning a report", async () => {
+        const controller = new ScamCheckController({
+            reportUseCase: {
+                execute: async () => {
+                    throw new Error("Report description required.");
+                },
+            },
+        });
+        controller.check("hello");
+        await expect(controller.generateReport()).resolves.toBeNull();
+        expect(controller.getError()).toBe("Report description required.");
     });
 });
