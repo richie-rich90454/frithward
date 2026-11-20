@@ -1,6 +1,6 @@
 # Audio protection engine
 
-Experimental voice protection research. The engine validates an audio id and returns `protected: true`. It does not apply a protection transform.
+Experimental voice protection research surface. The engine validates an audio id, accepts audio bytes or a path, and returns an explicit `unavailable` status with `protected: false`. It does not apply a protection transform.
 
 ## Intended use
 
@@ -17,8 +17,8 @@ Experimental voice protection research. The engine validates an audio id and ret
 
 | Item            | Value                                            |
 | --------------- | ------------------------------------------------ |
-| Request         | `ProtectionRequest { audio_id: str }`            |
-| Response        | `ProtectionResult { audio_id, protected: bool }` |
+| Request         | `ProtectionRequest { audio_id, audio_base64?, audio_path? }` |
+| Response        | `ProtectionResult { audio_id, protected, status, reason, limitations }` |
 | Validation      | `audio_id` must be non-empty                     |
 | Complexity      | Model-specific                                   |
 | Streaming       | Chunked with bounded memory                      |
@@ -35,6 +35,6 @@ No fixed candidate. Training and evaluation data must be consented and licensed.
 
 ## Limitations
 
-- The scaffold returns success without transforming audio.
+- No protection is applied and no success is claimed (`protected` is always false).
 - Consent and experimental opt-in are enforced by `VoiceProtectionPolicy` in `@frithward/media-analysis`, not by this engine.
 - Protection claims require independent evaluation and human review.
