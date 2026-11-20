@@ -4,6 +4,7 @@ import {
     loadWatchlist,
     removeFromWatchlist,
     saveWatchlist,
+    subscribeWatchlist,
     type WatchEntry,
 } from "./WatchlistStore.js";
 
@@ -66,5 +67,33 @@ describe("WatchlistStore", () => {
         expect(loadWatchlist()).toEqual([]);
         expect(addToWatchlist(entry("memory")).map((item) => item.id)).toEqual(["memory"]);
         expect(removeFromWatchlist("memory")).toEqual([]);
+    });
+
+    it("notifies local subscribers when an entry is added elsewhere", () => {
+        stubStorage();
+        const received: WatchEntry[][] = [];
+        const unsubscribe = subscribeWatchlist((entries) => received.push(entries));
+        addToWatchlist(entry("notified"));
+        expect(received).toHaveLength(1);
+        expect(received[0]?.map((item) => item.id)).toEqual(["notified"]);
+        unsubscribe();
+        addToWatchlist(entry("ignored"));
+        expect(received).toHaveLength(1);
+    });
+
+    it("notifies subscribers when another tab changes storage", () => {
+        const values = stubStorage();
+        let onStorage: ((event: { key: string | null }) => void) | undefined;
+        vi.stubGlobal("window", {
+            addEventListener: (type: string, listener: (event: { key: string | null }) => void) => {
+                if (type === "storage") onStorage = listener;
+            },
+        });
+        values.set(KEY, JSON.stringify({ version: 1, entries: [entry("remote")] }));
+        const received: WatchEntry[][] = [];
+        const unsubscribe = subscribeWatchlist((entries) => received.push(entries));
+        onStorage?.({ key: KEY });
+        expect(received.at(-1)?.map((item) => item.id)).toEqual(["remote"]);
+        unsubscribe();
     });
 });
