@@ -1,3 +1,5 @@
+import { english, interpolate, type Translator } from "../../../../i18n/translate.js";
+
 export const COMMUNITY_PATTERNS_KEY = "frithward.community.patterns";
 const VERSION = 1;
 
@@ -32,20 +34,25 @@ export interface CommunityStorage {
 
 export interface CommunityControllerOptions {
     storage?: CommunityStorage | null;
+    translate?: Translator;
 }
 
 /** Returns an error message, or null when the input is acceptable. */
-export function validatePatternInput(input: CommunityPatternInput): string | null {
+export function validatePatternInput(
+    input: CommunityPatternInput,
+    translate: Translator = english,
+): string | null {
     const title = input.title.trim();
     const description = input.description.trim();
     const sourceUrl = (input.sourceUrl ?? "").trim();
-    if (title.length === 0) return "A title is required.";
-    if (title.length > TITLE_MAX) return `Title must be ${TITLE_MAX} characters or fewer.`;
-    if (description.length === 0) return "A description is required.";
+    if (title.length === 0) return translate("community.error.titleRequired");
+    if (title.length > TITLE_MAX)
+        return interpolate(translate("community.error.titleTooLong"), { n: TITLE_MAX });
+    if (description.length === 0) return translate("community.error.descriptionRequired");
     if (description.length > DESCRIPTION_MAX)
-        return `Description must be ${DESCRIPTION_MAX} characters or fewer.`;
+        return interpolate(translate("community.error.descriptionTooLong"), { n: DESCRIPTION_MAX });
     if (sourceUrl.length > SOURCE_URL_MAX)
-        return `Source URL must be ${SOURCE_URL_MAX} characters or fewer.`;
+        return interpolate(translate("community.error.sourceUrlTooLong"), { n: SOURCE_URL_MAX });
     return null;
 }
 
@@ -96,12 +103,14 @@ function nextId(): string {
  */
 export class CommunityPatternsController {
     private readonly storage: CommunityStorage | null;
+    private readonly translate: Translator;
     private readonly listeners = new Set<() => void>();
     private patterns: CommunityPattern[];
     private error: string | null = null;
 
     public constructor(options: CommunityControllerOptions = {}) {
         this.storage = options.storage ?? browserStorage();
+        this.translate = options.translate ?? english;
         this.patterns = readPatterns(this.storage);
     }
 
@@ -117,7 +126,7 @@ export class CommunityPatternsController {
     }
 
     public add(input: CommunityPatternInput): boolean {
-        const error = validatePatternInput(input);
+        const error = validatePatternInput(input, this.translate);
         if (error !== null) {
             this.error = error;
             this.notify();
