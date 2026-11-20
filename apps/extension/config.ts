@@ -1,5 +1,11 @@
-/** Default web-app origin. Override per environment when documenting deployment. */
-export const WEB_APP_URL = "http://localhost:4173";
+/** Web-app origin; override with VITE_FRITHWARD_WEB_URL at build time for a real deployment. */
+const configuredUrl =
+    typeof import.meta !== "undefined" &&
+    typeof import.meta.env?.VITE_FRITHWARD_WEB_URL === "string"
+        ? import.meta.env.VITE_FRITHWARD_WEB_URL.trim()
+        : "";
+
+export const WEB_APP_URL = configuredUrl || "http://localhost:4173";
 
 /** browser.storage.local key holding the recent-check list. */
 export const RECENT_CHECKS_KEY = "frithward.recentChecks";
