@@ -1,6 +1,20 @@
 import { describe, expect, it, vi } from "vitest";
 import type { QrInspectionResult, ScamReport, UrlInspectionResult } from "@frithward/security-core";
 import { ScamCheckController } from "./ScamCheckController";
+import type {
+    RecentCheck,
+    RecentCheckRepository,
+} from "../../infrastructure/LocalStorageRecentCheckRepository";
+
+function memoryRepository(): RecentCheckRepository {
+    const entries: RecentCheck[] = [];
+    return {
+        list: () => entries,
+        save: (entry) => {
+            entries.unshift(entry);
+        },
+    };
+}
 
 const urlResult: UrlInspectionResult = {
     original: "paypa1.example",
@@ -138,5 +152,76 @@ describe("ScamCheckController report generation", () => {
         controller.check("hello");
         await expect(controller.generateReport()).resolves.toBeNull();
         expect(controller.getError()).toBe("Report description required.");
+    });
+});
+
+describe("ScamCheckController second-pass enrichment", () => {
+    it("adds a separately labelled heuristic pass for realistic scam text", () => {
+        const controller = new ScamCheckController({ recentChecks: memoryRepository() });
+        controller.check("URGENT: pay the invoice now or buy a gift card immediately.");
+        const ids = controller.getReviewedFindings().map((finding) => finding.id);
+        expect(ids).toContain("reviewed-urgency");
+        expect(ids).toContain("reviewed-payment");
+        expect(ids).toContain("reviewed-gift-card");
+        for (const finding of controller.getReviewedFindings()) {
+            expect(finding.rationale.length).toBeGreaterThan(0);
+        }
+    });
+
+    it("adds nothing for a benign message and makes no certainty claim", () => {
+        const controller = new ScamCheckController({ recentChecks: memoryRepository() });
+        controller.check("Lunch is at noon. See you there!");
+        expect(controller.getReviewedFindings()).toEqual([]);
+        const result = controller.getLastResult();
+        expect(result?.limitations.join(" ").toLowerCase()).toContain("not proof of fraud");
+        expect(result?.limitations.join(" ").toLowerCase()).not.toContain("confirmed");
+    });
+
+    it("keeps the secondary pass separate from the core analysis indicators", () => {
+        const controller = new ScamCheckController({ recentChecks: memoryRepository() });
+        controller.check("send your password urgently");
+        const coreIds = controller.getAnalysis()?.indicators.map((item) => item.id) ?? [];
+        const reviewedIds = controller.getReviewedFindings().map((item) => item.id);
+        expect(coreIds).not.toEqual(reviewedIds);
+        expect(coreIds.some((id) => id.startsWith("reviewed-"))).toBe(false);
+    });
+});
+
+describe("ScamCheckController persistence", () => {
+    it("exposes the last result for later Case-store wiring", () => {
+        const controller = new ScamCheckController({ recentChecks: memoryRepository() });
+        controller.check("URGENT pay the invoice");
+        const result = controller.getLastResult();
+        expect(result).toMatchObject({ channel: "message", input: "URGENT pay the invoice" });
+        expect(result?.analysis).not.toBeNull();
+        expect(result?.reviewedFindings.length).toBeGreaterThan(0);
+        expect(result?.createdAt).toBeTruthy();
+    });
+
+    it("saves each check to the recent-checks list", () => {
+        const repository = memoryRepository();
+        const controller = new ScamCheckController({ recentChecks: repository });
+        controller.check("hello there");
+        controller.checkUrl("example.com");
+        expect(controller.getRecentChecks().map((item) => item.channel)).toEqual([
+            "url",
+            "message",
+        ]);
+        expect(repository.list()[0]?.input).toBe("example.com");
+    });
+
+    it("does not record a result when a check fails", () => {
+        const controller = new ScamCheckController({
+            recentChecks: memoryRepository(),
+            urlInspector: {
+                execute: () => {
+                    throw new Error("URL required.");
+                },
+            },
+        });
+        controller.checkUrl("");
+        expect(controller.getLastResult()).toBeNull();
+        expect(controller.getRecentChecks()).toEqual([]);
+        expect(controller.getError()).toBe("URL required.");
     });
 });
