@@ -1,6 +1,7 @@
 import { FaceProtectionAdapter, VoiceProtectionAdapter } from "@frithward/media-core";
 import { english, type Translator } from "../../../../i18n/translate.js";
 import { resultList } from "../../../../i18n/results.js";
+import { translateMediaAnalysisText } from "../../../../i18n/mapMediaAnalysis.js";
 import {
     FaceProtectionPolicy,
     ProtectFaceUseCase,
@@ -44,14 +45,15 @@ interface ProtectionInput {
 }
 
 function toView(t: Translator, result: ProtectionResult): ProtectionResultView {
+    const text = translateMediaAnalysisText(t, result);
     return {
         assetId: result.assetId,
         status: result.status,
         method: result.method,
         artifactId: result.artifactId,
-        summary: result.summary,
-        limitations: resultList(t, result.limitations),
-        nextSteps: [...result.nextSteps],
+        summary: text.summary,
+        limitations: text.limitations,
+        nextSteps: text.nextSteps,
         experimental: result.experimental,
     };
 }
