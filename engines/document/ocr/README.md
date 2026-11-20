@@ -1,6 +1,6 @@
 # Document OCR engine
 
-Optical character recognition with per-page text. The engine validates the document id and language and returns text. The scaffold returns empty text; Tesseract is the intended backend.
+Optical character recognition surface. The engine validates the document id and accepts document bytes or a path, but returns an explicit `unavailable` status and empty text because no OCR engine is configured. Tesseract is the intended backend.
 
 ## Intended use
 
@@ -16,8 +16,8 @@ Optical character recognition with per-page text. The engine validates the docum
 
 | Item            | Value                                                   |
 | --------------- | ------------------------------------------------------- |
-| Request         | `OcrRequest { document_id: str, language: str = "en" }` |
-| Response        | `OcrResult { document_id, text: str }`                  |
+| Request         | `OcrRequest { document_id, language = "en", document_base64?, document_path? }` |
+| Response        | `OcrResult { document_id, text: str, status, reason, limitations }` |
 | Validation      | `document_id` must be non-empty                         |
 | Complexity      | O(p) in pixels per page                                 |
 | Streaming       | Per page                                                |
@@ -34,6 +34,6 @@ Tesseract is the intended backend. Language data must be licensed and documented
 
 ## Limitations
 
-- The scaffold does not recognize text.
+- No text is recognized; empty output means unavailable, not a blank document.
 - Accuracy varies with scan quality, layout, and language.
 - OCR errors propagate to extraction and redaction.
