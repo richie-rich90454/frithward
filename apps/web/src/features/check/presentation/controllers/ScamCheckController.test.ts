@@ -1,9 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type {
-    QrInspectionResult,
-    ScamReport,
-    UrlInspectionResult,
-} from "@frithward/security-core";
+import type { QrInspectionResult, ScamReport, UrlInspectionResult } from "@frithward/security-core";
 import { ScamCheckController } from "./ScamCheckController";
 
 const urlResult: UrlInspectionResult = {
