@@ -252,14 +252,17 @@ class TiffReader {
                 entry.valueCount === 3
             ) {
                 const block = this.dataOffset(entry.valueOffset, 24);
+                if (block === null) continue;
                 const components: number[] = [];
-                for (let index = 0; index < 3 && block !== null; index++) {
+                for (let index = 0; index < 3; index++) {
                     const component = this.numberAt(block + index * 8, 5);
                     if (component === null) break;
                     components.push(component);
                 }
-                if (components.length !== 3) continue;
-                const decimal = components[0]! + components[1]! / 60 + components[2]! / 3600;
+                const [degrees, minutes, seconds] = components;
+                if (degrees === undefined || minutes === undefined || seconds === undefined)
+                    continue;
+                const decimal = degrees + minutes / 60 + seconds / 3600;
                 const ref = entry.tag === 0x0002 ? refs[0x0001] : refs[0x0003];
                 const sign = ref === "S" || ref === "W" ? -1 : 1;
                 const key = entry.tag === 0x0002 ? "GPSLatitude" : "GPSLongitude";
