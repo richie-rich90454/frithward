@@ -1,0 +1,46 @@
+@media (max-width: 640px) {
+    .charts-workshop {
+        display: flex;
+        flex-direction: column;
+        gap: var(--fw-space-3);
+    }
+
+    .charts-workshop label {
+        display: flex;
+        flex-direction: column;
+        gap: var(--fw-space-1);
+        width: 100%;
+    }
+
+    .charts-workshop input,
+    .charts-workshop textarea,
+    .charts-workshop button {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-height: 44px;
+    }
+
+    .charts-workshop textarea {
+        resize: vertical;
+        white-space: pre;
+        overflow-x: auto;
+    }
+
+    .charts-workshop__actions {
+        display: flex;
+        flex-direction: column;
+        gap: var(--fw-space-2);
+    }
+
+    .charts-workshop .chart-container,
+    .charts-workshop canvas {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    .charts-workshop__status {
+        color: var(--fw-color-success);
+    }
+}
