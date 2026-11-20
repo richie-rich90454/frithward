@@ -1,6 +1,7 @@
 import { ChartDataPolicy } from "../domain/ChartDataPolicy";
 import type { ChartDataset } from "../domain/ChartDataPolicy";
 import { english, type Translator } from "../../../i18n/translate.js";
+import { translatedError } from "../../../i18n/errors.js";
 
 export interface ChartViewState {
     dataset: ChartDataset | null;
@@ -68,8 +69,7 @@ export class ChartDataController {
         } catch (cause) {
             this.state = {
                 dataset: null,
-                error:
-                    cause instanceof Error ? cause.message : this.translate("charts.error.invalid"),
+                error: translatedError(cause, this.translate, "charts.error.invalid"),
             };
         }
         this.notify();
