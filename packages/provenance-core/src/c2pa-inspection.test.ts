@@ -93,6 +93,89 @@ describe("C2paInspectionUseCase", () => {
         });
         expect(result.limitations.length).toBeGreaterThan(0);
     });
+
+    it("parses c2pa.actions assertions into transformation steps", async () => {
+        const manifest = {
+            signature: { issuer: "A", alg: "ES256" },
+            assertions: [
+                {
+                    label: "c2pa.actions",
+                    data: {
+                        actions: [
+                            {
+                                action: "c2pa.created",
+                                when: "2026-01-01T00:00:00Z",
+                                actors: [{ name: "Camera App" }],
+                                parameters: { assetHashAfter: "hash-1" },
+                                description: "Original capture",
+                            },
+                            {
+                                action: "c2pa.edited",
+                                timestamp: "2026-01-02T00:00:00Z",
+                                actor: "Editor",
+                                assetHashBefore: "hash-1",
+                                assetHashAfter: "hash-2",
+                                detail: "Cropped",
+                            },
+                        ],
+                    },
+                },
+            ],
+        };
+        const result = await useCase.execute({ manifest });
+        expect(result.transformations).toEqual([
+            {
+                action: "c2pa.created",
+                actor: "Camera App",
+                timestamp: "2026-01-01T00:00:00Z",
+                assetHashBefore: null,
+                assetHashAfter: "hash-1",
+                detail: "Original capture",
+            },
+            {
+                action: "c2pa.edited",
+                actor: "Editor",
+                timestamp: "2026-01-02T00:00:00Z",
+                assetHashBefore: "hash-1",
+                assetHashAfter: "hash-2",
+                detail: "Cropped",
+            },
+        ]);
+        expect(result.limitations.some((item) => item.includes("no transformation history"))).toBe(
+            false,
+        );
+    });
+
+    it("returns an empty history with a limitation when c2pa.actions is absent", async () => {
+        const result = await useCase.execute({
+            manifest: { signature: { issuer: "A", alg: "ES256" } },
+        });
+        expect(result.transformations).toEqual([]);
+        expect(result.limitations).toContain(
+            "No c2pa.actions assertion was available; no transformation history could be parsed.",
+        );
+    });
+
+    it("persists parsed transformations on the record", async () => {
+        const repository = new InMemoryProvenanceRecordRepository();
+        const useCase = new C2paInspectionUseCase(repository);
+        await useCase.execute({
+            manifest: {
+                signature: { issuer: "A", alg: "ES256" },
+                assertions: [
+                    { label: "c2pa.hash.data", data: { hash: "deadbeef" } },
+                    {
+                        label: "c2pa.actions",
+                        data: { actions: [{ action: "c2pa.created" }] },
+                    },
+                ],
+            },
+            id: "record-t",
+        });
+        const stored = await repository.load("record-t");
+        expect(stored?.transformations).toHaveLength(1);
+        expect(stored?.transformations[0]?.action).toBe("c2pa.created");
+    });
 });
 
 describe("VerifyProvenanceUseCase", () => {
@@ -105,7 +188,37 @@ describe("VerifyProvenanceUseCase", () => {
                 signer: "A",
                 assetSha256: "h",
                 manifest: null,
+                transformations: [],
             }),
         ).toContain("unverified");
+    });
+
+    it("summarizes recorded and missing transformation history", () => {
+        const useCase = new VerifyProvenanceUseCase();
+        const base = {
+            id: "r",
+            signatureStatus: "valid" as const,
+            signer: "A",
+            assetSha256: "h",
+            manifest: null,
+        };
+        expect(useCase.describe({ ...base, transformations: [] })).toContain(
+            "No transformation history available.",
+        );
+        expect(
+            useCase.describe({
+                ...base,
+                transformations: [
+                    {
+                        action: "c2pa.created",
+                        actor: null,
+                        timestamp: null,
+                        assetHashBefore: null,
+                        assetHashAfter: null,
+                        detail: null,
+                    },
+                ],
+            }),
+        ).toContain("1 transformation(s) recorded.");
     });
 });
