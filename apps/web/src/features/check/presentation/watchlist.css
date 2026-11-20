@@ -1,0 +1,36 @@
+.fw-watchlist ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.fw-watchlist li {
+    border: 1px solid var(--fw-border);
+    border-radius: var(--fw-radius);
+    padding: 12px 16px;
+}
+
+.fw-watchlist li p {
+    margin: 6px 0 0;
+}
+
+.fw-watchlist-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.fw-watchlist button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--fw-border-strong);
+    border-radius: var(--fw-radius);
+    background: var(--fw-canvas);
+    color: var(--fw-text);
+    font: inherit;
+    cursor: pointer;
+}
