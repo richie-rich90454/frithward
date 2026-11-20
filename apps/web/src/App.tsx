@@ -28,6 +28,7 @@ import { ChartsPage } from "./features/charts/presentation/ChartsView";
 import { RuntimePage } from "./features/runtime/presentation/pages/RuntimeView";
 import { ModelManagerPage } from "./features/models/presentation/pages/ModelManagerView";
 import { LanguageSwitcher, useI18n } from "./i18n/index.js";
+import { ThemeToggle } from "./theme/ThemeProvider.js";
 
 const NAVIGATION = [
     { path: "/", labelKey: "nav.home", icon: Home },
@@ -73,6 +74,7 @@ function Shell() {
                     <p>{t("tagline")}</p>
                 </div>
                 <LanguageSwitcher />
+                <ThemeToggle />
                 <nav aria-label={t("nav.primary")}>
                     <For each={NAVIGATION}>
                         {(item) => (
