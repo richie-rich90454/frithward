@@ -889,7 +889,8 @@ export const fr: Record<string, string> = {
     "result.GUIDED_REVIEW_PLAIN": "{findings}",
     "result.GUIDED_REVIEW_NO_FINDINGS":
         "Nous n'avons pas trouvé de signaux d'alerte évidents, mais cela ne signifie pas que le message est sûr.",
-    "result.GUIDED_REVIEW_ACTION": "Lisez chaque point lentement. Vous pouvez demander à quelqu'un de le lire avec vous.",
+    "result.GUIDED_REVIEW_ACTION":
+        "Lisez chaque point lentement. Vous pouvez demander à quelqu'un de le lire avec vous.",
     "result.GUIDED_CHECK_TITLE": "Vérifiez avec une personne de confiance",
     "result.GUIDED_CHECK_PLAIN":
         "Appelez un membre de votre famille ou un ami avec un numéro que vous connaissez déjà. N'utilisez pas un numéro figurant dans le message.",
@@ -897,7 +898,8 @@ export const fr: Record<string, string> = {
     "result.GUIDED_PROTECT_TITLE": "Protégez vos comptes",
     "result.GUIDED_PROTECT_PLAIN":
         "Si vous avez saisi un mot de passe ou un code, modifiez-le maintenant sur le site ou l'application officiels. N'utilisez pas les liens du message.",
-    "result.GUIDED_PROTECT_ACTION": "Modifiez vos mots de passe et activez la sécurité supplémentaire si elle est proposée.",
+    "result.GUIDED_PROTECT_ACTION":
+        "Modifiez vos mots de passe et activez la sécurité supplémentaire si elle est proposée.",
     "result.GUIDED_REPORT_TITLE": "Signalez-le",
     "result.GUIDED_REPORT_PLAIN": "Conservez le message et signalez-le.{reportLine}",
     "result.GUIDED_REPORT_ACTION": "Conservez le message et toutes les captures d'écran.",
@@ -911,30 +913,39 @@ export const fr: Record<string, string> = {
         "La protection n'est pas disponible pour ce fichier. Cela ne prouve pas que le contenu est sûr à publier.",
     "result.PROTECTION_LIMIT_EXPERIMENTAL":
         "La protection est expérimentale et ne garantit pas la prévention des abus.",
-    "result.PROTECTION_NEXT_KEEP_ARTIFACTS": "Conservez ensemble l'original et les fichiers protégés.",
-    "result.PROTECTION_NEXT_REEVALUATE": "Réévaluez la protection après toute mise à jour du modèle ou de la politique.",
+    "result.PROTECTION_NEXT_KEEP_ARTIFACTS":
+        "Conservez ensemble l'original et les fichiers protégés.",
+    "result.PROTECTION_NEXT_REEVALUATE":
+        "Réévaluez la protection après toute mise à jour du modèle ou de la politique.",
     "result.DETECTION_SUMMARY_SIGNALS":
         "{n} signal(aux) observé(s) à examiner. Cela ne démontre pas l'authenticité et n'identifie personne.",
     "result.DETECTION_SUMMARY_NONE":
         "Aucun signal de manipulation observé. L'absence de signaux ne démontre pas l'authenticité.",
     "result.DETECTION_NEXT_REVIEW_AUDIO":
         "Examinez les segments audio signalés avec l'enregistrement original.",
-    "result.DETECTION_NEXT_PROVENANCE_AUDIO": "Comparez l'enregistrement aux dossiers de provenance disponibles.",
+    "result.DETECTION_NEXT_PROVENANCE_AUDIO":
+        "Comparez l'enregistrement aux dossiers de provenance disponibles.",
     "result.DETECTION_NEXT_REVIEW_IMAGE": "Examinez les régions signalées avec l'image originale.",
-    "result.DETECTION_NEXT_PROVENANCE_IMAGE": "Comparez l'image aux dossiers de provenance disponibles.",
+    "result.DETECTION_NEXT_PROVENANCE_IMAGE":
+        "Comparez l'image aux dossiers de provenance disponibles.",
     "result.DETECTION_NEXT_REVIEW_VIDEO": "Examinez les images signalées avec la vidéo originale.",
-    "result.DETECTION_NEXT_PROVENANCE_VIDEO": "Comparez la vidéo aux dossiers de provenance disponibles.",
-    "result.DETECTION_NEXT_REVIEW_MULTIMODAL": "Examinez ensemble les segments audio et vidéo signalés.",
-    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL": "Comparez le contenu aux dossiers de provenance disponibles.",
+    "result.DETECTION_NEXT_PROVENANCE_VIDEO":
+        "Comparez la vidéo aux dossiers de provenance disponibles.",
+    "result.DETECTION_NEXT_REVIEW_MULTIMODAL":
+        "Examinez ensemble les segments audio et vidéo signalés.",
+    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL":
+        "Comparez le contenu aux dossiers de provenance disponibles.",
     "result.ANALYSIS_LIMIT_EVIDENCE":
         "Les résultats de détection sont un élément à examiner, et non une preuve d'authenticité.",
     "result.ANALYSIS_LIMIT_MODEL_VARIATION":
         "Les performances du modèle varient selon les jeux de données, les langues et les conditions d'enregistrement.",
-    "result.ANALYSIS_LIMIT_HUMAN_REVIEW": "Les décisions importantes nécessitent un examen humain indépendant.",
+    "result.ANALYSIS_LIMIT_HUMAN_REVIEW":
+        "Les décisions importantes nécessitent un examen humain indépendant.",
     "result.ANALYSIS_LIMIT_AUDIO":
         "Les scores d'un seul modèle audio ne démontrent ni synthèse ni conversion de voix.",
     "result.ANALYSIS_LIMIT_IMAGE": "Les scores par image ne démontrent pas une manipulation.",
-    "result.ANALYSIS_LIMIT_VIDEO": "L'échantillonnage d'images peut manquer de brèves manipulations.",
+    "result.ANALYSIS_LIMIT_VIDEO":
+        "L'échantillonnage d'images peut manquer de brèves manipulations.",
     "result.ANALYSIS_LIMIT_MULTIMODAL":
         "Les signaux de synchronisation audio-vidéo sont sensibles à la langue et à la qualité de l'enregistrement.",
     "error.URL_REQUIRED": "Une URL est requise.",
