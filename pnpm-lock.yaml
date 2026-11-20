@@ -333,6 +333,9 @@ importers:
       '@zip.js/zip.js':
         specifier: ^2.25.0
         version: 2.25.0
+      browser-whisper:
+        specifier: ^2.0.0
+        version: 2.0.0(@types/node@26.6.6)
       comlink:
         specifier: ^4.4.2
         version: 4.4.2
@@ -3727,6 +3730,10 @@ packages:
 
   brace-expansion@2.1.7:
     resolution: {integrity: sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==}
+
+  browser-whisper@2.0.0:
+    resolution: {integrity: sha512-wl2zyvOJe+uHw4aJYO59a9ti0phL4w5QFvpNCbhFXVsngMrKNNumabJf/piNDefaC3XiOuqXTE1ErhVSY/pi1w==}
+    engines: {node: '>=18'}
 
   browserslist@4.29.5:
     resolution: {integrity: sha512-khTmKu5NGYTotqcYo8Bew2k4RAE9PuXRSFRXG2lQBrCEQHyeQ/vX6gKMxfokwywBsLiXZMnHsmWMG1pnO8J7uQ==}
@@ -9249,6 +9256,13 @@ snapshots:
   brace-expansion@2.1.7:
     dependencies:
       balanced-match: 1.0.2
+
+  browser-whisper@2.0.0(@types/node@26.6.6):
+    dependencies:
+      '@huggingface/transformers': 4.3.2(@types/node@26.6.6)
+      mediabunny: 1.66.1
+    transitivePeerDependencies:
+      - '@types/node'
 
   browserslist@4.29.5:
     dependencies:
