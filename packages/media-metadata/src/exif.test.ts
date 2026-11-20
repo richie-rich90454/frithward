@@ -42,8 +42,7 @@ class TiffWriter {
             void index;
         }
         this.bytes.push(...this.u32(0));
-        for (let index = 0; index < entries.length; index++) {
-            const entry = entries[index]!;
+        for (const [index, entry] of entries.entries()) {
             const position = entryStart + index * 12;
             this.bytes.splice(position, 2, ...this.u16(entry.tag));
             this.bytes.splice(position + 2, 2, ...this.u16(entry.type));
