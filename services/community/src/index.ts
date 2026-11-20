@@ -2,19 +2,20 @@ import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { CommunityRoutes } from "./presentation/CommunityRoutes.js";
 import { SubmitReportUseCase } from "./application/SubmitReportUseCase.js";
-import { InMemoryReportRepository } from "./infrastructure/InMemoryReportRepository.js";
+import { createReportRepository } from "./infrastructure/DatabaseReportRepository.js";
 import { RedactPrivacyUseCase } from "@frithward/privacy-core";
 import { errorHandler } from "./presentation/errorHandler.js";
 
-const repository = new InMemoryReportRepository();
+// DATABASE_URL opts into persistent storage; without it this service stays local-first.
+const reports = createReportRepository(process.env.DATABASE_URL);
 
 const app = new Hono();
 app.onError(errorHandler);
 app.route(
     "/",
     new CommunityRoutes(
-        new SubmitReportUseCase(new RedactPrivacyUseCase(), repository),
-        repository,
+        new SubmitReportUseCase(new RedactPrivacyUseCase(), reports.repository),
+        reports.repository,
     ),
 );
 
@@ -45,9 +46,13 @@ const shutdown = () => {
     if (closing) return;
     closing = true;
     const forceExit = setTimeout(() => process.exit(1), 10_000);
-    server.close(() => {
-        clearTimeout(forceExit);
-        process.exit(0);
+    server.close(async () => {
+        try {
+            await reports.close();
+        } finally {
+            clearTimeout(forceExit);
+            process.exit(0);
+        }
     });
 };
 process.once("SIGTERM", shutdown);
