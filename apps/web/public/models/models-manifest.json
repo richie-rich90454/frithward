@@ -1,0 +1,9 @@
+{
+    "filename": "whisper-tiny.bin",
+    "url": "/models/whisper-tiny.bin",
+    "format": "whisper.cpp ggml binary (tiny, multilingual)",
+    "sha256": null,
+    "sha256Note": "Set to the sha256 of the model you install; null until a file is verified.",
+    "distributed": false,
+    "note": "Model weights are NOT bundled or downloaded. Install the file at apps/web/public/models/whisper-tiny.bin and rebuild, or supply a model URL in the UI."
+}
