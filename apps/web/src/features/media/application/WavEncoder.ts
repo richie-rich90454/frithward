@@ -39,11 +39,7 @@ export function encodeWav(channels: readonly Float32Array[], sampleRate: number)
         for (let channel = 0; channel < numChannels; channel += 1) {
             const value = channels[channel]?.[frame] ?? 0;
             const clamped = Math.max(-1, Math.min(1, value));
-            view.setInt16(
-                offset,
-                clamped < 0 ? clamped * 0x8000 : clamped * 0x7fff,
-                true,
-            );
+            view.setInt16(offset, clamped < 0 ? clamped * 0x8000 : clamped * 0x7fff, true);
             offset += bytesPerSample;
         }
     }
