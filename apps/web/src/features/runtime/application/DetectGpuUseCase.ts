@@ -1,3 +1,4 @@
+import { CodedError, ERROR_CODES } from "@frithward/contracts";
 import type { GpuDetectionPort, GpuReport } from "../ports/GpuDetectionPort";
 
 const STANDARD_LIMITATION =
@@ -7,7 +8,8 @@ export class DetectGpuUseCase {
     public constructor(private readonly detector: GpuDetectionPort) {}
 
     public async execute(signal: AbortSignal): Promise<GpuReport> {
-        if (signal.aborted) throw new Error("GPU detection was aborted.");
+        if (signal.aborted)
+            throw new CodedError(ERROR_CODES.GPU_DETECTION_ABORTED, "GPU detection was aborted.");
         const report = await this.detector.detect(signal);
         const limitations = report.limitations.includes(STANDARD_LIMITATION)
             ? report.limitations
