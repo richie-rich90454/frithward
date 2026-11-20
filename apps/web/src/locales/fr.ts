@@ -57,7 +57,8 @@ export const fr: Record<string, string> = {
     "protect.addField": "Ajouter un autre champ",
     "protect.inspectMetadata": "Inspecter les métadonnées",
     "protect.planExport": "Planifier un export assaini",
-    "protect.planNote": "Ceci est un plan seulement. Aucun fichier n'est réécrit ni téléchargé ici.",
+    "protect.planNote":
+        "Ceci est un plan seulement. Aucun fichier n'est réécrit ni téléchargé ici.",
     "learn.title": "Apprendre",
     "learn.intro":
         "Quatre courtes leçons pour vérifier l'information et rester en sécurité. Chaque leçon se termine par un exemple fictif ; le quiz qui suit vérifie ce que vous avez retenu.",
@@ -100,7 +101,8 @@ export const fr: Record<string, string> = {
     "learn.quiz.q-sources.prompt":
         "Vous voyez une photo spectaculaire dans un groupe, sans date ni lieu. Quelle est la première étape la plus utile ?",
     "learn.quiz.q-sources.option.0": "La partager pour que les autres préviennent leurs amis",
-    "learn.quiz.q-sources.option.1": "Chercher la publication la plus ancienne et vérifier une source indépendante",
+    "learn.quiz.q-sources.option.1":
+        "Chercher la publication la plus ancienne et vérifier une source indépendante",
     "learn.quiz.q-sources.option.2": "Supposer qu'elle est fausse parce qu'elle n'a pas de légende",
     "learn.quiz.q-sources.explanation":
         "Trouver la publication la plus ancienne et une source indépendante vous donne du contexte. Partager d'abord propage des affirmations non vérifiées, et supposer que c'est faux est tout aussi peu fondé.",
@@ -120,9 +122,12 @@ export const fr: Record<string, string> = {
         "Le texte identifiable et les plaques peuvent exposer des personnes. Recadrez-les ou floutez-les ; un fond uni contient beaucoup moins d'informations.",
     "learn.quiz.q-synthetic.prompt":
         "Un détecteur qualifie une vidéo de « probablement synthétique ». Quelle est la conclusion honnête ?",
-    "learn.quiz.q-synthetic.option.0": "C'est définitivement faux et vous devriez accuser la source",
-    "learn.quiz.q-synthetic.option.1": "C'est un indice ; sans corroboration, vous ne pouvez pas savoir",
-    "learn.quiz.q-synthetic.option.2": "C'est forcément vrai car les détecteurs se trompent souvent",
+    "learn.quiz.q-synthetic.option.0":
+        "C'est définitivement faux et vous devriez accuser la source",
+    "learn.quiz.q-synthetic.option.1":
+        "C'est un indice ; sans corroboration, vous ne pouvez pas savoir",
+    "learn.quiz.q-synthetic.option.2":
+        "C'est forcément vrai car les détecteurs se trompent souvent",
     "learn.quiz.q-synthetic.explanation":
         "Les détecteurs peuvent se tromper dans les deux sens. Sans corroboration indépendante, la position honnête est l'incertitude.",
     "learn.quiz.title": "Vérification des connaissances",
