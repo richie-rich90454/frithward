@@ -4,7 +4,9 @@ import { encodeWav } from "../../application/WavEncoder.js";
 import { WebCodecsTranscoder } from "../../../runtime/infrastructure/WebCodecsTranscoder.js";
 import type { TranscoderPort } from "../../../runtime/ports/TranscoderPort.js";
 import { LocalStorageCaptionRepository } from "../../../captions/infrastructure/LocalStorageCaptionRepository.js";
+import { CodedError, ERROR_CODES } from "@frithward/contracts";
 import { english, interpolate, type Translator } from "../../../../i18n/translate.js";
+import { translatedError } from "../../../../i18n/errors.js";
 
 export interface MediaArtifact {
     blob: Blob;
@@ -29,7 +31,10 @@ export type AudioDecodeFn = (bytes: ArrayBuffer) => Promise<DecodedAudio>;
 
 const defaultDecodeAudio: AudioDecodeFn = async (bytes) => {
     if (typeof AudioContext === "undefined")
-        throw new Error("Audio decoding (AudioContext) is not available in this browser.");
+        throw new CodedError(
+            ERROR_CODES.AUDIO_DECODE_UNAVAILABLE,
+            "Audio decoding (AudioContext) is not available in this browser.",
+        );
     const context = new AudioContext();
     try {
         const buffer = await context.decodeAudioData(bytes);
@@ -186,8 +191,7 @@ export class MediaWorkshopController {
             );
             this.error = null;
         } catch (cause) {
-            this.error =
-                cause instanceof Error ? cause.message : this.translate("media.error.addSegment");
+            this.error = translatedError(cause, this.translate, "media.error.addSegment");
         }
         this.notify();
     }
@@ -198,8 +202,7 @@ export class MediaWorkshopController {
             this.selectedSegmentId = segmentId;
             this.error = null;
         } catch (cause) {
-            this.error =
-                cause instanceof Error ? cause.message : this.translate("media.error.notFound");
+            this.error = translatedError(cause, this.translate, "media.error.notFound");
         }
         this.notify();
     }
@@ -214,8 +217,7 @@ export class MediaWorkshopController {
             this.selectedSegmentId = input.segmentId;
             this.error = null;
         } catch (cause) {
-            this.error =
-                cause instanceof Error ? cause.message : this.translate("media.error.edit");
+            this.error = translatedError(cause, this.translate, "media.error.edit");
         }
         this.notify();
     }
@@ -264,8 +266,7 @@ export class MediaWorkshopController {
             });
             this.error = null;
         } catch (cause) {
-            this.error =
-                cause instanceof Error ? cause.message : this.translate("media.error.transcode");
+            this.error = translatedError(cause, this.translate, "media.error.transcode");
             this.transcodeStatus = null;
         }
         this.notify();
@@ -294,8 +295,7 @@ export class MediaWorkshopController {
             this.redactionStatus = this.translate("media.status.redacted");
             this.error = null;
         } catch (cause) {
-            this.error =
-                cause instanceof Error ? cause.message : this.translate("media.error.redact");
+            this.error = translatedError(cause, this.translate, "media.error.redact");
             this.redactionStatus = null;
         }
         this.notify();
