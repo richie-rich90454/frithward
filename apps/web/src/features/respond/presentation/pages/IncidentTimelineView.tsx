@@ -246,13 +246,8 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                     {t("respond.export")}
                 </button>
             </Show>
-            <Show when={props.evidence.length > 0}>
-                <ReportButtons
-                    caseData={caseFromEvidence(
-                        props.evidence[props.evidence.length - 1]!,
-                        props.history,
-                    )}
-                />
+            <Show when={props.evidence.at(-1)}>
+                {(item) => <ReportButtons caseData={caseFromEvidence(item(), props.history)} />}
             </Show>
 
             <h2>{t("respond.importTitle")}</h2>
