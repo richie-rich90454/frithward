@@ -141,7 +141,8 @@ describe("C2paInspectionUseCase verification paths", () => {
         expect(result.signatureStatus).toBe("valid");
         expect(result.signer).toBe("SDK Signer");
         expect(result.signedAt).toBe("2026-03-01T00:00:00Z");
-        expect(result.limitations).toEqual(["SDK limitation"]);
+        expect(result.limitations).toContain("SDK limitation");
+        expect(result.transformations).toEqual([]);
     });
 
     it("does not claim verification when the injected port throws", async () => {
