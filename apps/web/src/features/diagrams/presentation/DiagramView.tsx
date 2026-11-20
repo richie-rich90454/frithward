@@ -3,6 +3,7 @@ import { CodeHighlighter } from "../application/CodeHighlighter";
 import { DiagramRenderer } from "../application/DiagramRenderer";
 import { DiagramDraftStore } from "../infrastructure/DiagramDraftStore";
 import { useThemeVersion } from "./useThemeVersion";
+import { useI18n } from "../../../i18n/index.js";
 import "./diagrams.css";
 
 interface DiagramViewProps {
@@ -20,6 +21,7 @@ const EXAMPLE =
     "flowchart TD\n  A[Start] --> B{Valid?}\n  B -->|yes| C[Continue]\n  B -->|no| D[Stop]";
 
 export function DiagramView(props: DiagramViewProps) {
+    const { t } = useI18n();
     const highlighter = new CodeHighlighter();
     const [highlighted, setHighlighted] = createSignal<string | null>(null);
     createEffect(() => {
@@ -40,14 +42,14 @@ export function DiagramView(props: DiagramViewProps) {
 
     return (
         <section class="diagram-workshop">
-            <h1>Diagrams</h1>
+            <h1>{t("diagrams.title")}</h1>
             <Show when={props.draftSaved}>
                 <p class="diagram-workshop__status" role="status" aria-live="polite">
-                    Draft saved
+                    {t("draft.saved")}
                 </p>
             </Show>
             <label>
-                Mermaid source
+                {t("diagrams.mermaidSource")}
                 <textarea
                     rows={8}
                     value={props.source}
@@ -60,10 +62,10 @@ export function DiagramView(props: DiagramViewProps) {
             </Show>
             <div class="diagram-workshop__actions">
                 <button type="button" disabled={props.busy} onClick={props.onRender}>
-                    Render
+                    {t("diagrams.render")}
                 </button>
                 <button type="button" disabled={props.busy} onClick={props.onClear}>
-                    Clear
+                    {t("action.clear")}
                 </button>
             </div>
             <Show when={props.error}>
@@ -72,7 +74,10 @@ export function DiagramView(props: DiagramViewProps) {
             <Show when={props.svg}>
                 {(svg) => (
                     <img
-                        alt={`Mermaid diagram: ${props.source.trim().replace(/\s+/g, " ").slice(0, 80)}${props.source.trim().length > 80 ? "..." : ""}`}
+                        alt={t("diagrams.diagramAlt").replace(
+                            "{source}",
+                            `${props.source.trim().replace(/\s+/g, " ").slice(0, 80)}${props.source.trim().length > 80 ? "..." : ""}`,
+                        )}
                         src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg())}`}
                     />
                 )}
@@ -82,6 +87,7 @@ export function DiagramView(props: DiagramViewProps) {
 }
 
 export function DiagramPage() {
+    const { t } = useI18n();
     const renderer = new DiagramRenderer();
     const store = new DiagramDraftStore();
     const themeVersion = useThemeVersion();
@@ -120,7 +126,7 @@ export function DiagramPage() {
         } catch (cause) {
             if (!disposed) {
                 setSvg(null);
-                setError(cause instanceof Error ? cause.message : "Could not render the diagram.");
+                setError(cause instanceof Error ? cause.message : t("diagrams.error.render"));
             }
         } finally {
             if (!disposed) setBusy(false);
