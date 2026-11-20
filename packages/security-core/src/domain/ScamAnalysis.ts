@@ -1,10 +1,12 @@
-import { ScamIndicator } from "@frithward/contracts";
+import { RESULT_CODES, resultCodeForText, ScamIndicator } from "@frithward/contracts";
 
 export class ScamAnalysis {
     public readonly indicators: readonly ScamIndicator[];
     public readonly summary: string;
     public readonly nextSteps: readonly string[];
     public readonly limitations: readonly string[];
+    public readonly summaryCode: string;
+    public readonly limitationCodes: readonly (string | undefined)[];
 
     public constructor(indicators: readonly ScamIndicator[]) {
         this.indicators = indicators;
@@ -20,5 +22,7 @@ export class ScamAnalysis {
             "Text patterns alone cannot prove intent.",
             "Related URLs, images, and callers were not checked.",
         ];
+        this.summaryCode = resultCodeForText(this.summary) ?? RESULT_CODES.SCAM_SUMMARY_FOUND;
+        this.limitationCodes = this.limitations.map(resultCodeForText);
     }
 }
