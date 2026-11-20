@@ -3,6 +3,7 @@ import { Clapperboard } from "lucide-solid";
 import { MediaWorkshopController } from "../controllers/MediaWorkshopController";
 import type { MediaWorkshopSegment } from "../controllers/MediaWorkshopController";
 import { paintWaveform } from "../painters/WaveformPainter";
+import { useI18n } from "../../../../i18n/index.js";
 
 interface MediaWorkshopViewProps {
     segments: readonly MediaWorkshopSegment[];
@@ -30,6 +31,7 @@ interface MediaWorkshopViewProps {
 }
 
 export function MediaWorkshopView(props: MediaWorkshopViewProps) {
+    const { t } = useI18n();
     const [startMs, setStartMs] = createSignal("");
     const [endMs, setEndMs] = createSignal("");
     const [text, setText] = createSignal("");
@@ -49,7 +51,7 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
         <section>
             <h1>
                 <Clapperboard class="fw-icon" />
-                Media workshop
+                {t("media.title")}
             </h1>
             <form
                 onSubmit={(event) => {
@@ -60,7 +62,7 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
                 }}
             >
                 <label>
-                    Audio file (decode and transcode)
+                    {t("media.audioLabel")}
                     <input
                         type="file"
                         accept="audio/*"
@@ -71,7 +73,7 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
                     />
                 </label>
                 <label>
-                    Image file
+                    {t("media.imageLabel")}
                     <input
                         type="file"
                         accept="image/*"
@@ -79,29 +81,29 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
                     />
                 </label>
                 <label>
-                    Region x
+                    {t("media.regionX")}
                     <input value={x()} onInput={(event) => setX(event.currentTarget.value)} />
                 </label>
                 <label>
-                    Region y
+                    {t("media.regionY")}
                     <input value={y()} onInput={(event) => setY(event.currentTarget.value)} />
                 </label>
                 <label>
-                    Region width
+                    {t("media.regionWidth")}
                     <input
                         value={width()}
                         onInput={(event) => setWidth(event.currentTarget.value)}
                     />
                 </label>
                 <label>
-                    Region height
+                    {t("media.regionHeight")}
                     <input
                         value={height()}
                         onInput={(event) => setHeight(event.currentTarget.value)}
                     />
                 </label>
                 <button type="submit" disabled={!imageFile() || !width() || !height()}>
-                    Redact region
+                    {t("media.redactRegion")}
                 </button>
             </form>
             <Show when={props.transcodeStatus}>
@@ -111,7 +113,7 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
                 <p>{props.redactionStatus}</p>
             </Show>
             <Show when={props.previewUrl}>
-                {(url) => <img src={url()} alt="Redacted preview" />}
+                {(url) => <img src={url()} alt={t("media.redactedPreview")} />}
             </Show>
             <Show when={props.waveformData}>
                 <canvas
@@ -120,7 +122,7 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
                     width={512}
                     height={128}
                     role="img"
-                    aria-label="Audio waveform"
+                    aria-label={t("media.waveform")}
                 />
             </Show>
             <div>
@@ -129,21 +131,17 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
                     disabled={!props.canDownloadAudio}
                     onClick={props.onDownloadTranscodedAudio}
                 >
-                    Download transcoded audio
+                    {t("media.downloadAudio")}
                 </button>
                 <button
                     type="button"
                     disabled={!props.canDownloadImage}
                     onClick={props.onDownloadRedactedImage}
                 >
-                    Download redacted image
+                    {t("media.downloadImage")}
                 </button>
             </div>
-            <p>
-                Processing is local: audio uses AudioContext and WebCodecs (AAC), and redaction uses
-                createImageBitmap and Canvas 2D. Unsupported browsers report an error instead of a
-                fake result.
-            </p>
+            <p>{t("media.localNote")}</p>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -154,7 +152,7 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
                 }}
             >
                 <label>
-                    Start (ms)
+                    {t("time.startMs")}
                     <input
                         type="number"
                         value={startMs()}
@@ -162,7 +160,7 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
                     />
                 </label>
                 <label>
-                    End (ms)
+                    {t("time.endMs")}
                     <input
                         type="number"
                         value={endMs()}
@@ -170,10 +168,10 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
                     />
                 </label>
                 <label>
-                    Text
+                    {t("media.text")}
                     <input value={text()} onInput={(event) => setText(event.currentTarget.value)} />
                 </label>
-                <button type="submit">Add segment</button>
+                <button type="submit">{t("action.addSegment")}</button>
             </form>
             <ul>
                 <For each={props.segments}>
@@ -203,13 +201,13 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
                         }}
                     >
                         <label>
-                            Segment text
+                            {t("media.segmentText")}
                             <input
                                 value={draft()}
                                 onInput={(event) => setDraft(event.currentTarget.value)}
                             />
                         </label>
-                        <button type="submit">Save segment</button>
+                        <button type="submit">{t("media.saveSegment")}</button>
                     </form>
                 )}
             </Show>
@@ -221,7 +219,8 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
 }
 
 export function MediaWorkshopPage() {
-    const controller = new MediaWorkshopController();
+    const { t } = useI18n();
+    const controller = new MediaWorkshopController({ translate: t });
     const [segments, setSegments] = createSignal(controller.getSegments());
     const [selectedSegmentId, setSelectedSegmentId] = createSignal(
         controller.getSelectedSegmentId(),
