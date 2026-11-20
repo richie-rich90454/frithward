@@ -33,15 +33,16 @@ export function LearnView() {
             <p>{t("learn.intro")}</p>
 
             <p role="status">
-                Progress: {completedCount()} / {lessons.length} lessons complete
+                {t("learn.progress")} {completedCount()} / {lessons.length}{" "}
+                {t("learn.lessonsComplete")}
             </p>
             <Show when={hasIncomplete()}>
                 <button type="button" onClick={() => controller.continueLearning()}>
-                    Continue learning
+                    {t("learn.continue")}
                 </button>
             </Show>
             <button type="button" onClick={() => controller.resetProgress()}>
-                Reset progress
+                {t("learn.resetProgress")}
             </button>
 
             <For each={lessons}>
