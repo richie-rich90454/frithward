@@ -1,3 +1,5 @@
+import type { C2paVerificationPort, C2paVerificationResult } from "@frithward/provenance-core";
+
 export type SignatureStatus = "valid" | "invalid" | "unverified" | "missing";
 
 export interface AssertionInfo {
@@ -97,7 +99,10 @@ export class ProvenanceController {
     private result: ProvenanceResult | null = null;
     private error: string | null = null;
 
-    public constructor(private readonly extractor: EmbeddedManifestExtractor = BROWSER_EXTRACTOR) {}
+    public constructor(
+        private readonly extractor: EmbeddedManifestExtractor = BROWSER_EXTRACTOR,
+        private readonly verifier?: C2paVerificationPort,
+    ) {}
 
     public subscribe(listener: () => void): () => void {
         this.listeners.add(listener);
@@ -135,6 +140,11 @@ export class ProvenanceController {
             return;
         }
 
+        if (this.verifier) {
+            await this.verifyWithSdk(bytes, meta);
+            return;
+        }
+
         let extraction: EmbeddedManifestResult;
         try {
             extraction = await this.extractor.extract(bytes);
@@ -168,6 +178,59 @@ export class ProvenanceController {
         };
         this.error = null;
         this.notify();
+    }
+
+    private async verifyWithSdk(bytes: Uint8Array, meta: ManifestMeta): Promise<void> {
+        const verifier = this.verifier;
+        if (!verifier) return;
+
+        let verification: C2paVerificationResult;
+        try {
+            verification = await verifier.verify(bytes);
+        } catch (cause) {
+            const reason = cause instanceof Error ? cause.message : "Unknown SDK error.";
+            verification = {
+                signatureStatus: "unverified",
+                signer: null,
+                timestamp: null,
+                assertions: [],
+                validationFailures: [{ code: "sdk.error", message: reason }],
+                limitations: [
+                    `C2PA verification failed: ${reason}`,
+                    "No signature was verified; do not treat this file as having valid provenance.",
+                ],
+            };
+        }
+
+        this.result = {
+            ...meta,
+            signatureStatus: verification.signatureStatus,
+            signer: verification.signer,
+            timestamp: verification.timestamp,
+            assertions: verification.assertions.map((assertion) => ({
+                label: assertion.label,
+                present: assertion.present,
+            })),
+            limitations: [...verification.limitations],
+            summary: this.summarizeVerification(verification),
+        };
+        this.error = null;
+        this.notify();
+    }
+
+    private summarizeVerification(verification: C2paVerificationResult): string {
+        const signer = verification.signer ?? "unknown";
+        const failures = verification.validationFailures.length;
+        switch (verification.signatureStatus) {
+            case "valid":
+                return `Signature verified by the C2PA SDK; signer ${signer}; ${verification.assertions.length} assertion(s) present.`;
+            case "invalid":
+                return `The C2PA SDK reported ${failures} validation failure(s); evidence requires review.`;
+            case "unverified":
+                return `Signature was not verified by the C2PA SDK; signer ${signer}.`;
+            case "missing":
+                return "No embedded C2PA manifest was found in this file.";
+        }
     }
 
     private applyManifest(text: string, meta: ManifestMeta): void {
