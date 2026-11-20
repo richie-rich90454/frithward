@@ -1,6 +1,9 @@
-import { A } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import { For } from "solid-js";
+import type { Case } from "@frithward/contracts";
 import { useI18n } from "../../../../i18n/index.js";
+import { useCases } from "../../../../cases/CaseProvider.js";
+import { RecentCases } from "../../../../cases/RecentCases.js";
 import {
     BadgeCheck,
     Captions,
@@ -10,6 +13,28 @@ import {
     Lock,
     ScanSearch,
 } from "lucide-solid";
+import "../home.css";
+
+const TASKS = [
+    {
+        href: "/check",
+        title: "Check a message or link",
+        descKey: "home.check.desc",
+        icon: ScanSearch,
+    },
+    {
+        href: "/protect",
+        title: "Check a file before sharing",
+        descKey: "home.protect.desc",
+        icon: Lock,
+    },
+    {
+        href: "/respond",
+        title: "Track an incident",
+        descKey: "home.respond.desc",
+        icon: HeartHandshake,
+    },
+] as const;
 
 const SHORTCUTS = [
     {
@@ -50,8 +75,25 @@ const SHORTCUTS = [
     },
 ] as const;
 
+function routeForCase(kind: Case["kind"]): string {
+    switch (kind) {
+        case "message":
+        case "url":
+        case "qr":
+            return "/check";
+        case "file":
+            return "/protect";
+        case "provenance":
+            return "/verify";
+        case "evidence":
+            return "/respond";
+    }
+}
+
 export function HomeView() {
     const { t } = useI18n();
+    const { recent } = useCases();
+    const navigate = useNavigate();
     return (
         <section>
             <h1>
@@ -59,6 +101,31 @@ export function HomeView() {
                 {t("home.title")}
             </h1>
             <p>{t("home.intro")}</p>
+            <div class="home-start">
+                <h2>Start here</h2>
+                <ul class="home-start__grid">
+                    <For each={TASKS}>
+                        {(task) => (
+                            <li class="home-start__card">
+                                <A href={task.href}>
+                                    <task.icon class="fw-icon" />
+                                    <span>
+                                        <strong>{task.title}</strong>
+                                        <span class="home-start__desc">{t(task.descKey)}</span>
+                                    </span>
+                                </A>
+                            </li>
+                        )}
+                    </For>
+                </ul>
+            </div>
+            <div class="home-recent">
+                <h2>Recent cases</h2>
+                <RecentCases
+                    cases={recent()}
+                    onOpen={(record) => navigate(routeForCase(record.kind))}
+                />
+            </div>
             <ul class="shortcut-list">
                 <For each={SHORTCUTS}>
                     {(shortcut) => (
