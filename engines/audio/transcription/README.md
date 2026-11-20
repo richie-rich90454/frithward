@@ -1,6 +1,6 @@
 # Audio transcription engine
 
-Speech-to-text surface with a FastAPI HTTP layer. No speech model is configured, so the engine returns no utterances and an explicit `unavailable` status with a reason; the API exposes `POST /transcribe` and `GET /health`.
+Speech-to-text surface with a FastAPI HTTP layer. No speech model is configured, so the engine returns no utterances and an explicit `unavailable` status with a reason. Before reporting unavailable it performs a real PCM preflight (duration, RMS, peak) when bytes are supplied. The API exposes `POST /transcribe` and `GET /health`.
 
 ## Intended use
 
@@ -16,8 +16,8 @@ Speech-to-text surface with a FastAPI HTTP layer. No speech model is configured,
 
 | Item | Value |
 | --- | --- |
-| Request | `TranscriptionRequest { audio_id, language, audio_base64?, audio_path? }` |
-| Response | `transcribe() -> list[Utterance]` (empty); `transcribe_detailed() -> TranscriptionResult { audio_id, language, utterances, status, reason, limitations }` |
+| Request | `TranscriptionRequest { audio_id, language, audio_base64?, audio_path?, sample_rate = 16000, sample_width = 2 }` |
+| Response | `transcribe() -> list[Utterance]` (empty); `transcribe_detailed() -> TranscriptionResult { audio_id, language, utterances, preflight?, status, reason, limitations }` |
 | Supported languages | `en`, `zh`, `es`, `fr`, `de`, `ar`, `hi`, `ja` |
 | Validation | Non-empty audio id; language must be supported |
 | Complexity | O(n) in samples |
@@ -37,5 +37,6 @@ No fixed candidate. Use licensed, consented speech data and document language co
 ## Limitations
 
 - No speech is transcribed; an empty utterance list means unavailable, not silence.
+- Preflight measures signal properties only; it does not recognize speech. Assumes mono 8-bit unsigned or 16-bit signed PCM.
 - Accuracy varies by language, accent, noise, and domain.
 - Speaker labels are model output and require review.
