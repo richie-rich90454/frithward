@@ -1,3 +1,4 @@
+import { CodedError, ERROR_CODES } from "@frithward/contracts";
 import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
@@ -16,15 +17,19 @@ export class PdfRenderController {
         canvas: HTMLCanvasElement,
     ): Promise<PdfRenderResult> {
         if (arrayBuffer.byteLength === 0) {
-            throw new Error("The PDF is empty.");
+            throw new CodedError(ERROR_CODES.PDF_EMPTY, "The PDF is empty.");
         }
         const loadingTask = getDocument({ data: arrayBuffer });
         let pdf: PDFDocumentProxy;
         try {
             pdf = await loadingTask.promise;
         } catch (cause) {
-            throw new Error(
-                `Could not open PDF: ${cause instanceof Error ? cause.message : "unknown error"}`,
+            throw new CodedError(
+                ERROR_CODES.PDF_OPEN_FAILED,
+                `Could not open PDF: ${causeMessage(cause)}`,
+                {
+                    detail: causeMessage(cause),
+                },
             );
         }
         try {
@@ -39,11 +44,17 @@ export class PdfRenderController {
             await page.render({ canvas, viewport }).promise;
             return { pageCount: pdf.numPages };
         } catch (cause) {
-            throw new Error(
-                `Could not render PDF page: ${cause instanceof Error ? cause.message : "unknown error"}`,
+            throw new CodedError(
+                ERROR_CODES.PDF_RENDER_FAILED,
+                `Could not render PDF page: ${causeMessage(cause)}`,
+                { detail: causeMessage(cause) },
             );
         } finally {
             await loadingTask.destroy();
         }
     }
+}
+
+function causeMessage(cause: unknown): string {
+    return cause instanceof Error ? cause.message : "unknown error";
 }
