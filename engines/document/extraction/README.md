@@ -1,6 +1,6 @@
 # Document extraction engine
 
-Typed field extraction surface. The engine validates a document id, accepts text or document bytes/path, and returns an explicit `unavailable` status with an empty field map because no parser or model is configured.
+Deterministic regex field extraction from caller-supplied text (also accepts base64-encoded text or a UTF-8 text path). Emails, URLs, dates, postcodes and phone numbers are located with real offsets and heuristic confidence values. No learned extractor or model is configured.
 
 ## Intended use
 
@@ -17,7 +17,7 @@ Typed field extraction surface. The engine validates a document id, accepts text
 | Item | Value |
 | --- | --- |
 | Request | `ExtractionRequest { document_id, text?, document_base64?, document_path? }` |
-| Response | `ExtractionResult { document_id, fields: dict[str, str], status, reason, limitations }` |
+| Response | `ExtractionResult { document_id, fields: dict[str, str], occurrences: list[ExtractedField { name, value, start, end, confidence }], status, reason, method, limitations }` |
 | Validation | `document_id` must be non-empty |
 | Complexity | O(n) in text length |
 | Streaming | Per page |
@@ -35,5 +35,7 @@ No fixed candidate. Training data must be licensed and consented. See the datase
 ## Limitations
 
 - Output quality depends on OCR quality.
-- No fields are extracted; an empty map means unavailable, not that no fields exist.
+- An empty field map means no supported pattern matched the supplied text; it does not mean unavailable.
+- Only email, URL, date (ISO, slash, month-name), postcode (UK/US) and phone patterns are recognized; no other fields are invented.
+- Confidence values are fixed ranking heuristics, not calibrated probabilities; overlapping matches are suppressed in favour of the more specific type.
 - Extracted fields must be reviewed before use.
