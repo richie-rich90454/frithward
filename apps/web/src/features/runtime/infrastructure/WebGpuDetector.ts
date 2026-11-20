@@ -1,4 +1,4 @@
-import { CodedError, ERROR_CODES } from "@frithward/contracts";
+import { CodedError, ERROR_CODES, resultCodeForText } from "@frithward/contracts";
 import type { GpuDetectionPort, GpuReport } from "../ports/GpuDetectionPort";
 
 const BUFFER_USAGE_STORAGE = 0x0080;
@@ -21,17 +21,20 @@ function checkAbort(signal: AbortSignal): void {
 }
 
 function unavailable(message: string): GpuReport {
+    const limitations = [
+        "WebGPU is unavailable, so no GPU capability check could be performed.",
+        "Results from one browser and device do not generalise to other hardware.",
+    ];
     return {
         available: false,
         adapterName: null,
         vendor: null,
         architecture: null,
         computePassRan: false,
-        limitations: [
-            "WebGPU is unavailable, so no GPU capability check could be performed.",
-            "Results from one browser and device do not generalise to other hardware.",
-        ],
+        limitations,
         error: message,
+        errorCode: resultCodeForText(message),
+        limitationCodes: limitations.map(resultCodeForText),
     };
 }
 
@@ -115,6 +118,10 @@ export class WebGpuDetector implements GpuDetectionPort {
                 "The compute pass did not complete, so support is unconfirmed.",
             );
         }
-        return report;
+        return {
+            ...report,
+            errorCode: resultCodeForText(report.error ?? ""),
+            limitationCodes: report.limitations.map(resultCodeForText),
+        };
     }
 }
