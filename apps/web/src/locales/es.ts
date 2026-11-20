@@ -48,6 +48,16 @@ export const es: Record<string, string> = {
     "check.guidedBack": "Paso anterior",
     "check.guidedDone": "Marcar este paso como completado",
     "check.guidedComplete": "Ha completado todos los pasos.",
+    "check.clipboardUnavailable":
+        "El acceso al portapapeles no está disponible en este navegador. Usa la opción de archivo en su lugar.",
+    "check.pasteFailed":
+        "Se denegó el permiso para acceder al portapapeles. Permite el acceso o pega el texto manualmente en el cuadro.",
+    "check.fileTypeUnsupported": "Solo se admiten archivos .txt, .eml y .json.",
+    "check.fileReadFailed": "No se pudo leer ese archivo. Inténtalo de nuevo.",
+    "check.pasteButton": "Pegar desde el portapapeles",
+    "check.dropHint":
+        "Arrastra aquí un archivo .txt, .eml o .json para revisar su texto localmente. No se sube nada.",
+    "check.chooseFile": "Elige un archivo de texto (.txt, .eml, .json)",
     "protect.title": "Comprobación de compartir",
     "protect.intro": "Selecciona los metadatos que se compartirán y comprueba si son seguros.",
     "protect.button": "Comprobar compartición",
@@ -866,6 +876,14 @@ export const es: Record<string, string> = {
         "Contacta a la persona por un canal conocido para confirmar la solicitud.",
     "result.SCAM_NEXT_NO_SEND": "No envíes dinero, códigos ni credenciales.",
     "result.SCAM_NEXT_KEEP_EVIDENCE": "Conserva el mensaje original como prueba.",
+    "result.SCAM_INDICATOR_URGENCY_LABEL": "Presión de urgencia",
+    "result.SCAM_INDICATOR_URGENCY_DETAIL": "El mensaje te presiona para actuar rápidamente.",
+    "result.SCAM_INDICATOR_PAYMENT_LABEL": "Solicitud de pago",
+    "result.SCAM_INDICATOR_PAYMENT_DETAIL": "El mensaje pide un pago.",
+    "result.SCAM_INDICATOR_CREDENTIAL_LABEL": "Solicitud de credenciales",
+    "result.SCAM_INDICATOR_CREDENTIAL_DETAIL": "El mensaje pide tus credenciales.",
+    "result.SCAM_INDICATOR_SECRECY_LABEL": "Solicitud de secreto",
+    "result.SCAM_INDICATOR_SECRECY_DETAIL": "El mensaje te pide que lo mantengas en secreto.",
     "result.GUIDED_PAUSE_TITLE": "Detente y respira",
     "result.GUIDED_PAUSE_PLAIN":
         "No hagas clic, no respondas y no pagues nada ahora mismo. Puedes tomarte tu tiempo.",
