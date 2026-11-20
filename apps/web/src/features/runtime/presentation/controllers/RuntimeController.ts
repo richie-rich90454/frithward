@@ -14,6 +14,7 @@ import type {
 } from "../../ports/TranscoderPort";
 import { english, interpolate, type Translator } from "../../../../i18n/translate.js";
 import { translatedError } from "../../../../i18n/errors.js";
+import { resultList, resultText } from "../../../../i18n/results.js";
 
 export interface RuntimeState {
     storageMessage: string | null;
@@ -115,7 +116,21 @@ export class RuntimeController {
     public async detectGpu(signal: AbortSignal = new AbortController().signal): Promise<void> {
         try {
             this.state = { ...this.state, error: null };
-            this.state = { ...this.state, gpu: await this.detectGpuUseCase.execute(signal) };
+            const report = await this.detectGpuUseCase.execute(signal);
+            this.state = {
+                ...this.state,
+                gpu: {
+                    ...report,
+                    error: report.error
+                        ? resultText(this.translate, report.error, report.errorCode)
+                        : null,
+                    limitations: resultList(
+                        this.translate,
+                        report.limitations,
+                        report.limitationCodes,
+                    ),
+                },
+            };
         } catch (cause) {
             this.fail(cause);
         }
