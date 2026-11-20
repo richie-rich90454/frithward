@@ -307,7 +307,7 @@ async function main() {
     const caseHeaders = sessionCookie ? { cookie: sessionCookie } : {};
     const validCase = { kind: "message", title: "Live integration case", inputs: { text: "pay now" } };
 
-    const unauthCases = await request("GET", `${api.base}/api/cases`);
+    const unauthCases = await request("GET", `${api.base}/api/cases`, { headers: caseHeaders });
     if (sessionCookie) {
         check("GET /api/cases (authenticated) -> 200", unauthCases.status === 200, unauthCases.raw);
     } else {
