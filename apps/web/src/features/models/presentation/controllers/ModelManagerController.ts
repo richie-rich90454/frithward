@@ -1,5 +1,6 @@
 import { ModelManager, type InstalledModel } from "@frithward/model-manager";
 import { ModelRegistry, type ModelEntry } from "@frithward/model-registry";
+import { english, type Translator } from "../../../../i18n/translate.js";
 
 export interface InstalledModelView {
     id: string;
@@ -37,11 +38,14 @@ export class ModelManagerController {
     private readonly listeners = new Set<() => void>();
     private error: string | null = null;
     private viewModel: ModelManagerViewModel;
+    private readonly translate: Translator;
 
     public constructor(
         private readonly manager: ModelManager = new ModelManager(),
         private readonly registry: ModelRegistry = new ModelRegistry(),
+        translate: Translator = english,
     ) {
+        this.translate = translate;
         this.viewModel = this.buildViewModel();
     }
 
@@ -67,7 +71,7 @@ export class ModelManagerController {
     public registerCard(input: RegisterCardInput): void {
         this.run(() => {
             const id = input.id.trim();
-            if (id === "") throw new Error("Model id required.");
+            if (id === "") throw new Error(this.translate("models.error.idRequired"));
             this.registry.register({
                 id,
                 stage: input.stage,
@@ -84,7 +88,8 @@ export class ModelManagerController {
             this.error = null;
             this.viewModel = this.buildViewModel();
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Operation failed.";
+            this.error =
+                cause instanceof Error ? cause.message : this.translate("models.error.operation");
         }
         for (const listener of this.listeners) listener();
     }
