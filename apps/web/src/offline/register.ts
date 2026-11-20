@@ -39,9 +39,12 @@ export function registerOfflineSupport(): OfflineController {
     };
 
     if (supported) {
-        navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {
-            // Registration may be blocked by policy; status remains honest.
-        });
+        const swUrl = new URL("sw.js", document.baseURI);
+        navigator.serviceWorker
+            .register(swUrl.href, { scope: new URL("./", swUrl).href })
+            .catch(() => {
+                // Registration may be blocked by policy; status remains honest.
+            });
         navigator.serviceWorker.addEventListener("controllerchange", () => {
             controlled = Boolean(navigator.serviceWorker.controller);
             emit();
