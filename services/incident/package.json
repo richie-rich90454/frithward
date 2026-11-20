@@ -12,6 +12,7 @@
         "hono": "latest",
         "pg": "^8.23.1",
         "postal-mime": "^4.2.1",
+        "prom-client": "^15.1.3",
         "tsx": "latest",
         "zod": "latest"
     },
