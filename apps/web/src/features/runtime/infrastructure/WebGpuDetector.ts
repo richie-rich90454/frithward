@@ -1,3 +1,4 @@
+import { CodedError, ERROR_CODES } from "@frithward/contracts";
 import type { GpuDetectionPort, GpuReport } from "../ports/GpuDetectionPort";
 
 const BUFFER_USAGE_STORAGE = 0x0080;
@@ -15,7 +16,8 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
 `;
 
 function checkAbort(signal: AbortSignal): void {
-    if (signal.aborted) throw new Error("GPU detection was aborted.");
+    if (signal.aborted)
+        throw new CodedError(ERROR_CODES.GPU_DETECTION_ABORTED, "GPU detection was aborted.");
 }
 
 function unavailable(message: string): GpuReport {
