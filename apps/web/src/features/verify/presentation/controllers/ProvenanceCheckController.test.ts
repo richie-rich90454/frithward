@@ -130,7 +130,10 @@ describe("ProvenanceCheckController C2PA inspection", () => {
                         timestamp: null,
                         assertions: [],
                         validationFailures: [
-                            { code: "sdk.error", message: "C2PA WASM SDK could not read this asset" },
+                            {
+                                code: "sdk.error",
+                                message: "C2PA WASM SDK could not read this asset",
+                            },
                         ],
                         limitations: ["Signature was NOT verified"],
                     };
