@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import "./styles.js";
 import { LocaleProvider } from "./i18n/index.js";
 import { ThemeProvider } from "./theme/ThemeProvider.js";
+import { CaseProvider } from "./cases/CaseProvider.js";
 import { App } from "./App.jsx";
 
 const root = document.getElementById("root");
@@ -13,7 +14,9 @@ render(
         <QueryClientProvider client={queryClient}>
             <LocaleProvider>
                 <ThemeProvider>
-                    <App />
+                    <CaseProvider>
+                        <App />
+                    </CaseProvider>
                 </ThemeProvider>
             </LocaleProvider>
         </QueryClientProvider>
