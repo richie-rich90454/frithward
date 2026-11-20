@@ -1,6 +1,7 @@
 import { For, Show, createSignal, onCleanup } from "solid-js";
 import { CalendarClock } from "lucide-solid";
 import { IncidentTimelineController } from "../controllers/IncidentTimelineController";
+import { useI18n } from "../../../../i18n/index.js";
 import type {
     EvidenceItem,
     IncidentTimelineEntry,
@@ -30,6 +31,7 @@ interface IncidentTimelineViewProps {
 const tabular = { "font-variant-numeric": "tabular-nums" };
 
 export function IncidentTimelineView(props: IncidentTimelineViewProps) {
+    const { t } = useI18n();
     const [text, setText] = createSignal("");
     const [receivedAt, setReceivedAt] = createSignal("");
     const [file, setFile] = createSignal<File | null>(null);
@@ -40,7 +42,7 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
     const addEvidence = async () => {
         const selected = file();
         if (!selected) {
-            setLocalError("Choose a file to hash first.");
+            setLocalError(t("respond.chooseFile"));
             return;
         }
         setLocalError(null);
@@ -51,21 +53,21 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                 source: source(),
             });
         } catch (cause) {
-            setLocalError(cause instanceof Error ? cause.message : "Could not hash evidence.");
+            setLocalError(cause instanceof Error ? cause.message : t("respond.error.hashFailed"));
         }
     };
 
     const importReport = async () => {
         const selected = reportFile();
         if (!selected) {
-            setLocalError("Choose a scam check report JSON file first.");
+            setLocalError(t("respond.chooseReport"));
             return;
         }
         let report: unknown;
         try {
             report = JSON.parse(await selected.text());
         } catch {
-            setLocalError("The selected file is not valid JSON.");
+            setLocalError(t("respond.invalidJson"));
             return;
         }
         setLocalError(null);
@@ -76,7 +78,7 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                 report,
             });
         } catch (cause) {
-            setLocalError(cause instanceof Error ? cause.message : "Could not import report.");
+            setLocalError(cause instanceof Error ? cause.message : t("respond.error.importFailed"));
         }
     };
 
@@ -91,7 +93,7 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
             link.click();
             URL.revokeObjectURL(url);
         } catch (cause) {
-            setLocalError(cause instanceof Error ? cause.message : "Could not export report.");
+            setLocalError(cause instanceof Error ? cause.message : t("respond.error.exportFailed"));
         }
     };
 
@@ -99,7 +101,7 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
         <section>
             <h1>
                 <CalendarClock class="fw-icon" />
-                Incident timeline
+                {t("respond.title")}
             </h1>
             <form
                 onSubmit={(event) => {
@@ -108,23 +110,23 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                 }}
             >
                 <label>
-                    Message text
+                    {t("respond.messageLabel")}
                     <textarea
                         value={text()}
                         onInput={(event) => setText(event.currentTarget.value)}
                     />
                 </label>
                 <label>
-                    Received at
+                    {t("respond.receivedAt")}
                     <input
                         value={receivedAt()}
                         placeholder="2026-01-01 12:00"
                         onInput={(event) => setReceivedAt(event.currentTarget.value)}
                     />
                 </label>
-                <button type="submit">Add to timeline</button>
+                <button type="submit">{t("respond.addToTimeline")}</button>
                 <button type="button" onClick={props.onReset}>
-                    Reset
+                    {t("respond.reset")}
                 </button>
             </form>
             <Show when={props.error}>
@@ -143,11 +145,8 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                 </ol>
             </Show>
 
-            <h2>Evidence log</h2>
-            <p role="note">
-                Files are hashed locally in your browser. Nothing is uploaded, and no example
-                evidence is added for you.
-            </p>
+            <h2>{t("respond.evidenceLog")}</h2>
+            <p role="note">{t("respond.evidenceNote")}</p>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -155,35 +154,35 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                 }}
             >
                 <label>
-                    Evidence file
+                    {t("respond.evidenceFile")}
                     <input
                         type="file"
                         onChange={(event) => setFile(event.currentTarget.files?.[0] ?? null)}
                     />
                 </label>
                 <label>
-                    Source
+                    {t("respond.source")}
                     <input
                         value={source()}
-                        placeholder="Where this file came from"
+                        placeholder={t("respond.sourcePlaceholder")}
                         onInput={(event) => setSource(event.currentTarget.value)}
                     />
                 </label>
-                <button type="submit">Hash and add evidence</button>
+                <button type="submit">{t("respond.hashEvidence")}</button>
             </form>
             <Show when={localError()}>
                 <p role="alert">{localError()}</p>
             </Show>
-            <Show when={props.evidence.length > 0} fallback={<p>No evidence recorded yet.</p>}>
+            <Show when={props.evidence.length > 0} fallback={<p>{t("respond.noEvidence")}</p>}>
                 <table>
-                    <caption>Recorded evidence</caption>
+                    <caption>{t("respond.recordedEvidence")}</caption>
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">File name</th>
-                            <th scope="col">SHA-256</th>
-                            <th scope="col">Collected at</th>
-                            <th scope="col">Source</th>
+                            <th scope="col">{t("respond.tableId")}</th>
+                            <th scope="col">{t("respond.tableFileName")}</th>
+                            <th scope="col">{t("respond.tableHash")}</th>
+                            <th scope="col">{t("respond.tableCollected")}</th>
+                            <th scope="col">{t("respond.tableSource")}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -203,15 +202,12 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                     </tbody>
                 </table>
                 <button type="button" onClick={() => void exportReport()}>
-                    Export report
+                    {t("respond.export")}
                 </button>
             </Show>
 
-            <h2>Import a scam check report</h2>
-            <p role="note">
-                Add the JSON downloaded from the scam check as evidence. The file is hashed locally
-                in your browser; its findings are not re-analysed here.
-            </p>
+            <h2>{t("respond.importTitle")}</h2>
+            <p role="note">{t("respond.importNote")}</p>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -219,28 +215,29 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                 }}
             >
                 <label>
-                    Scam check report JSON
+                    {t("respond.reportJsonLabel")}
                     <input
                         type="file"
                         accept="application/json,.json"
                         onChange={(event) => setReportFile(event.currentTarget.files?.[0] ?? null)}
                     />
                 </label>
-                <button type="submit">Import report as evidence</button>
+                <button type="submit">{t("respond.importButton")}</button>
             </form>
 
-            <h2>Report history</h2>
-            <p role="note">Exports are recorded locally in this browser. Nothing is uploaded.</p>
-            <Show when={props.history.length > 0} fallback={<p>No reports exported yet.</p>}>
+            <h2>{t("respond.historyTitle")}</h2>
+            <p role="note">{t("respond.historyNote")}</p>
+            <Show when={props.history.length > 0} fallback={<p>{t("respond.noReports")}</p>}>
                 <ul>
                     <For each={props.history}>
                         {(item) => (
                             <li>
                                 <strong>{item.createdAt}</strong> — {item.summary}
                                 <br />
-                                ID: {item.id}
+                                {t("respond.idLabel")} {item.id}
                                 <br />
-                                SHA-256: <span style={tabular}>{item.sha256}</span>
+                                {t("respond.sha256Label")}{" "}
+                                <span style={tabular}>{item.sha256}</span>
                             </li>
                         )}
                     </For>
@@ -251,7 +248,8 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
 }
 
 export function IncidentTimelinePage() {
-    const controller = new IncidentTimelineController();
+    const { t } = useI18n();
+    const controller = new IncidentTimelineController({ translate: t });
     const [entries, setEntries] = createSignal(controller.getEntries());
     const [evidence, setEvidence] = createSignal(controller.getEvidence());
     const [history, setHistory] = createSignal(controller.getReportHistory());
