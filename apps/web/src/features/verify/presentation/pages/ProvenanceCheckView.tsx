@@ -66,7 +66,9 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                             <dt>Signature timestamp</dt>
                             <dd>
                                 <Value value={result.signedAt} />
-                                <small>Time stated by the manifest, not an independent time proof.</small>
+                                <small>
+                                    Time stated by the manifest, not an independent time proof.
+                                </small>
                             </dd>
                             <dt>Assertions</dt>
                             <dd>
@@ -78,18 +80,23 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                                         <For each={result.assertions}>
                                             {(assertion) => (
                                                 <li>
-                                                    {assertion.label}: {assertion.present ? "present" : "absent"}
+                                                    {assertion.label}:{" "}
+                                                    {assertion.present ? "present" : "absent"}
                                                 </li>
                                             )}
                                         </For>
                                     </ul>
                                 </Show>
-                                <small>Names of claims present; their contents were not validated.</small>
+                                <small>
+                                    Names of claims present; their contents were not validated.
+                                </small>
                             </dd>
                             <dt>Asset hash</dt>
                             <dd>
                                 <Value value={result.assetHash} />
-                                <small>Hash recorded in the manifest; no file was re-hashed here.</small>
+                                <small>
+                                    Hash recorded in the manifest; no file was re-hashed here.
+                                </small>
                             </dd>
                             <dt>Validation failures</dt>
                             <dd>
@@ -101,13 +108,16 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                                         <For each={result.validationFailures}>
                                             {(failure) => (
                                                 <li>
-                                                    <strong>{failure.code}</strong>: {failure.message}
+                                                    <strong>{failure.code}</strong>:{" "}
+                                                    {failure.message}
                                                 </li>
                                             )}
                                         </For>
                                     </ul>
                                 </Show>
-                                <small>Failures listed by the manifest; they need human review.</small>
+                                <small>
+                                    Failures listed by the manifest; they need human review.
+                                </small>
                             </dd>
                             <dt>Missing information</dt>
                             <dd>
@@ -116,10 +126,14 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                                     fallback={<span>None</span>}
                                 >
                                     <ul>
-                                        <For each={result.missingInfo}>{(item) => <li>{item}</li>}</For>
+                                        <For each={result.missingInfo}>
+                                            {(item) => <li>{item}</li>}
+                                        </For>
                                     </ul>
                                 </Show>
-                                <small>Absent fields reduce how much provenance can be shown.</small>
+                                <small>
+                                    Absent fields reduce how much provenance can be shown.
+                                </small>
                             </dd>
                         </dl>
                         <h2>Limitations</h2>
