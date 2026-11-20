@@ -34,8 +34,8 @@ function resolvePnpm() {
     const configured = process.env.PNPM_BIN?.trim();
     if (configured) return { command: configured, shell: false };
     if (process.platform === "win32") {
-        const local = process.env.LOCALAPPDATA && join(process.env.LOCALAPPDATA, "pnpm", "bin", "pnpm.exe");
-        if (local && existsSync(local)) return { command: local, shell: false };
+        const npmShim = process.env.APPDATA && join(process.env.APPDATA, "npm", "pnpm.cmd");
+        if (npmShim && existsSync(npmShim)) return { command: npmShim, shell: true };
         return { command: "pnpm.cmd", shell: true };
     }
     return { command: "pnpm", shell: false };
@@ -46,6 +46,7 @@ function run(command, args, options = {}) {
     const result = spawnSync(command, args, {
         cwd: ROOT,
         encoding: "utf8",
+        stdio: options.stdio ?? "pipe",
         shell: options.shell ?? false,
         env: { ...process.env, ...(options.env ?? {}) },
         timeout: options.timeout ?? 120_000,
@@ -149,6 +150,7 @@ async function stopAndWait(service) {
     await new Promise((done) => setTimeout(done, 600));
 }
 
+let workDir = null;
 let dataDir = null;
 let pgCtlLog = null;
 let pgStarted = false;
@@ -192,6 +194,7 @@ async function startReportService(name, script, port, databaseUrl) {
 }
 
 async function main() {
+    const findings = [];
     log("== Live PostgreSQL 18 integration verification ==");
 
     const [pgPort, apiPort, communityPort, incidentPort] = await Promise.all([
@@ -202,9 +205,10 @@ async function main() {
     ]);
     log(`Ports: postgres=${pgPort} api=${apiPort} community=${communityPort} incident=${incidentPort}`);
 
-    dataDir = await mkdtemp(join(tmpdir(), "frithward-pg18-int-"));
-    pgCtlLog = join(dataDir, "postgres.log");
-    const pwFile = join(dataDir, "pwfile");
+    workDir = await mkdtemp(join(tmpdir(), "frithward-pg18-int-"));
+    dataDir = join(workDir, "data");
+    pgCtlLog = join(workDir, "postgres.log");
+    const pwFile = join(workDir, "pwfile");
     await writeFile(pwFile, `${PASSWORD}\n`, "utf8");
     log(`Temp data dir: ${dataDir}`);
 
@@ -214,18 +218,20 @@ async function main() {
         "-U", "postgres",
         "--auth=trust",
         "--encoding=UTF8",
+        "--locale=C",
         "--pwfile", pwFile,
         "--no-instructions",
     ]);
 
     log("== pg_ctl start ==");
+    pgStarted = true;
+    // pg_ctl leaves its stdio pipes open in the Windows child, so ignore them and use -l instead.
     run(pg("pg_ctl"), [
         "-D", dataDir,
         "-l", pgCtlLog,
         "-o", `-h 127.0.0.1 -p ${pgPort}`,
         "-w", "start",
-    ]);
-    pgStarted = true;
+    ], { stdio: "ignore" });
 
     const psqlEnv = { PGPASSWORD: PASSWORD };
     const psqlArgs = ["-h", "127.0.0.1", "-p", String(pgPort), "-U", "postgres", "-v", "ON_ERROR_STOP=1"];
@@ -274,8 +280,17 @@ async function main() {
     check("GET /health reports status ok", health.body?.status === "ok", health.raw);
 
     const anonymousSession = await request("GET", `${api.base}/api/auth/session`);
-    check("GET /api/auth/session -> 200", anonymousSession.status === 200, anonymousSession.raw);
-    check("GET /api/auth/session is anonymous", anonymousSession.body?.authenticated === false, anonymousSession.raw);
+    if (anonymousSession.status === 200) {
+        check("GET /api/auth/session -> 200", true);
+        check("GET /api/auth/session is anonymous", anonymousSession.body?.authenticated === false, anonymousSession.raw);
+    } else {
+        findings.push(`GET /api/auth/session -> ${anonymousSession.status} ${anonymousSession.raw.slice(0, 200)}`);
+        log(`  FINDING  GET /api/auth/session -> ${anonymousSession.status} ${anonymousSession.raw.slice(0, 300)}`);
+    }
+    if (api.child.log.includes("Drizzle schema mismatch")) {
+        const start = api.child.log.indexOf("Drizzle schema mismatch");
+        findings.push(`Better Auth Drizzle schema mismatch: ${api.child.log.slice(start, start + 700).replace(/\s+/g, " ").trim()}`);
+    }
 
     let sessionCookie = null;
     const signUp = await request("POST", `${api.base}/api/auth/sign-up/email`, {
@@ -296,8 +311,12 @@ async function main() {
     if (sessionCookie) {
         check("GET /api/cases (authenticated) -> 200", unauthCases.status === 200, unauthCases.raw);
     } else {
-        check("GET /api/cases without session -> 401 UNAUTHORIZED", unauthCases.status === 401 && unauthCases.body?.code === "UNAUTHORIZED", unauthCases.raw);
-        log("  NOTE  Skipping authenticated case CRUD/persistence assertions because no session can be created.");
+        log(`  FINDING  case routes are gated by requireSession; GET /api/cases without a session -> ${unauthCases.status} ${unauthCases.raw.slice(0, 200)}`);
+        findings.push(`Case CRUD could not be exercised: Better Auth cannot establish a session with the shipped schema (GET /api/cases without session -> ${unauthCases.status}).`);
+        await request("POST", `${api.base}/api/cases`, { body: validCase });
+        await request("GET", `${api.base}/api/cases/not-a-real-id`);
+        await request("PATCH", `${api.base}/api/cases/not-a-real-id`, { body: { title: "x" } });
+        await request("DELETE", `${api.base}/api/cases/not-a-real-id`);
     }
 
     let createdCaseId = null;
@@ -335,7 +354,7 @@ async function main() {
         },
     });
     check("POST /api/community/reports -> 201", submitted.status === 201, submitted.raw);
-    const communityId = submitted.body?.id;
+    const communityId = submitted.body?.report?.id;
     check("community report has an id", typeof communityId === "string" && communityId.length > 0, submitted.raw);
     const communityList = await request("GET", `${community.base}/api/community/reports`);
     check("GET /api/community/reports lists the report", communityList.status === 200 && communityList.body?.reports?.some((item) => item.id === communityId), communityList.raw);
@@ -392,10 +411,13 @@ async function main() {
     ], { env: psqlEnv });
     log(`Postgres row counts: ${counts.trim()}`);
 
-    log("== RESULT: ALL AVAILABLE CHECKS PASSED ==");
-    if (!sessionCookie) {
-        log("== RESULT: case CRUD NOT exercised — auth schema cannot create a session (see notes above) ==");
+    if (findings.length === 0) {
+        log("== RESULT: ALL CHECKS PASSED ==");
+        return;
     }
+    log(`== RESULT: ${findings.length} GENUINE BLOCKER(S) FOUND; reachable checks passed ==`);
+    for (const finding of findings) log(`  - ${finding}`);
+    fail(`Integration verification incomplete: ${findings.length} genuine blocker(s) prevented full endpoint coverage (see RESULT lines above).`);
 }
 
 try {
@@ -419,13 +441,14 @@ try {
     for (const key of ["api", "community", "incident"]) stopService(services[key]);
     if (pgStarted && dataDir) {
         try {
-            run(pg("pg_ctl"), ["-D", dataDir, "-m", "fast", "-w", "stop"]);
+            run(pg("pg_ctl"), ["-D", dataDir, "-m", "fast", "-w", "stop"], { stdio: "ignore" });
+            await new Promise((done) => setTimeout(done, 1000));
         } catch (error) {
             console.error(`pg_ctl stop failed: ${error instanceof Error ? error.message : error}`);
         }
     }
-    if (dataDir) {
-        await rm(dataDir, { recursive: true, force: true, maxRetries: 8, retryDelay: 500 });
-        log(`Removed temp dir ${dataDir}`);
+    if (workDir) {
+        await rm(workDir, { recursive: true, force: true, maxRetries: 8, retryDelay: 500 });
+        log(`Removed temp dir ${workDir}`);
     }
 }
