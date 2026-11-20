@@ -31,6 +31,16 @@ export interface C2paManifest {
     [key: string]: unknown;
 }
 
+/** One transformation step parsed from a C2PA actions assertion. Values are read from the manifest, not re-derived. */
+export interface TransformationStep {
+    action: string;
+    actor: string | null;
+    timestamp: string | null;
+    assetHashBefore: string | null;
+    assetHashAfter: string | null;
+    detail: string | null;
+}
+
 export type C2paSignatureStatus = "valid" | "invalid" | "missing" | "unverified";
 
 export interface C2paAssertionSummary {
@@ -49,6 +59,7 @@ export interface C2paInspectionResult {
     signedAt: string | null;
     assertions: readonly C2paAssertionSummary[];
     assetHash: string | null;
+    transformations: readonly TransformationStep[];
     validationFailures: readonly C2paValidationFailure[];
     missingInfo: readonly string[];
     summary: string;
