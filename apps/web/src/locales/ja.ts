@@ -48,6 +48,16 @@ export const ja: Record<string, string> = {
     "check.guidedBack": "前のステップ",
     "check.guidedDone": "このステップを完了にする",
     "check.guidedComplete": "すべてのステップが完了しました。",
+    "check.clipboardUnavailable":
+        "このブラウザではクリップボードにアクセスできません。代わりにファイルオプションを使用してください。",
+    "check.pasteFailed":
+        "クリップボードへのアクセスが拒否されました。アクセスを許可するか、ボックスに手動で貼り付けてください。",
+    "check.fileTypeUnsupported": ".txt、.eml、.json ファイルのみ対応しています。",
+    "check.fileReadFailed": "ファイルを読み込めませんでした。もう一度お試しください。",
+    "check.pasteButton": "クリップボードから貼り付け",
+    "check.dropHint":
+        ".txt、.eml、.json ファイルをここにドロップすると、テキストをローカルで確認できます。何もアップロードされません。",
+    "check.chooseFile": "テキストファイルを選択 (.txt, .eml, .json)",
     "protect.title": "共有チェック",
     "protect.intro": "共有するメタデータを選択し、安全かどうかを確認します。",
     "protect.button": "共有を確認",
@@ -837,6 +847,15 @@ export const ja: Record<string, string> = {
     "result.SCAM_NEXT_CONTACT_KNOWN": "既知の連絡先で相手に連絡し、依頼を確認してください。",
     "result.SCAM_NEXT_NO_SEND": "お金、コード、認証情報は送らないでください。",
     "result.SCAM_NEXT_KEEP_EVIDENCE": "元のメッセージを証拠として保管してください。",
+    "result.SCAM_INDICATOR_URGENCY_LABEL": "急がせる圧力",
+    "result.SCAM_INDICATOR_URGENCY_DETAIL":
+        "メッセージはあなたに急いで行動するよう圧力をかけます。",
+    "result.SCAM_INDICATOR_PAYMENT_LABEL": "支払いの要求",
+    "result.SCAM_INDICATOR_PAYMENT_DETAIL": "メッセージは支払いを求めています。",
+    "result.SCAM_INDICATOR_CREDENTIAL_LABEL": "認証情報の要求",
+    "result.SCAM_INDICATOR_CREDENTIAL_DETAIL": "メッセージは認証情報を求めています。",
+    "result.SCAM_INDICATOR_SECRECY_LABEL": "秘密保持の要求",
+    "result.SCAM_INDICATOR_SECRECY_DETAIL": "メッセージはあなたに秘密を保つよう求めています。",
     "result.GUIDED_PAUSE_TITLE": "立ち止まって深呼吸",
     "result.GUIDED_PAUSE_PLAIN":
         "今はクリック、返信、支払いをしないでください。時間をかけて構いません。",
