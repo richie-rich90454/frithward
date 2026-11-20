@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "start": "vite preview --host 0.0.0.0 --port 4174"
+        "start": "vite preview --host 0.0.0.0 --port 4174",
+        "tauri:build": "pnpm run build && tauri build"
     },
     "dependencies": {
         "@solidjs/router": "^1.0.1",
@@ -15,6 +16,7 @@
         "vite-plugin-solid": "latest"
     },
     "devDependencies": {
+        "@tauri-apps/cli": "^2.12.6",
         "typescript": "latest",
         "vite": "latest"
     }
