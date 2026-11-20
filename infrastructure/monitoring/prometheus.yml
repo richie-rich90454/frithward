@@ -1,6 +1,9 @@
 # Scrape configuration for a single-host Frithward deployment.
 # Each service exposes /metrics on its own port; adjust the host if services
 # run on separate machines. No container runtime is assumed.
+# The API exports full prom-client metrics; the five workers expose a minimal
+# honest endpoint: frithward_service_up (gauge, 1 while answering) plus
+# process_uptime_seconds. No request counters or histograms on the workers.
 global:
     scrape_interval: 15s
     evaluation_interval: 15s
