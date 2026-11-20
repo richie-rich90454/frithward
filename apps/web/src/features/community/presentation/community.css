@@ -1,0 +1,42 @@
+.community-view {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fw-space-3);
+}
+
+.community-view__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fw-space-2);
+}
+
+.community-view__source,
+.community-view__empty {
+    color: var(--fw-color-text-secondary);
+}
+
+.community-view__error {
+    color: var(--fw-danger);
+}
+
+@media (max-width: 640px) {
+    .community-view__form label {
+        display: flex;
+        flex-direction: column;
+        gap: var(--fw-space-1);
+        width: 100%;
+    }
+
+    .community-view input,
+    .community-view textarea,
+    .community-view button {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-height: 44px;
+    }
+
+    .community-view__form textarea {
+        resize: vertical;
+    }
+}
