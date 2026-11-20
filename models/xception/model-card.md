@@ -2,6 +2,10 @@
 
 Stage: `experimental`. Status: documentation-only candidate; no weights in this repository.
 
+## Model id
+
+`xception`
+
 ## Intended use
 
 Research evaluation of synthetic-image detection, including comparison across image generators. Any score is evidence for a human reviewer.
@@ -29,6 +33,10 @@ None evaluated in this repository. The proposed datasets have not been run throu
 ## Metrics
 
 Planned: precision, recall, false-positive rate, calibration, and cross-generator/cross-dataset generalization. No values have been measured in this repository.
+
+## Evaluation results
+
+No evaluation has been performed for this model in this repository; no metrics are reported. The only results artifact present is `research/results/audio-detection-synthetic.json`, a synthetic harness smoke test whose scores are placeholders and not an evaluation of this model.
 
 ## Known biases
 
