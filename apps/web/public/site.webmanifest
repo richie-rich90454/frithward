@@ -23,7 +23,16 @@
             "src": "./symbol.svg",
             "sizes": "any",
             "type": "image/svg+xml",
-            "purpose": "any"
+            "purpose": "any maskable"
         }
-    ]
+    ],
+    "share_target": {
+        "action": "/check",
+        "method": "GET",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url"
+        }
+    }
 }
