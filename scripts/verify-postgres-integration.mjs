@@ -161,8 +161,9 @@ async function startApi(port, databaseUrl) {
     const child = startService("api", "start:api", {
         DATABASE_URL: databaseUrl,
         BETTER_AUTH_SECRET: AUTH_SECRET,
+        BETTER_AUTH_URL: `http://127.0.0.1:${port}`,
         PORT: String(port),
-        CORS_ORIGIN: "",
+        CORS_ORIGIN: `http://127.0.0.1:${port}`,
         OTEL_EXPORTER_OTLP_ENDPOINT: "",
     });
     const base = `http://127.0.0.1:${port}`;
