@@ -98,7 +98,8 @@ export const en: Record<string, string> = {
     "learn.quiz.q-sources.prompt":
         "You see a dramatic photo in a group chat with no date or location. What is the most useful first step?",
     "learn.quiz.q-sources.option.0": "Share it so others can warn their friends",
-    "learn.quiz.q-sources.option.1": "Try to find the earliest post and check an independent source",
+    "learn.quiz.q-sources.option.1":
+        "Try to find the earliest post and check an independent source",
     "learn.quiz.q-sources.option.2": "Assume it is false because it has no caption",
     "learn.quiz.q-sources.explanation":
         "Finding the earliest post and an independent source gives you context. Sharing first spreads unverified claims, and assuming it is false is just as unsupported.",
