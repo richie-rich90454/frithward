@@ -2,6 +2,7 @@ import {
     C2paInspectionUseCase,
     type C2paInspectionResult,
     type C2paSignatureStatus,
+    type C2paVerificationPort,
 } from "@frithward/provenance-core";
 import { english, type Translator } from "../../../../i18n/translate.js";
 
@@ -53,11 +54,13 @@ export interface ProvenanceFileInput {
 export interface ProvenanceCheckControllerOptions {
     inspector?: C2paInspector;
     extractor?: C2paManifestExtractor;
+    verifier?: C2paVerificationPort;
     translate?: Translator;
 }
 
 export class ProvenanceCheckController {
     private readonly inspector: C2paInspector;
+    private readonly fileInspector: C2paInspector | null;
     private readonly extractor: C2paManifestExtractor | null;
     private readonly translate: Translator;
     private readonly listeners = new Set<() => void>();
@@ -66,6 +69,9 @@ export class ProvenanceCheckController {
 
     public constructor(options: ProvenanceCheckControllerOptions = {}) {
         this.inspector = options.inspector ?? new C2paInspectionUseCase();
+        this.fileInspector = options.verifier
+            ? new C2paInspectionUseCase(undefined, options.verifier)
+            : null;
         this.extractor = options.extractor ?? null;
         this.translate = options.translate ?? english;
     }
@@ -117,6 +123,12 @@ export class ProvenanceCheckController {
                 } catch {
                     throw new Error(this.translate("verify.error.fileJson"));
                 }
+            } else if (this.fileInspector) {
+                // Binary assets go through the real byte-level cryptographic verifier.
+                this.result = toView(await this.fileInspector.execute({ manifest: input.bytes }));
+                this.error = null;
+                this.notify();
+                return;
             } else {
                 manifest = this.extractor ? await this.extractor.extract(input.bytes) : null;
                 if (manifest === null) {
