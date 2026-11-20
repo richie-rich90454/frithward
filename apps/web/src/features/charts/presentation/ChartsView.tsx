@@ -1,7 +1,13 @@
-import { Show, createEffect, createSignal, onCleanup } from "solid-js";
+import { Show, createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import { ChartDataController } from "../application/ChartDataController";
 import type { ChartViewState } from "../application/ChartDataController";
 import { EChartAdapter } from "../application/EChartAdapter";
+import { ChartDraftStore } from "../infrastructure/ChartDraftStore";
+import { useThemeVersion } from "./useThemeVersion";
+import "./charts.css";
+
+const DEFAULT_X_LABEL = "Category";
+const DEFAULT_Y_LABEL = "Value";
 
 interface ChartsViewProps {
     state: ChartViewState;
@@ -13,14 +19,17 @@ interface ChartsViewProps {
     onYAxisLabelChange: (value: string) => void;
     onApply: () => void;
     onClear: () => void;
+    draftSaved: boolean;
 }
 
 export function ChartsView(props: ChartsViewProps) {
     const adapter = new EChartAdapter();
+    const themeVersion = useThemeVersion();
     const [container, setContainer] = createSignal<HTMLDivElement>();
     let chart: ReturnType<EChartAdapter["render"]> | null = null;
 
     createEffect(() => {
+        themeVersion();
         const dataset = props.state.dataset;
         const element = container();
         chart?.dispose();
@@ -34,8 +43,13 @@ export function ChartsView(props: ChartsViewProps) {
     });
 
     return (
-        <section>
+        <section class="charts-workshop">
             <h1>Charts</h1>
+            <Show when={props.draftSaved}>
+                <p class="charts-workshop__status" role="status" aria-live="polite">
+                    Draft saved
+                </p>
+            </Show>
             <label>
                 Data (one "label,value" line per row)
                 <textarea
@@ -58,12 +72,14 @@ export function ChartsView(props: ChartsViewProps) {
                     onInput={(event) => props.onYAxisLabelChange(event.currentTarget.value)}
                 />
             </label>
-            <button type="button" onClick={props.onApply}>
-                Render chart
-            </button>
-            <button type="button" onClick={props.onClear}>
-                Clear
-            </button>
+            <div class="charts-workshop__actions">
+                <button type="button" onClick={props.onApply}>
+                    Render chart
+                </button>
+                <button type="button" onClick={props.onClear}>
+                    Clear
+                </button>
+            </div>
             <Show when={props.state.error}>
                 <p role="alert">{props.state.error}</p>
             </Show>
@@ -84,27 +100,60 @@ export function ChartsView(props: ChartsViewProps) {
 
 export function ChartsPage() {
     const controller = new ChartDataController();
+    const store = new ChartDraftStore();
     const [state, setState] = createSignal(controller.getState());
     const [text, setText] = createSignal("");
-    const [xAxisLabel, setXAxisLabel] = createSignal("Category");
-    const [yAxisLabel, setYAxisLabel] = createSignal("Value");
+    const [xAxisLabel, setXAxisLabel] = createSignal(DEFAULT_X_LABEL);
+    const [yAxisLabel, setYAxisLabel] = createSignal(DEFAULT_Y_LABEL);
+    const [draftSaved, setDraftSaved] = createSignal(false);
     onCleanup(
         controller.subscribe(() => {
             setState(controller.getState());
         }),
     );
+    onMount(() => {
+        const draft = store.load();
+        if (draft === null) return;
+        setText(draft.text);
+        setXAxisLabel(draft.xAxisLabel);
+        setYAxisLabel(draft.yAxisLabel);
+        if (draft.text.trim() !== "") {
+            controller.setFromText(draft.text, draft.xAxisLabel, draft.yAxisLabel);
+        }
+    });
+    createEffect(() => {
+        const draft = { text: text(), xAxisLabel: xAxisLabel(), yAxisLabel: yAxisLabel() };
+        const empty =
+            draft.text.trim() === "" &&
+            draft.xAxisLabel === DEFAULT_X_LABEL &&
+            draft.yAxisLabel === DEFAULT_Y_LABEL;
+        if (empty) {
+            store.clear();
+            setDraftSaved(false);
+            return;
+        }
+        store.saveSoon(draft);
+        setDraftSaved(true);
+    });
+    onCleanup(() => store.flush());
+
     return (
         <ChartsView
             state={state()}
             text={text()}
             xAxisLabel={xAxisLabel()}
             yAxisLabel={yAxisLabel()}
+            draftSaved={draftSaved()}
             onTextChange={setText}
             onXAxisLabelChange={setXAxisLabel}
             onYAxisLabelChange={setYAxisLabel}
             onApply={() => controller.setFromText(text(), xAxisLabel(), yAxisLabel())}
             onClear={() => {
+                store.clear();
                 setText("");
+                setXAxisLabel(DEFAULT_X_LABEL);
+                setYAxisLabel(DEFAULT_Y_LABEL);
+                setDraftSaved(false);
                 controller.clear();
             }}
         />
