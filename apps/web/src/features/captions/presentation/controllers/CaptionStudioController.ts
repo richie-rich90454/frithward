@@ -9,6 +9,10 @@ import {
 } from "@frithward/media-core";
 import type { CaptionRepository, SpeechRecognitionPort } from "@frithward/media-core";
 import { LocalStorageCaptionRepository } from "../../infrastructure/LocalStorageCaptionRepository.js";
+import {
+    LocalModelResolver,
+    type ModelResolver,
+} from "../../infrastructure/LocalModelResolver.js";
 
 export interface CaptionGenerationRecognizer extends SpeechRecognitionPort {
     start?(): Promise<void>;
@@ -17,7 +21,7 @@ export interface CaptionGenerationRecognizer extends SpeechRecognitionPort {
 
 export interface CaptionGenerationInput {
     audio: ArrayBuffer;
-    modelUrl: string;
+    modelUrl?: string;
     wasmUrl: string;
     language: string;
     signal?: AbortSignal;
@@ -42,12 +46,14 @@ export interface CaptionStudioControllerOptions {
         wasmUrl: string;
     }) => CaptionGenerationRecognizer;
     repository?: CaptionRepository;
+    modelResolver?: ModelResolver;
 }
 
 export class CaptionStudioController {
     private readonly controller: MediaCaptionStudioController;
     private readonly project: CaptionProject;
     private readonly repository: CaptionRepository;
+    private readonly modelResolver: ModelResolver;
     private readonly recognizerFactory: NonNullable<
         CaptionStudioControllerOptions["recognizerFactory"]
     >;
@@ -64,6 +70,7 @@ export class CaptionStudioController {
             language: "en",
         });
         this.repository = options.repository ?? new LocalStorageCaptionRepository();
+        this.modelResolver = options.modelResolver ?? new LocalModelResolver();
         this.recognizerFactory =
             options.recognizerFactory ??
             ((input) =>
@@ -121,8 +128,11 @@ export class CaptionStudioController {
         let recognizer: CaptionGenerationRecognizer | null = null;
         try {
             this.setGeneration("loading model", "Loading speech model...");
+            const model = await this.modelResolver.resolve(input.modelUrl);
+            if (abort.signal.aborted)
+                throw new AppError("CANCELLED", "Caption generation cancelled.");
             recognizer = this.recognizerFactory({
-                modelUrl: input.modelUrl,
+                modelUrl: model.url,
                 wasmUrl: input.wasmUrl,
             });
             await recognizer.start?.();
