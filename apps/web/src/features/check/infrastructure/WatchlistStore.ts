@@ -9,6 +9,33 @@ export type WatchEntry = {
 const KEY = "frithward.watchlist";
 const VERSION = 1;
 
+export type WatchlistListener = (entries: WatchEntry[]) => void;
+
+const listeners = new Set<WatchlistListener>();
+let storageListening = false;
+
+function notify(): void {
+    const entries = loadWatchlist();
+    for (const listener of [...listeners]) listener(entries);
+}
+
+function listenForStorage(): void {
+    if (storageListening || typeof window === "undefined") return;
+    window.addEventListener("storage", (event) => {
+        if (event.key === KEY || event.key === null) notify();
+    });
+    storageListening = true;
+}
+
+/** Notifies the caller whenever the watchlist changes, including from other tabs. */
+export function subscribeWatchlist(listener: WatchlistListener): () => void {
+    listenForStorage();
+    listeners.add(listener);
+    return () => {
+        listeners.delete(listener);
+    };
+}
+
 interface StoredWatchlist {
     version: number;
     entries: WatchEntry[];
@@ -61,6 +88,7 @@ export function saveWatchlist(entries: readonly WatchEntry[]): void {
             entries: entries.filter(isWatchEntry),
         };
         store.setItem(KEY, JSON.stringify(payload));
+        notify();
     } catch {
         // Best-effort local persistence; the caller already has the updated list.
     }
