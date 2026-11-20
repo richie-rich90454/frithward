@@ -1,3 +1,4 @@
+import { RESULT_CODES } from "@frithward/contracts";
 import type {
     MetadataFinding,
     MetadataFindingSeverity,
@@ -19,6 +20,7 @@ export interface ShareCheckViewModelData {
     redactionRequired: boolean;
     remediation: readonly string[];
     summary: string;
+    summaryCode?: string | undefined;
 }
 
 export class ShareCheckViewModel {
@@ -28,6 +30,7 @@ export class ShareCheckViewModel {
     public readonly redactionRequired: boolean;
     public readonly remediation: readonly string[];
     public readonly summary: string;
+    public readonly summaryCode: string | undefined;
 
     private constructor(input: ShareCheckViewModelData) {
         this.fileName = input.fileName;
@@ -36,6 +39,7 @@ export class ShareCheckViewModel {
         this.redactionRequired = input.redactionRequired;
         this.remediation = input.remediation;
         this.summary = input.summary;
+        this.summaryCode = input.summaryCode;
     }
 
     public static fromResult(
@@ -61,6 +65,9 @@ export class ShareCheckViewModel {
             redactionRequired,
             remediation,
             summary,
+            summaryCode: safeToShare
+                ? RESULT_CODES.PRIVACY_VIEW_SAFE
+                : RESULT_CODES.PRIVACY_VIEW_ISSUES,
         });
     }
 }
