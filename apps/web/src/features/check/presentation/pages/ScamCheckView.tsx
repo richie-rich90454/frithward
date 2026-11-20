@@ -17,6 +17,7 @@ interface ScamCheckViewProps {
     onCheck: (text: string) => void;
     onCheckUrl: (input: string) => void;
     onCheckQr: (input: string) => void;
+    onGenerateReport: () => void;
     onGuidedNext: () => void;
     onGuidedBack: () => void;
     onGuidedComplete: () => void;
@@ -144,6 +145,9 @@ export function ScamCheckView(props: ScamCheckViewProps) {
                         <ul>
                             <For each={analysis.limitations}>{(limit) => <li>{limit}</li>}</For>
                         </ul>
+                        <button type="button" onClick={props.onGenerateReport}>
+                            Generate scam report
+                        </button>
                     </div>
                 )}
             </Show>
@@ -196,6 +200,17 @@ export function ScamCheckPage() {
         setGuidedComplete(controller.isGuidedComplete());
     };
     onCleanup(controller.subscribe(sync));
+    const generateReport = async () => {
+        const report = await controller.generateReport();
+        if (!report) return;
+        const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "scam-report.json";
+        link.click();
+        URL.revokeObjectURL(url);
+    };
     return (
         <ScamCheckView
             analysis={analysis()}
@@ -209,6 +224,7 @@ export function ScamCheckPage() {
             onCheck={(text) => controller.check(text)}
             onCheckUrl={(input) => controller.checkUrl(input)}
             onCheckQr={(input) => controller.checkQr(input)}
+            onGenerateReport={() => void generateReport()}
             onGuidedNext={() => controller.guidedNext()}
             onGuidedBack={() => controller.guidedBack()}
             onGuidedComplete={() => controller.guidedComplete()}
