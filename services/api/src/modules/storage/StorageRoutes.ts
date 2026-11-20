@@ -39,12 +39,12 @@ export class StorageRoutes extends Hono {
                 );
             const storage = this.requireStorage();
             const bytes = await storage.getObject(parsed.data.key);
-            if (!bytes)
-                throw new AppError("NOT_FOUND", `Object ${parsed.data.key} not found.`);
+            if (!bytes) throw new AppError("NOT_FOUND", `Object ${parsed.data.key} not found.`);
             return new Response(new Blob([new Uint8Array(bytes)]), {
                 status: 200,
                 headers: {
-                    "content-type": context.req.header("content-type") ?? "application/octet-stream",
+                    "content-type":
+                        context.req.header("content-type") ?? "application/octet-stream",
                 },
             });
         });
@@ -52,10 +52,7 @@ export class StorageRoutes extends Hono {
 
     private requireStorage(): GarageObjectStorage {
         if (!this.storage)
-            throw new AppError(
-                "EXTERNAL_UNAVAILABLE",
-                "Garage object storage is not configured.",
-            );
+            throw new AppError("EXTERNAL_UNAVAILABLE", "Garage object storage is not configured.");
         return this.storage;
     }
 }
