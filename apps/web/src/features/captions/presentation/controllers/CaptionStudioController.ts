@@ -293,6 +293,29 @@ export class CaptionStudioController {
         return this.redoStack.length > 0;
     }
 
+    /** Restores the locally saved project on startup; call once from the view. */
+    public async hydrate(): Promise<void> {
+        try {
+            const loaded = await this.repository.load(this.project.id);
+            if (!loaded) return;
+            this.undoStack = [];
+            this.redoStack = [];
+            this.nextSegmentId = 0;
+            this.restore(
+                loaded.listSegments().map((segment) => ({
+                    id: segment.id,
+                    startMs: segment.startMs,
+                    endMs: segment.endMs,
+                    text: segment.text,
+                    speakerId: segment.speakerId,
+                })),
+            );
+        } catch (cause) {
+            this.error = cause instanceof Error ? cause.message : "Could not load captions.";
+            this.refresh();
+        }
+    }
+
     public async generateCaptions(input: CaptionGenerationInput): Promise<void> {
         const before = this.captureSnapshot();
         const abort = new AbortController();
