@@ -11,7 +11,11 @@
         "@frithward/privacy-core": "workspace:*",
         "hono": "latest",
         "@hono/node-server": "latest",
+        "pg": "^8.23.1",
         "tsx": "latest",
         "zod": "latest"
+    },
+    "devDependencies": {
+        "@types/pg": "^8.23.1"
     }
 }
