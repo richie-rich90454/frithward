@@ -10,8 +10,8 @@ Temporal and frame-level models are under consideration, but no specific candida
 
 ## Dataset candidates
 
-| Dataset | License status | Consent status |
-| --- | --- | --- |
+| Dataset                                   | License status  | Consent status  |
+| ----------------------------------------- | --------------- | --------------- |
 | Cross-dataset evaluation (to be selected) | review required | review required |
 
 No dataset has been selected, approved, or downloaded in this repository.
