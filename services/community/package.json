@@ -9,9 +9,10 @@
     "dependencies": {
         "@frithward/contracts": "workspace:*",
         "@frithward/privacy-core": "workspace:*",
-        "hono": "latest",
         "@hono/node-server": "latest",
+        "hono": "latest",
         "pg": "^8.23.1",
+        "prom-client": "^15.1.3",
         "tsx": "latest",
         "zod": "latest"
     },
