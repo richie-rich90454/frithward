@@ -18,10 +18,15 @@ def test_rejects_empty_input():
         engine.redact(engine.RedactionRequest(video_id=""))
 
 
-def test_echoes_regions():
+def test_does_not_claim_redacted_regions():
     engine = load_engine()
-    result = engine.redact(engine.RedactionRequest(video_id="v1", regions=["r1"]))
-    assert result.redacted_regions == ["r1"]
+    result = engine.redact(
+        engine.RedactionRequest(video_id="v1", regions=["r1"], video_path="/tmp/v.mp4")
+    )
+    assert result.redacted_regions == []
+    assert result.status == "unavailable"
+    assert "No local" in result.reason
+    assert result.limitations
 
 
 def test_rejects_whitespace_id():
