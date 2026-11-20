@@ -27,10 +27,7 @@ interface ShareCheckViewProps {
     protectionError: string | null;
     onToggle: (optionId: string) => void;
     onCheck: () => void;
-    onInspect: (payload: {
-        fileName: string;
-        fields: Record<string, string | number | boolean | null>;
-    }) => void;
+    onInspect: (file: File) => Promise<void>;
     onPlanExport: () => void;
     onExecuteRedaction: () => void;
     onProtectVoice: (input: {
@@ -48,18 +45,12 @@ interface ShareCheckViewProps {
     }) => Promise<void>;
 }
 
-interface FieldRow {
-    key: string;
-    value: string;
-}
-
 const experimentalNote =
     "Experimental: protection is not independently evaluated, does not guarantee prevention of misuse, and requires documented consent. The engine may be unavailable in this build.";
 
 export function ShareCheckView(props: ShareCheckViewProps) {
     const { t } = useI18n();
-    const [rows, setRows] = createSignal<FieldRow[]>([{ key: "", value: "" }]);
-    const [fileName, setFileName] = createSignal("");
+    const [selectedFile, setSelectedFile] = createSignal<File | null>(null);
     const [voiceAssetId, setVoiceAssetId] = createSignal("");
     const [voiceFile, setVoiceFile] = createSignal<File | null>(null);
     const [voiceConsent, setVoiceConsent] = createSignal(false);
@@ -67,19 +58,19 @@ export function ShareCheckView(props: ShareCheckViewProps) {
     const [faceFile, setFaceFile] = createSignal<File | null>(null);
     const [faceConsent, setFaceConsent] = createSignal(false);
     const [faceSizePx, setFaceSizePx] = createSignal("");
-    const updateRow = (index: number, patch: Partial<FieldRow>) => {
-        setRows((current) =>
-            current.map((row, rowIndex) => (rowIndex === index ? { ...row, ...patch } : row)),
-        );
+
+    const selectFile = async (file: File | null) => {
+        setSelectedFile(file);
+        if (file) await props.onInspect(file);
     };
 
-    const inspect = () => {
-        const fields = Object.fromEntries(
-            rows()
-                .filter((row) => row.key.trim().length > 0)
-                .map((row) => [row.key.trim(), row.value]),
-        );
-        props.onInspect({ fileName: fileName(), fields });
+    const download = (artifact: { blob: Blob; fileName: string }): void => {
+        const url = URL.createObjectURL(artifact.blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = artifact.fileName;
+        anchor.click();
+        URL.revokeObjectURL(url);
     };
 
     const protectVoice = async () => {
@@ -145,67 +136,41 @@ export function ShareCheckView(props: ShareCheckViewProps) {
             </Show>
 
             <h2>{t("protect.metadataTitle")}</h2>
-            <p>{t("protect.metadataIntro")}</p>
-            <form
-                onSubmit={(event) => {
-                    event.preventDefault();
-                    inspect();
-                }}
-            >
-                <label>
-                    {t("protect.fileName")}
-                    <input
-                        value={fileName()}
-                        placeholder="photo.jpg"
-                        onInput={(event) => setFileName(event.currentTarget.value)}
-                    />
-                </label>
-                <For each={rows()}>
-                    {(row, index) => (
-                        <div>
-                            <label>
-                                {t("protect.fieldName")}
-                                <input
-                                    value={row.key}
-                                    placeholder="GPSPosition"
-                                    onInput={(event) =>
-                                        updateRow(index(), { key: event.currentTarget.value })
-                                    }
-                                />
-                            </label>
-                            <label>
-                                {t("protect.fieldValue")}
-                                <input
-                                    value={row.value}
-                                    onInput={(event) =>
-                                        updateRow(index(), { value: event.currentTarget.value })
-                                    }
-                                />
-                            </label>
-                        </div>
-                    )}
-                </For>
-                <button
-                    type="button"
-                    onClick={() => setRows((current) => [...current, { key: "", value: "" }])}
-                >
-                    {t("protect.addField")}
-                </button>
-                <button type="submit">{t("protect.inspectMetadata")}</button>
-            </form>
+            <p role="note">
+                Choose a file to inspect in your browser. Supported formats are JPEG and PNG (EXIF
+                and IPTC); other formats are labelled as unverified.
+            </p>
+            <label>
+                Image file to inspect
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => void selectFile(event.currentTarget.files?.[0] ?? null)}
+                />
+            </label>
+            <Show when={selectedFile()}>
+                {(file) => <p role="status">Selected: {file().name}</p>}
+            </Show>
 
             <Show when={props.metadataView} keyed>
                 {(view) => (
                     <div>
                         <h3>{view.summary}</h3>
+                        <p role="note">
+                            Read {view.fieldCount} tag(s) from {view.fileName}. Review the findings
+                            before sharing. Redaction downloads a new copy; your original is never
+                            modified.
+                        </p>
                         <Show when={view.issues.length > 0}>
                             <table>
                                 <caption>{view.fileName}</caption>
                                 <thead>
                                     <tr>
                                         <th scope="col">Detected</th>
+                                        <th scope="col">Value</th>
                                         <th scope="col">Where</th>
                                         <th scope="col">Why it matters</th>
+                                        <th scope="col">Risk</th>
                                         <th scope="col">How to resolve</th>
                                     </tr>
                                 </thead>
@@ -214,8 +179,10 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                                         {(issue) => (
                                             <tr>
                                                 <td>{issue.label}</td>
+                                                <td>{issue.value}</td>
                                                 <td>{issue.where}</td>
                                                 <td>{issue.why}</td>
+                                                <td>{issue.severity}</td>
                                                 <td>{issue.how}</td>
                                             </tr>
                                         )}
@@ -242,14 +209,17 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                                 {(action) => <li>{action.description}</li>}
                             </For>
                         </ul>
-                        <p role="note">{t("protect.planNote")}</p>
+                        <p role="note">
+                            This plan is advisory only. Use Execute redaction to download a
+                            sanitized copy.
+                        </p>
                     </div>
                 )}
             </Show>
             <Show when={props.redaction} keyed>
                 {(redaction) => (
                     <div>
-                        <h3>Redaction descriptor</h3>
+                        <h3>Sanitized file ready</h3>
                         <p role="status">{redaction.summary}</p>
                         <ul>
                             <For each={redaction.remaining}>
@@ -260,6 +230,9 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                                 )}
                             </For>
                         </ul>
+                        <button type="button" onClick={() => download(redaction.artifact)}>
+                            Download sanitized file
+                        </button>
                         <p role="note">{redaction.note}</p>
                     </div>
                 )}
@@ -424,9 +397,9 @@ export function ShareCheckPage() {
             protectionError={protectionError()}
             onToggle={(optionId) => controller.toggle(optionId)}
             onCheck={() => controller.check()}
-            onInspect={(payload) => controller.inspectMetadata(payload)}
+            onInspect={(file) => controller.inspectFile(file)}
             onPlanExport={() => controller.planSanitizedExport(controller.getMetadataFindings())}
-            onExecuteRedaction={() => controller.executeRedaction()}
+            onExecuteRedaction={() => void controller.executeRedaction()}
             onProtectVoice={(input) => protection.protectVoice(input)}
             onProtectFace={(input) => protection.protectFace(input)}
         />
