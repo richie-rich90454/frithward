@@ -57,7 +57,8 @@ export const ja: Record<string, string> = {
     "protect.addField": "項目を追加",
     "protect.inspectMetadata": "メタデータを確認",
     "protect.planExport": "安全な書き出しの計画を作成",
-    "protect.planNote": "これは計画のみです。ここではファイルの書き換えやダウンロードは行われません。",
+    "protect.planNote":
+        "これは計画のみです。ここではファイルの書き換えやダウンロードは行われません。",
     "learn.title": "学ぶ",
     "learn.intro":
         "情報を確かめ、安全に過ごすための四つの短いレッスン。各レッスンは架空の例で終わり、後のクイズで学んだことを確認します。",
@@ -66,7 +67,8 @@ export const ja: Record<string, string> = {
     "learn.pressure.title": "圧力を見極める",
     "learn.pressure.desc": "急かす、秘密にする、支払いを求めるは一般的なリスクの兆候です。",
     "learn.details.title": "自分の情報を守る",
-    "learn.details.desc": "メディアを投稿する前に位置情報とデバイスのメタデータを削除してください。",
+    "learn.details.desc":
+        "メディアを投稿する前に位置情報とデバイスのメタデータを削除してください。",
     "learn.lesson.sources.title": "情報源を確かめる",
     "learn.lesson.sources.p1":
         "写真や引用は、出所が確認される前に広く拡散されることがあります。共有する前に、最初の投稿、投稿したアカウント、日付を探してください。再投稿、スクリーンショット、切り抜いた画像は文脈を失わせ、主張の追跡を難しくします。",
