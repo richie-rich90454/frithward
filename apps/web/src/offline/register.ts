@@ -1,3 +1,5 @@
+import { getRuntimeBase } from "./base.js";
+
 export interface OfflineStatus {
     supported: boolean;
     online: boolean;
@@ -18,7 +20,7 @@ let controller: OfflineController | undefined;
  * Registers the offline service worker and exposes honest connection state.
  * Calling more than once is safe: the first call's controller is returned.
  */
-export function registerOfflineSupport(): OfflineController {
+export function registerOfflineSupport(baseHref?: string): OfflineController {
     if (controller) return controller;
 
     const hasServiceWorker = typeof navigator !== "undefined" && "serviceWorker" in navigator;
@@ -39,7 +41,8 @@ export function registerOfflineSupport(): OfflineController {
     };
 
     if (supported) {
-        const swUrl = new URL("sw.js", document.baseURI);
+        const base = new URL(baseHref ?? getRuntimeBase().href, window.location.origin);
+        const swUrl = new URL("sw.js", base);
         navigator.serviceWorker
             .register(swUrl.href, { scope: new URL("./", swUrl).href })
             .catch(() => {
