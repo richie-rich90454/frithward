@@ -1,11 +1,19 @@
-import { AppError } from "@frithward/contracts";
+import { AppError, RESULT_CODES, type ResultCode } from "@frithward/contracts";
 
 export interface FaceProtectionOutcome {
     readonly artifactId: string;
     readonly method: string;
     readonly experimental: boolean;
     readonly limitations: readonly string[];
+    readonly limitationCodes: readonly ResultCode[];
 }
+
+export const FACE_PROTECTION_LIMIT_CODES: readonly ResultCode[] = [
+    RESULT_CODES.FACE_LIMIT_0,
+    RESULT_CODES.FACE_LIMIT_1,
+    RESULT_CODES.FACE_LIMIT_2,
+    RESULT_CODES.FACE_LIMIT_3,
+];
 
 const FACE_PROTECTION_LIMITS: readonly string[] = Object.freeze([
     "Face protection is experimental and has not been independently evaluated.",
