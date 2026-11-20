@@ -61,8 +61,56 @@ export function DeveloperToolsView() {
                 <li>
                     <Terminal class="fw-icon" />
                     <div>
-                        <h2>Core packages</h2>
+                        <h2>
+                            <a href="https://github.com/richie-rich90454/frithward/tree/main/packages">
+                                Core packages
+                            </a>
+                        </h2>
                         <p>Media, security, privacy, and provenance logic runs locally.</p>
+                    </div>
+                </li>
+                <li>
+                    <Info class="fw-icon" />
+                    <div>
+                        <h2>
+                            <a href="https://github.com/richie-rich90454/frithward/blob/main/docs/compatibility.md">
+                                Compatibility
+                            </a>
+                        </h2>
+                        <p>Browser API minimums and local runtime requirements.</p>
+                    </div>
+                </li>
+                <li>
+                    <Info class="fw-icon" />
+                    <div>
+                        <h2>
+                            <a href="https://github.com/richie-rich90454/frithward/blob/main/docs/deployment.md">
+                                Self-hosting and deployment
+                            </a>
+                        </h2>
+                        <p>How to run Frithward on your own infrastructure.</p>
+                    </div>
+                </li>
+                <li>
+                    <Terminal class="fw-icon" />
+                    <div>
+                        <h2>
+                            <a href="https://github.com/richie-rich90454/frithward/blob/main/packages/sdk/examples/typed.ts">
+                                TypeScript SDK example
+                            </a>
+                        </h2>
+                        <p>Typed client usage in TypeScript.</p>
+                    </div>
+                </li>
+                <li>
+                    <Terminal class="fw-icon" />
+                    <div>
+                        <h2>
+                            <a href="https://github.com/richie-rich90454/frithward/blob/main/packages/sdk-python/examples/typed_example.py">
+                                Python SDK example
+                            </a>
+                        </h2>
+                        <p>Typed client usage in Python.</p>
                     </div>
                 </li>
                 <li>
