@@ -1,8 +1,5 @@
 import { AppError } from "@frithward/contracts";
-import type {
-    RecognizedUtterance,
-    SpeechRecognitionPort,
-} from "@frithward/media-core";
+import type { RecognizedUtterance, SpeechRecognitionPort } from "@frithward/media-core";
 
 /**
  * Headless adapter around `browser-whisper` v2's `BrowserWhisper` engine.
