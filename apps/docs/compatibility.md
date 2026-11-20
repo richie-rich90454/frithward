@@ -33,8 +33,11 @@ The minimum versions below are commonly cited baselines, **not** a browser matri
 | WebCodecs | local audio/video transcoding | Chrome 94, Safari 16.4 | Firefox support is not assumed |
 | WebGPU | default `browser-whisper` transcription and GPU detection | Chrome 113, Safari 18+ | Required for zero-config transcription (first run downloads weights); caption editing/export and the rest of the app still work without it |
 | WebAssembly SIMD | WASM-based media and inference libraries | Modern evergreen browsers | Older browsers without SIMD cannot run the local inference path |
+| `localStorage` | theme preference, scam recent checks, incident export history | Modern evergreen browsers | Theme cycles system/light/dark and persists as `frithward.theme`; data stays on this origin |
+| IndexedDB | browser-local Case store (`frithward-cases`, `cases` store) | Chrome 24, Firefox 15, Safari 10.1 | Cases are saved locally through Dexie and are never uploaded; unavailable environments get an explicit error |
+| `crypto.subtle` (Web Crypto) | SHA-256 hashing of provenance artifacts and incident evidence | Chrome 37, Firefox 34, Safari 11 | Hashing runs in the browser; no server call. Missing `crypto.subtle` disables evidence hashing with an explicit error |
 
-None of these gates requires a backend or a native install. There is no server-side fallback: where an API is missing, the affected local feature is unavailable.
+None of these gates requires a backend or a native install. There is no server-side fallback: where an API is missing, the affected local feature is unavailable. Cryptographic C2PA verification is one such missing feature: the native `@contentauth/c2pa-node` SDK cannot run in the browser, so manifest fields are read and reported as unverified, and binary files with no locally readable manifest return an explicit "unavailable" result rather than "valid".
 
 ### Cross-origin isolation and static hosts
 
@@ -42,16 +45,23 @@ None of these gates requires a backend or a native install. There is no server-s
 
 A host that cannot set arbitrary response headers (for example GitHub Pages) still runs every non-`SharedArrayBuffer` feature normally; only Whisper pthreads transcription is unavailable. The browser-whisper/WebGPU transcription path does not need COOP/COEP. All runtime assets are same-origin, so `require-corp` blocks nothing and is kept over `credentialless` for broader browser support. `getIsolationStatus()` in `apps/web/src/offline/isolation.ts` exposes the check at runtime.
 
+## Accessibility and dark mode
+
+The theme toggle offers `system`, `light`, and `dark`. The choice persists in `localStorage` under `frithward.theme`; on `system`, the resolved theme follows `prefers-color-scheme` and updates live. `e2e/theme.spec.ts` verifies the cycle, persistence across reload, and system-preference changes. `e2e/mobile.spec.ts` and `e2e/theme.spec.ts` verify a 375px viewport across the main routes with no horizontal overflow, a reachable theme toggle, and 44px touch targets on home buttons. `e2e/accessibility.spec.ts` runs axe-core checks. The docs site uses VitePress `appearance: auto` with a dark accent palette.
+
+Accessibility and dark mode are verified in Chromium only; screen-reader testing and real mobile devices are not covered in this checkout.
+
 ## Browser compatibility (local-first path)
 
 The web app ships WASM-based libraries (`onnxruntime-web`, `@ffmpeg/ffmpeg`, `tesseract.js`, `@mediapipe/tasks-vision`, `@mlc-ai/web-llm`) and requires a cross-origin-isolated page for some of them. Caddy sets `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` for that reason.
 
 | Browser | Level | Status | Notes |
 | --- | --- | --- | --- |
-| Chromium (Chrome, Edge) current | Recent desktop | Not verified | E2E tests run in Playwright Chromium; no manual browser matrix has been executed |
+| Chromium (Chrome, Edge) current | Recent desktop | E2E coverage | Playwright Chromium runs the theme, mobile-layout, accessibility, and browser-only suites; no manual browser matrix has been executed |
 | Firefox current | Recent desktop | Not verified | WASM SIMD supported; cross-origin isolation behavior not tested here |
 | Safari current (macOS) | Recent desktop | Not verified | WASM threading / WebGPU support varies by version; not tested here |
-| Mobile browsers | iOS Safari / Android Chrome | Not verified | No mobile E2E coverage |
+| Mobile viewport (375 × 812) | Responsive layout in Chromium | Verified | `e2e/mobile.spec.ts` checks 16 routes for no horizontal overflow and a reachable theme toggle; `e2e/theme.spec.ts` checks 44px touch targets |
+| Mobile browsers (real devices) | iOS Safari / Android Chrome | Not verified | No real-device or Safari-mobile coverage in this repository |
 | Older browsers without WASM SIMD | — | Not supported | Core local inference path will not run |
 
 There is no browserslist configuration in this repository, so build targets are Vite defaults. Treat the table as guidance, not a tested contract.
@@ -88,7 +98,7 @@ This describes the execution shapes present in this repository; it is not a cert
 
 ## Model compatibility
 
-Most engines are interface scaffolds: they validate input and return structurally correct results, but model-backed inference is not wired. Candidate models below are research targets, not shipped weights.
+Engines now split into two honest groups. Several perform deterministic local computation (reviewed scam patterns, literal document redaction, EXIF/GPS inspection, PCM gain, language heuristics, resize and trim geometry, JSON provenance parsing, and caller-supplied PyTorch image inference); the rest return `status="unavailable"` with a reason rather than fabricating results. No detector, OCR, transcription, generation, or protection model ships with the repository, so model-backed detection remains unavailable. Candidate models below are research targets, not shipped weights. See [Engines](/engines) for the per-engine table.
 
 | Area | Candidate(s) | Dataset | Status |
 | --- | --- | --- | --- |
