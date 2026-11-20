@@ -27,9 +27,7 @@ export function DeveloperToolsView() {
                     <Overlay class="dialog-overlay" />
                     <Content class="dialog-content">
                         <Title>About Frithward</Title>
-                        <Description>
-                            Keep people safe. Keep media honest.
-                        </Description>
+                        <Description>Keep people safe. Keep media honest.</Description>
                         <p>
                             Frithward is an open-source toolkit for inspecting media, checking
                             provenance, and spotting scams. Processing runs on your device by
