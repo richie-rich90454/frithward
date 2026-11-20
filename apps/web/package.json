@@ -10,6 +10,7 @@
         "start": "vite preview --host 0.0.0.0 --port 4173"
     },
     "dependencies": {
+        "@contentauth/c2pa-wasm": "0.15.1",
         "@ffmpeg/ffmpeg": "^0.12.15",
         "@fontsource/noto-sans": "^5.3.0",
         "@frithward/contracts": "workspace:*",
