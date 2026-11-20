@@ -18,6 +18,11 @@ interface IncidentTimelineViewProps {
         content: ArrayBuffer;
         source: string;
     }) => Promise<unknown>;
+    onImportReport: (input: {
+        fileName: string;
+        content: ArrayBuffer;
+        report: unknown;
+    }) => Promise<unknown>;
     onExport: () => Promise<string>;
     onReset: () => void;
 }
@@ -29,6 +34,7 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
     const [receivedAt, setReceivedAt] = createSignal("");
     const [file, setFile] = createSignal<File | null>(null);
     const [source, setSource] = createSignal("");
+    const [reportFile, setReportFile] = createSignal<File | null>(null);
     const [localError, setLocalError] = createSignal<string | null>(null);
 
     const addEvidence = async () => {
@@ -46,6 +52,31 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
             });
         } catch (cause) {
             setLocalError(cause instanceof Error ? cause.message : "Could not hash evidence.");
+        }
+    };
+
+    const importReport = async () => {
+        const selected = reportFile();
+        if (!selected) {
+            setLocalError("Choose a scam check report JSON file first.");
+            return;
+        }
+        let report: unknown;
+        try {
+            report = JSON.parse(await selected.text());
+        } catch {
+            setLocalError("The selected file is not valid JSON.");
+            return;
+        }
+        setLocalError(null);
+        try {
+            await props.onImportReport({
+                fileName: selected.name,
+                content: await selected.arrayBuffer(),
+                report,
+            });
+        } catch (cause) {
+            setLocalError(cause instanceof Error ? cause.message : "Could not import report.");
         }
     };
 
@@ -176,6 +207,28 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
                 </button>
             </Show>
 
+            <h2>Import a scam check report</h2>
+            <p role="note">
+                Add the JSON downloaded from the scam check as evidence. The file is hashed locally
+                in your browser; its findings are not re-analysed here.
+            </p>
+            <form
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    void importReport();
+                }}
+            >
+                <label>
+                    Scam check report JSON
+                    <input
+                        type="file"
+                        accept="application/json,.json"
+                        onChange={(event) => setReportFile(event.currentTarget.files?.[0] ?? null)}
+                    />
+                </label>
+                <button type="submit">Import report as evidence</button>
+            </form>
+
             <h2>Report history</h2>
             <p role="note">Exports are recorded locally in this browser. Nothing is uploaded.</p>
             <Show when={props.history.length > 0} fallback={<p>No reports exported yet.</p>}>
@@ -219,6 +272,7 @@ export function IncidentTimelinePage() {
             error={error()}
             onAnalyze={(input) => controller.analyze(input)}
             onAddEvidence={(input) => controller.addEvidence(input)}
+            onImportReport={(input) => controller.importScamReport(input)}
             onExport={() => controller.exportReport()}
             onReset={() => controller.reset()}
         />
