@@ -227,7 +227,8 @@ export class ShareCheckController {
             this.error = null;
         } catch (cause) {
             this.exportPlan = null;
-            this.error = cause instanceof Error ? cause.message : "Could not plan a sanitized export.";
+            this.error =
+                cause instanceof Error ? cause.message : "Could not plan a sanitized export.";
         }
         this.notify();
     }
