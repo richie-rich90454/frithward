@@ -115,6 +115,7 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
             </Show>
             <Show when={props.waveformData}>
                 <canvas
+                    class="waveform-canvas"
                     ref={setWaveformCanvas}
                     width={512}
                     height={128}
