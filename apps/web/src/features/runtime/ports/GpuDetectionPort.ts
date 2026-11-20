@@ -6,6 +6,8 @@ export interface GpuReport {
     computePassRan: boolean;
     limitations: string[];
     error: string | null;
+    errorCode?: string | undefined;
+    limitationCodes?: readonly (string | undefined)[] | undefined;
 }
 
 export interface GpuDetectionPort {
