@@ -14,7 +14,7 @@ interface CaptionStudioViewProps {
     onGenerateCaptions: (input: {
         file: File;
         modelUrl?: string;
-        wasmUrl: string;
+        wasmUrl?: string;
         language: string;
     }) => void;
     onCancelGeneration: () => void;
@@ -39,37 +39,40 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                 onSubmit={(event) => {
                     event.preventDefault();
                     const file = audioFile();
-                    if (!file || !wasmUrl()) return;
+                    if (!file) return;
                     props.onGenerateCaptions({
                         file,
                         ...(modelUrl().trim().length > 0 ? { modelUrl: modelUrl() } : {}),
-                        wasmUrl: wasmUrl(),
+                        ...(wasmUrl().trim().length > 0 ? { wasmUrl: wasmUrl() } : {}),
                         language: language(),
                     });
                 }}
             >
                 <label>
-                    Audio file (16-bit mono PCM, 16 kHz)
+                    Audio or video file (decoded locally with WebCodecs)
                     <input
                         type="file"
                         accept="audio/*"
                         onChange={(event) => setAudioFile(event.currentTarget.files?.[0] ?? null)}
                     />
                 </label>
-                <label>
-                    Whisper model URL (optional; blank uses /models/whisper-tiny.bin if installed)
-                    <input
-                        value={modelUrl()}
-                        onInput={(event) => setModelUrl(event.currentTarget.value)}
-                    />
-                </label>
-                <label>
-                    Whisper WASM URL
-                    <input
-                        value={wasmUrl()}
-                        onInput={(event) => setWasmUrl(event.currentTarget.value)}
-                    />
-                </label>
+                <details>
+                    <summary>Advanced: supply your own Whisper WASM runtime and model</summary>
+                    <label>
+                        Whisper model URL (blank uses /models/whisper-tiny.bin if installed)
+                        <input
+                            value={modelUrl()}
+                            onInput={(event) => setModelUrl(event.currentTarget.value)}
+                        />
+                    </label>
+                    <label>
+                        Whisper WASM URL (blank uses the local WebGPU engine above)
+                        <input
+                            value={wasmUrl()}
+                            onInput={(event) => setWasmUrl(event.currentTarget.value)}
+                        />
+                    </label>
+                </details>
                 <label>
                     Language code
                     <input
@@ -81,7 +84,6 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     type="submit"
                     disabled={
                         !audioFile() ||
-                        !wasmUrl() ||
                         props.generationStage === "loading model" ||
                         props.generationStage === "transcribing"
                     }
@@ -104,10 +106,15 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                 <Show when={props.generationMessage}>{(message) => ` - ${message()}`}</Show>
             </p>
             <p>
-                Local generation needs a Whisper WASM runtime supplied by you and a model: either
-                place whisper-tiny.bin in public/models/ and rebuild, or supply a model URL. No
-                model is downloaded automatically. A cross-origin-isolated page (COOP/COEP) and raw
-                16-bit little-endian mono audio at 16 kHz are also required. No audio is uploaded.
+                Transcription runs locally with WebGPU (Chrome/Edge 113+). No upload.
+            </p>
+            <p>
+                The default engine needs no model files from you: model weights are downloaded from
+                Hugging Face on first use and cached in the browser, so the first run needs network
+                and later runs can work offline. No native install and no cross-origin isolation
+                (COOP/COEP) headers are required. To use fully local/offline weights instead, supply
+                your own Whisper WASM runtime and a 16-bit mono 16 kHz .bin model under Advanced
+                (that path needs a cross-origin-isolated page).
             </p>
             <ul>
                 <For each={props.viewModel.segments}>
