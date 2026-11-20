@@ -9,6 +9,7 @@ import { OcrController } from "./OcrController";
 import { ZipController } from "./ZipController";
 import { english, interpolate, type Translator } from "../../../i18n/translate.js";
 import { translatedError } from "../../../i18n/errors.js";
+import { resultList } from "../../../i18n/results.js";
 
 export type ExportFormat = "docx" | "pdf" | "xlsx" | "pptx";
 
@@ -121,7 +122,11 @@ export class DocumentGenerationController {
                             : interpolate(this.translate("documents.ocr.confidence"), {
                                   n: Math.round(result.confidence),
                               }),
-                    limitations: result.limitations.join(" "),
+                    limitations: resultList(
+                        this.translate,
+                        result.limitations,
+                        result.limitationCodes,
+                    ).join(" "),
                 }),
             };
         } catch (cause) {
