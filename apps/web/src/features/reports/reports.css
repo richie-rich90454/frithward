@@ -1,0 +1,18 @@
+.fw-report-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.fw-report-button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--fw-border-strong);
+    border-radius: var(--fw-radius);
+    background: var(--fw-canvas);
+    color: var(--fw-text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
