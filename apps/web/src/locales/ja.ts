@@ -838,43 +838,63 @@ export const ja: Record<string, string> = {
     "result.SCAM_NEXT_NO_SEND": "お金、コード、認証情報は送らないでください。",
     "result.SCAM_NEXT_KEEP_EVIDENCE": "元のメッセージを証拠として保管してください。",
     "result.GUIDED_PAUSE_TITLE": "立ち止まって深呼吸",
-    "result.GUIDED_PAUSE_PLAIN": "今はクリック、返信、支払いをしないでください。時間をかけて構いません。",
+    "result.GUIDED_PAUSE_PLAIN":
+        "今はクリック、返信、支払いをしないでください。時間をかけて構いません。",
     "result.GUIDED_PAUSE_ACTION": "少しの間、電話やマウスから手を離してください。",
     "result.GUIDED_REVIEW_TITLE": "警告信号を確認する",
     "result.GUIDED_REVIEW_PLAIN": "{findings}",
-    "result.GUIDED_REVIEW_NO_FINDINGS": "明確な警告信号は見つかりませんでしたが、メッセージが安全とは限りません。",
-    "result.GUIDED_REVIEW_ACTION": "各項目をゆっくり読んでください。誰かに一緒に読んでもらっても構いません。",
+    "result.GUIDED_REVIEW_NO_FINDINGS":
+        "明確な警告信号は見つかりませんでしたが、メッセージが安全とは限りません。",
+    "result.GUIDED_REVIEW_ACTION":
+        "各項目をゆっくり読んでください。誰かに一緒に読んでもらっても構いません。",
     "result.GUIDED_CHECK_TITLE": "信頼できる人に確認する",
-    "result.GUIDED_CHECK_PLAIN": "既知の番号で家族や友人に電話してください。メッセージ内の番号は使わないでください。",
+    "result.GUIDED_CHECK_PLAIN":
+        "既知の番号で家族や友人に電話してください。メッセージ内の番号は使わないでください。",
     "result.GUIDED_CHECK_ACTION": "他のことをする前に電話してください。",
     "result.GUIDED_PROTECT_TITLE": "アカウントを保護する",
-    "result.GUIDED_PROTECT_PLAIN": "パスワードやコードを入力した場合は、公式サイトまたはアプリですぐに変更してください。メッセージ内のリンクは使わないでください。",
-    "result.GUIDED_PROTECT_ACTION": "パスワードを変更し、追加のセキュリティが用意されていれば有効にしてください。",
+    "result.GUIDED_PROTECT_PLAIN":
+        "パスワードやコードを入力した場合は、公式サイトまたはアプリですぐに変更してください。メッセージ内のリンクは使わないでください。",
+    "result.GUIDED_PROTECT_ACTION":
+        "パスワードを変更し、追加のセキュリティが用意されていれば有効にしてください。",
     "result.GUIDED_REPORT_TITLE": "通報する",
     "result.GUIDED_REPORT_PLAIN": "メッセージを保管して通報してください。{reportLine}",
     "result.GUIDED_REPORT_ACTION": "メッセージとすべてのスクリーンショットを保存してください。",
     "result.GUIDED_SUPPORT_TITLE": "あなたは一人ではありません",
-    "result.GUIDED_SUPPORT_PLAIN": "慎重な人でも詐欺に遭うことがあります。送金した場合は、すぐに銀行に連絡して通報してください。",
+    "result.GUIDED_SUPPORT_PLAIN":
+        "慎重な人でも詐欺に遭うことがあります。送金した場合は、すぐに銀行に連絡して通報してください。",
     "result.GUIDED_SUPPORT_ACTION": "このページを開いたまま、一歩ずつ進んでください。",
-    "result.PROTECTION_SUMMARY_APPLIED": "{method} を用いて実験的に保護を適用しました。悪用を防ぐことを保証するものではありません。",
-    "result.PROTECTION_SUMMARY_UNAVAILABLE": "このアセットには保護を適用できません。メディアが公開しても安全であることを意味しません。",
-    "result.PROTECTION_LIMIT_EXPERIMENTAL": "保護は実験的なもので、悪用を防ぐことを保証するものではありません。",
-    "result.PROTECTION_NEXT_KEEP_ARTIFACTS": "元のファイルと保護済みの成果物を一緒に保管してください。",
+    "result.PROTECTION_SUMMARY_APPLIED":
+        "{method} を用いて実験的に保護を適用しました。悪用を防ぐことを保証するものではありません。",
+    "result.PROTECTION_SUMMARY_UNAVAILABLE":
+        "このアセットには保護を適用できません。メディアが公開しても安全であることを意味しません。",
+    "result.PROTECTION_LIMIT_EXPERIMENTAL":
+        "保護は実験的なもので、悪用を防ぐことを保証するものではありません。",
+    "result.PROTECTION_NEXT_KEEP_ARTIFACTS":
+        "元のファイルと保護済みの成果物を一緒に保管してください。",
     "result.PROTECTION_NEXT_REEVALUATE": "モデルやポリシーの更新後に保護を再評価してください。",
-    "result.DETECTION_SUMMARY_SIGNALS": "レビュー用に {n} 件の信号を観察しました。真実性を示すものでも、人物を特定するものでもありません。",
-    "result.DETECTION_SUMMARY_NONE": "操作の信号は観察されませんでした。信号がないことは真実性を証明しません。",
-    "result.DETECTION_NEXT_REVIEW_AUDIO": "フラグの付いた音声区間を元の録音と一緒に確認してください。",
+    "result.DETECTION_SUMMARY_SIGNALS":
+        "レビュー用に {n} 件の信号を観察しました。真実性を示すものでも、人物を特定するものでもありません。",
+    "result.DETECTION_SUMMARY_NONE":
+        "操作の信号は観察されませんでした。信号がないことは真実性を証明しません。",
+    "result.DETECTION_NEXT_REVIEW_AUDIO":
+        "フラグの付いた音声区間を元の録音と一緒に確認してください。",
     "result.DETECTION_NEXT_PROVENANCE_AUDIO": "可能であれば、録音を来歴記録と比較してください。",
     "result.DETECTION_NEXT_REVIEW_IMAGE": "フラグの付いた領域を元の画像と一緒に確認してください。",
     "result.DETECTION_NEXT_PROVENANCE_IMAGE": "可能であれば、画像を来歴記録と比較してください。",
-    "result.DETECTION_NEXT_REVIEW_VIDEO": "フラグの付いたフレームを元の動画と一緒に確認してください。",
+    "result.DETECTION_NEXT_REVIEW_VIDEO":
+        "フラグの付いたフレームを元の動画と一緒に確認してください。",
     "result.DETECTION_NEXT_PROVENANCE_VIDEO": "可能であれば、動画を来歴記録と比較してください。",
-    "result.DETECTION_NEXT_REVIEW_MULTIMODAL": "フラグの付いた音声と動画の区間を一緒に確認してください。",
-    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL": "可能であれば、メディアを来歴記録と比較してください。",
-    "result.ANALYSIS_LIMIT_EVIDENCE": "検出結果はレビュー用の証拠であり、真実性の証明ではありません。",
-    "result.ANALYSIS_LIMIT_MODEL_VARIATION": "モデルの性能はデータセット、言語、録音条件によって異なります。",
+    "result.DETECTION_NEXT_REVIEW_MULTIMODAL":
+        "フラグの付いた音声と動画の区間を一緒に確認してください。",
+    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL":
+        "可能であれば、メディアを来歴記録と比較してください。",
+    "result.ANALYSIS_LIMIT_EVIDENCE":
+        "検出結果はレビュー用の証拠であり、真実性の証明ではありません。",
+    "result.ANALYSIS_LIMIT_MODEL_VARIATION":
+        "モデルの性能はデータセット、言語、録音条件によって異なります。",
     "result.ANALYSIS_LIMIT_HUMAN_REVIEW": "重大な判断には独立した人間のレビューが必要です。",
-    "result.ANALYSIS_LIMIT_AUDIO": "単一モデルの音声スコアは、音声合成や変換を証明するものではありません。",
+    "result.ANALYSIS_LIMIT_AUDIO":
+        "単一モデルの音声スコアは、音声合成や変換を証明するものではありません。",
     "result.ANALYSIS_LIMIT_IMAGE": "フレーム単位の画像スコアは操作を証明するものではありません。",
     "result.ANALYSIS_LIMIT_VIDEO": "フレームサンプリングでは短い操作を見逃す可能性があります。",
     "result.ANALYSIS_LIMIT_MULTIMODAL": "音声と動画の同期信号は言語と録音品質に左右されます。",
