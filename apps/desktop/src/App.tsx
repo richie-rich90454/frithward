@@ -11,6 +11,7 @@ import {
     Users,
 } from "lucide-solid";
 import { LanguageSwitcher, useI18n } from "./i18n/index.jsx";
+import { ThemeToggle } from "./theme.jsx";
 
 const NAVIGATION = [
     { path: "/", key: "nav.home", icon: Home },
@@ -115,7 +116,7 @@ export function DesktopApp() {
     const location = useLocation();
     const { t } = useI18n();
     return (
-        <div>
+        <div class="fw-shell">
             <header>
                 <div>
                     <p>
@@ -134,6 +135,7 @@ export function DesktopApp() {
                     </For>
                 </nav>
                 <LanguageSwitcher />
+                <ThemeToggle />
             </header>
             <main>{pageFor(location.pathname, t)}</main>
         </div>
