@@ -879,7 +879,8 @@ export const de: Record<string, string> = {
     "result.GUIDED_REVIEW_PLAIN": "{findings}",
     "result.GUIDED_REVIEW_NO_FINDINGS":
         "Wir haben keine offensichtlichen Warnzeichen gefunden, aber das bedeutet nicht, dass die Nachricht sicher ist.",
-    "result.GUIDED_REVIEW_ACTION": "Lesen Sie jeden Punkt langsam. Sie können jemanden bitten, ihn mit Ihnen zu lesen.",
+    "result.GUIDED_REVIEW_ACTION":
+        "Lesen Sie jeden Punkt langsam. Sie können jemanden bitten, ihn mit Ihnen zu lesen.",
     "result.GUIDED_CHECK_TITLE": "Prüfen Sie mit jemandem, dem Sie vertrauen",
     "result.GUIDED_CHECK_PLAIN":
         "Rufen Sie ein Familienmitglied oder einen Freund mit einer Nummer an, die Sie bereits kennen. Verwenden Sie keine Nummer aus der Nachricht.",
@@ -887,44 +888,57 @@ export const de: Record<string, string> = {
     "result.GUIDED_PROTECT_TITLE": "Schützen Sie Ihre Konten",
     "result.GUIDED_PROTECT_PLAIN":
         "Wenn Sie ein Passwort oder einen Code eingegeben haben, ändern Sie es jetzt auf der offiziellen Website oder in der offiziellen App. Verwenden Sie keine Links aus der Nachricht.",
-    "result.GUIDED_PROTECT_ACTION": "Ändern Sie Passwörter und aktivieren Sie zusätzliche Sicherheit, falls angeboten.",
+    "result.GUIDED_PROTECT_ACTION":
+        "Ändern Sie Passwörter und aktivieren Sie zusätzliche Sicherheit, falls angeboten.",
     "result.GUIDED_REPORT_TITLE": "Melden Sie es",
     "result.GUIDED_REPORT_PLAIN": "Bewahren Sie die Nachricht auf und melden Sie sie.{reportLine}",
     "result.GUIDED_REPORT_ACTION": "Speichern Sie die Nachricht und alle Screenshots.",
     "result.GUIDED_SUPPORT_TITLE": "Sie sind nicht allein",
     "result.GUIDED_SUPPORT_PLAIN":
         "Betrug passiert auch vorsichtigen Menschen. Wenn Geld überwiesen wurde, wenden Sie sich sofort an Ihre Bank und melden Sie es.",
-    "result.GUIDED_SUPPORT_ACTION": "Lassen Sie diese Seite offen und gehen Sie einen Schritt nach dem anderen.",
+    "result.GUIDED_SUPPORT_ACTION":
+        "Lassen Sie diese Seite offen und gehen Sie einen Schritt nach dem anderen.",
     "result.PROTECTION_SUMMARY_APPLIED":
         "Schutz wurde experimentell mit {method} angewendet. Dies garantiert keinen Schutz vor Missbrauch.",
     "result.PROTECTION_SUMMARY_UNAVAILABLE":
         "Der Schutz ist für diese Datei nicht verfügbar. Dies bedeutet nicht, dass die Medien unbedenklich veröffentlicht werden können.",
     "result.PROTECTION_LIMIT_EXPERIMENTAL":
         "Der Schutz ist experimentell und garantiert keinen Schutz vor Missbrauch.",
-    "result.PROTECTION_NEXT_KEEP_ARTIFACTS": "Bewahren Sie Original und geschützte Dateien zusammen auf.",
-    "result.PROTECTION_NEXT_REEVALUATE": "Bewerten Sie den Schutz nach jedem Modell- oder Richtlinienupdate erneut.",
+    "result.PROTECTION_NEXT_KEEP_ARTIFACTS":
+        "Bewahren Sie Original und geschützte Dateien zusammen auf.",
+    "result.PROTECTION_NEXT_REEVALUATE":
+        "Bewerten Sie den Schutz nach jedem Modell- oder Richtlinienupdate erneut.",
     "result.DETECTION_SUMMARY_SIGNALS":
         "{n} Signal(e) zur Prüfung beobachtet. Dies belegt weder Echtheit noch identifiziert es eine Person.",
     "result.DETECTION_SUMMARY_NONE":
         "Keine Manipulationssignale beobachtet. Das Fehlen von Signalen belegt keine Echtheit.",
     "result.DETECTION_NEXT_REVIEW_AUDIO":
         "Prüfen Sie die markierten Audiosegmente zusammen mit der ursprünglichen Aufnahme.",
-    "result.DETECTION_NEXT_PROVENANCE_AUDIO": "Vergleichen Sie die Aufnahme mit verfügbaren Provenienzdaten.",
-    "result.DETECTION_NEXT_REVIEW_IMAGE": "Prüfen Sie die markierten Bereiche zusammen mit dem Originalbild.",
-    "result.DETECTION_NEXT_PROVENANCE_IMAGE": "Vergleichen Sie das Bild mit verfügbaren Provenienzdaten.",
-    "result.DETECTION_NEXT_REVIEW_VIDEO": "Prüfen Sie die markierten Frames zusammen mit dem Originalvideo.",
-    "result.DETECTION_NEXT_PROVENANCE_VIDEO": "Vergleichen Sie das Video mit verfügbaren Provenienzdaten.",
-    "result.DETECTION_NEXT_REVIEW_MULTIMODAL": "Prüfen Sie die markierten Audio- und Videosegmente zusammen.",
-    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL": "Vergleichen Sie die Medien mit verfügbaren Provenienzdaten.",
+    "result.DETECTION_NEXT_PROVENANCE_AUDIO":
+        "Vergleichen Sie die Aufnahme mit verfügbaren Provenienzdaten.",
+    "result.DETECTION_NEXT_REVIEW_IMAGE":
+        "Prüfen Sie die markierten Bereiche zusammen mit dem Originalbild.",
+    "result.DETECTION_NEXT_PROVENANCE_IMAGE":
+        "Vergleichen Sie das Bild mit verfügbaren Provenienzdaten.",
+    "result.DETECTION_NEXT_REVIEW_VIDEO":
+        "Prüfen Sie die markierten Frames zusammen mit dem Originalvideo.",
+    "result.DETECTION_NEXT_PROVENANCE_VIDEO":
+        "Vergleichen Sie das Video mit verfügbaren Provenienzdaten.",
+    "result.DETECTION_NEXT_REVIEW_MULTIMODAL":
+        "Prüfen Sie die markierten Audio- und Videosegmente zusammen.",
+    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL":
+        "Vergleichen Sie die Medien mit verfügbaren Provenienzdaten.",
     "result.ANALYSIS_LIMIT_EVIDENCE":
         "Erkennungsergebnisse sind Hinweise für die Prüfung, kein Beweis der Echtheit.",
     "result.ANALYSIS_LIMIT_MODEL_VARIATION":
         "Die Modellleistung variiert je nach Datensatz, Sprache und Aufnahmebedingungen.",
-    "result.ANALYSIS_LIMIT_HUMAN_REVIEW": "Folgenreiche Entscheidungen erfordern eine unabhängige menschliche Prüfung.",
+    "result.ANALYSIS_LIMIT_HUMAN_REVIEW":
+        "Folgenreiche Entscheidungen erfordern eine unabhängige menschliche Prüfung.",
     "result.ANALYSIS_LIMIT_AUDIO":
         "Werte eines einzelnen Audiomodells belegen keine Synthese oder Sprachumwandlung.",
     "result.ANALYSIS_LIMIT_IMAGE": "Werte auf Frame-Ebene belegen keine Manipulation.",
-    "result.ANALYSIS_LIMIT_VIDEO": "Durch Frame-Sampling können kurze Manipulationen übersehen werden.",
+    "result.ANALYSIS_LIMIT_VIDEO":
+        "Durch Frame-Sampling können kurze Manipulationen übersehen werden.",
     "result.ANALYSIS_LIMIT_MULTIMODAL":
         "Audio-Video-Synchronisationssignale reagieren empfindlich auf Sprache und Aufnahmequalität.",
     "error.URL_REQUIRED": "Eine URL ist erforderlich.",
