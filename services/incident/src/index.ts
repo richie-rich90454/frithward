@@ -2,12 +2,15 @@ import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { IncidentRoutes } from "./presentation/IncidentRoutes.js";
 import { IncidentService } from "./application/IncidentService.js";
-import { InMemoryIncidentRepository } from "./infrastructure/InMemoryIncidentRepository.js";
+import { createIncidentRepository } from "./infrastructure/DatabaseIncidentRepository.js";
 import { errorHandler } from "./presentation/errorHandler.js";
+
+// DATABASE_URL opts into persistent storage; without it this service stays local-first.
+const incidents = createIncidentRepository(process.env.DATABASE_URL);
 
 const app = new Hono();
 app.onError(errorHandler);
-app.route("/", new IncidentRoutes(new IncidentService(new InMemoryIncidentRepository())));
+app.route("/", new IncidentRoutes(new IncidentService(incidents.repository)));
 
 const serviceName = "incident";
 app.get("/metrics", (context) =>
@@ -36,9 +39,13 @@ const shutdown = () => {
     if (closing) return;
     closing = true;
     const forceExit = setTimeout(() => process.exit(1), 10_000);
-    server.close(() => {
-        clearTimeout(forceExit);
-        process.exit(0);
+    server.close(async () => {
+        try {
+            await incidents.close();
+        } finally {
+            clearTimeout(forceExit);
+            process.exit(0);
+        }
     });
 };
 process.once("SIGTERM", shutdown);
