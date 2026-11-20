@@ -18,10 +18,23 @@ def test_rejects_empty_input():
         engine.recognize(engine.OcrRequest(document_id=""))
 
 
-def test_returns_document_shape():
+def test_reports_unavailable_and_never_invents_text():
     engine = load_engine()
     result = engine.recognize(engine.OcrRequest(document_id="d1"))
     assert result.document_id == "d1"
+    assert result.text == ""
+    assert result.status == "unavailable"
+    assert result.reason
+    assert result.limitations
+
+
+def test_accepts_input_without_claiming_recognition():
+    engine = load_engine()
+    result = engine.recognize(
+        engine.OcrRequest(document_id="d1", document_base64="AA==", language="en")
+    )
+    assert result.text == ""
+    assert result.status == "unavailable"
 
 
 def test_rejects_whitespace_id():
