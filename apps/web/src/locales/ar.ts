@@ -587,4 +587,9 @@ export const ar: Record<string, string> = {
     "share.noMetadata": "لم يتم العثور على بيانات وصفية",
     "share.couldNotRead": "تعذرت قراءة الملف",
     "share.redactedDownloaded": "تم تنزيل الملف المُخفى",
+    "captions.untitled": "ترجمة بلا عنوان",
+    "charts.seriesName": "القيمة المُبلَّغ عنها",
+    "runtime.storedFile": "تم تخزين «{name}» ({n} بايت).",
+    "runtime.notFound": "لم يتم العثور على أصل باسم «{name}».",
+    "runtime.readAsset": "تمت قراءة «{name}».",
 };
