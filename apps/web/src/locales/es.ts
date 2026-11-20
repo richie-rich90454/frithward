@@ -861,4 +861,80 @@ export const es: Record<string, string> = {
         "La precisión del OCR depende de la calidad de la imagen, la fuente y la cobertura del idioma.",
     "result.OCR_LIMIT_LOCAL":
         "El reconocimiento se ejecuta localmente con tesseract.js usando datos de idioma incluidos; no se descarga nada.",
+    "result.C2PA_SUMMARY_MISSING_FRAGMENT": " Información ausente: {n} elemento(s).",
+    "result.SCAM_NEXT_CONTACT_KNOWN":
+        "Contacta a la persona por un canal conocido para confirmar la solicitud.",
+    "result.SCAM_NEXT_NO_SEND": "No envíes dinero, códigos ni credenciales.",
+    "result.SCAM_NEXT_KEEP_EVIDENCE": "Conserva el mensaje original como prueba.",
+    "result.GUIDED_PAUSE_TITLE": "Detente y respira",
+    "result.GUIDED_PAUSE_PLAIN":
+        "No hagas clic, no respondas y no pagues nada ahora mismo. Puedes tomarte tu tiempo.",
+    "result.GUIDED_PAUSE_ACTION": "Deja el teléfono o el ratón un momento.",
+    "result.GUIDED_REVIEW_TITLE": "Mira las señales de advertencia",
+    "result.GUIDED_REVIEW_PLAIN": "{findings}",
+    "result.GUIDED_REVIEW_NO_FINDINGS":
+        "No encontramos señales evidentes de advertencia, pero eso no significa que el mensaje sea seguro.",
+    "result.GUIDED_REVIEW_ACTION": "Lee cada punto despacio. Puedes pedir a alguien que lo lea contigo.",
+    "result.GUIDED_CHECK_TITLE": "Consulta con alguien de confianza",
+    "result.GUIDED_CHECK_PLAIN":
+        "Llama a un familiar o amigo usando un número que ya conozcas. No uses un número del mensaje.",
+    "result.GUIDED_CHECK_ACTION": "Haz la llamada antes de hacer cualquier otra cosa.",
+    "result.GUIDED_PROTECT_TITLE": "Protege tus cuentas",
+    "result.GUIDED_PROTECT_PLAIN":
+        "Si introdujiste una contraseña o un código, cámbialo ahora en el sitio web o la aplicación oficial. No uses enlaces del mensaje.",
+    "result.GUIDED_PROTECT_ACTION": "Cambia las contraseñas y activa la seguridad adicional si se ofrece.",
+    "result.GUIDED_REPORT_TITLE": "Repórtalo",
+    "result.GUIDED_REPORT_PLAIN": "Conserva el mensaje y repórtalo.{reportLine}",
+    "result.GUIDED_REPORT_ACTION": "Guarda el mensaje y todas las capturas de pantalla.",
+    "result.GUIDED_SUPPORT_TITLE": "No estás solo",
+    "result.GUIDED_SUPPORT_PLAIN":
+        "Las estafas les pasan a personas cuidadosas. Si enviaste dinero, contacta a tu banco de inmediato y repórtalo.",
+    "result.GUIDED_SUPPORT_ACTION": "Mantén esta página abierta y da un paso a la vez.",
+    "result.PROTECTION_SUMMARY_APPLIED":
+        "Protección aplicada con carácter experimental usando {method}. Esto no garantiza la prevención del uso indebido.",
+    "result.PROTECTION_SUMMARY_UNAVAILABLE":
+        "La protección no está disponible para este archivo. Esto no demuestra que el contenido sea seguro para publicar.",
+    "result.PROTECTION_LIMIT_EXPERIMENTAL":
+        "La protección es experimental y no garantiza la prevención del uso indebido.",
+    "result.PROTECTION_NEXT_KEEP_ARTIFACTS": "Conserva juntos el original y los archivos protegidos.",
+    "result.PROTECTION_NEXT_REEVALUATE": "Reevalúa la protección tras cualquier actualización del modelo o la política.",
+    "result.DETECTION_SUMMARY_SIGNALS":
+        "{n} señal(es) observadas para revisión. Esto no demuestra la autenticidad ni identifica a nadie.",
+    "result.DETECTION_SUMMARY_NONE":
+        "No se observaron señales de manipulación. La ausencia de señales no demuestra la autenticidad.",
+    "result.DETECTION_NEXT_REVIEW_AUDIO":
+        "Revisa los segmentos de audio marcados junto con la grabación original.",
+    "result.DETECTION_NEXT_PROVENANCE_AUDIO": "Compara la grabación con los registros de procedencia disponibles.",
+    "result.DETECTION_NEXT_REVIEW_IMAGE": "Revisa las regiones marcadas junto con la imagen original.",
+    "result.DETECTION_NEXT_PROVENANCE_IMAGE": "Compara la imagen con los registros de procedencia disponibles.",
+    "result.DETECTION_NEXT_REVIEW_VIDEO": "Revisa los fotogramas marcados junto con el vídeo original.",
+    "result.DETECTION_NEXT_PROVENANCE_VIDEO": "Compara el vídeo con los registros de procedencia disponibles.",
+    "result.DETECTION_NEXT_REVIEW_MULTIMODAL": "Revisa juntos los segmentos de audio y vídeo marcados.",
+    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL": "Compara el contenido con los registros de procedencia disponibles.",
+    "result.ANALYSIS_LIMIT_EVIDENCE":
+        "Los resultados de detección son una prueba para revisar, no una prueba de autenticidad.",
+    "result.ANALYSIS_LIMIT_MODEL_VARIATION":
+        "El rendimiento del modelo varía según los conjuntos de datos, los idiomas y las condiciones de grabación.",
+    "result.ANALYSIS_LIMIT_HUMAN_REVIEW": "Las decisiones importantes requieren revisión humana independiente.",
+    "result.ANALYSIS_LIMIT_AUDIO":
+        "Las puntuaciones de un solo modelo de audio no demuestran síntesis ni conversión de voz.",
+    "result.ANALYSIS_LIMIT_IMAGE": "Las puntuaciones por fotograma no demuestran manipulación.",
+    "result.ANALYSIS_LIMIT_VIDEO": "El muestreo de fotogramas puede pasar por alto manipulaciones breves.",
+    "result.ANALYSIS_LIMIT_MULTIMODAL":
+        "Las señales de sincronización audio-vídeo son sensibles al idioma y a la calidad de la grabación.",
+    "error.URL_REQUIRED": "Se requiere una URL.",
+    "error.URL_LIMIT_EXCEEDED": "La URL supera el límite de inspección.",
+    "error.QR_REQUIRED": "Se requiere el contenido del código QR.",
+    "error.QR_LIMIT_EXCEEDED": "El contenido del QR supera el límite de inspección.",
+    "error.REPORT_DESCRIPTION_REQUIRED": "Se requiere la descripción del informe.",
+    "error.REPORT_DESCRIPTION_LIMIT": "La descripción del informe supera el límite.",
+    "error.REPORT_SOURCE_REQUIRED": "Se requiere la fuente del informe.",
+    "error.MESSAGE_REQUIRED": "Se requiere el texto del mensaje.",
+    "error.MESSAGE_LIMIT_EXCEEDED": "El mensaje supera el límite de análisis.",
+    "error.GUIDED_STEP_MISSING": "No hay ningún paso guiado disponible.",
+    "error.GUIDED_STEP_INVALID": "Paso guiado no válido.",
+    "error.REPORTING_UNAVAILABLE": "La presentación de informes no está disponible.",
+    "error.ASSET_ID_REQUIRED": "Se requiere el identificador del archivo.",
+    "error.PROTECTION_METHOD_REQUIRED": "Se requiere el método de protección.",
+    "error.ANALYSIS_CANCELLED": "Análisis cancelado.",
 };
