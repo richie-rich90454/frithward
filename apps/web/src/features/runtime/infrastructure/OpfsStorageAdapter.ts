@@ -1,3 +1,4 @@
+import { CodedError, ERROR_CODES } from "@frithward/contracts";
 import type { AssetStoragePort, StoredAsset } from "../ports/AssetStoragePort";
 
 function errorMessage(cause: unknown): string {
@@ -12,16 +13,29 @@ function isNotFound(cause: unknown): boolean {
     );
 }
 
+function fail(
+    code: (typeof ERROR_CODES)[keyof typeof ERROR_CODES],
+    message: string,
+    cause: unknown,
+): CodedError {
+    return new CodedError(code, `${message}: ${errorMessage(cause)}`, {
+        detail: errorMessage(cause),
+    });
+}
+
 export class OpfsStorageAdapter implements AssetStoragePort {
     private async root(): Promise<FileSystemDirectoryHandle> {
         const storage = navigator.storage;
         if (!storage || typeof storage.getDirectory !== "function") {
-            throw new Error("OPFS is not available in this browser.");
+            throw new CodedError(
+                ERROR_CODES.OPFS_UNAVAILABLE,
+                "OPFS is not available in this browser.",
+            );
         }
         try {
             return await storage.getDirectory();
         } catch (cause) {
-            throw new Error(`Unable to open OPFS: ${errorMessage(cause)}`);
+            throw fail(ERROR_CODES.OPFS_OPEN_FAILED, "Unable to open OPFS", cause);
         }
     }
 
@@ -33,7 +47,7 @@ export class OpfsStorageAdapter implements AssetStoragePort {
             await writable.write(data);
             await writable.close();
         } catch (cause) {
-            throw new Error(`Unable to write asset: ${errorMessage(cause)}`);
+            throw fail(ERROR_CODES.OPFS_WRITE_FAILED, "Unable to write asset", cause);
         }
     }
 
@@ -44,13 +58,13 @@ export class OpfsStorageAdapter implements AssetStoragePort {
             handle = await root.getFileHandle(name);
         } catch (cause) {
             if (isNotFound(cause)) return null;
-            throw new Error(`Unable to read asset: ${errorMessage(cause)}`);
+            throw fail(ERROR_CODES.OPFS_READ_FAILED, "Unable to read asset", cause);
         }
         try {
             const file = await handle.getFile();
             return await file.arrayBuffer();
         } catch (cause) {
-            throw new Error(`Unable to read asset: ${errorMessage(cause)}`);
+            throw fail(ERROR_CODES.OPFS_READ_FAILED, "Unable to read asset", cause);
         }
     }
 
@@ -71,7 +85,7 @@ export class OpfsStorageAdapter implements AssetStoragePort {
             await root.removeEntry(name);
         } catch (cause) {
             if (isNotFound(cause)) return;
-            throw new Error(`Unable to delete asset: ${errorMessage(cause)}`);
+            throw fail(ERROR_CODES.OPFS_DELETE_FAILED, "Unable to delete asset", cause);
         }
     }
 }
