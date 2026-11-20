@@ -1,10 +1,9 @@
 """FastAPI HTTP surface for the audio transcription engine.
 
 The API is the real integration point. The underlying engine stays honest: it
-returns no utterances because no speech model is configured in this repo.
+returns no utterances because no speech model is configured in this repo, but
+it reports a real PCM preflight when audio bytes are supplied.
 """
-from __future__ import annotations
-
 import sys
 from pathlib import Path
 
@@ -23,6 +22,8 @@ class TranscribePayload(BaseModel):
     language: str
     audio_base64: str | None = None
     audio_path: str | None = None
+    sample_rate: int = 16000
+    sample_width: int = 2
 
 
 @app.get("/health")
@@ -40,5 +41,6 @@ def transcribe_audio(payload: TranscribePayload) -> dict[str, object]:
         "status": result.status,
         "reason": result.reason,
         "utterances": [utterance.model_dump() for utterance in result.utterances],
+        "preflight": result.preflight.model_dump() if result.preflight else None,
         "limitations": result.limitations,
     }
