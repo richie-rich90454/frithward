@@ -94,6 +94,7 @@ export class GarageObjectStorage {
     }
 
     private assertKey(key: string): void {
-        if (key.trim().length === 0) throw new AppError("VALIDATION_FAILED", "Object key required.");
+        if (key.trim().length === 0)
+            throw new AppError("VALIDATION_FAILED", "Object key required.");
     }
 }
