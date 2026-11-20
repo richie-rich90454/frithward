@@ -22,7 +22,9 @@ describe("IncidentTimelineController evidence", () => {
             bufferOf("evidence bytes"),
         );
         expect(item.sha256).toBe(
-            [...new Uint8Array(expected)].map((byte) => byte.toString(16).padStart(2, "0")).join(""),
+            [...new Uint8Array(expected)]
+                .map((byte) => byte.toString(16).padStart(2, "0"))
+                .join(""),
         );
         expect(item.fileName).toBe("invoice.png");
         expect(item.source).toBe("message attachment");
