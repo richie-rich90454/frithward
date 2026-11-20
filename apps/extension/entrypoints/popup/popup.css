@@ -100,6 +100,122 @@ body {
     text-transform: capitalize;
 }
 
+.popup__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fw-space-2);
+}
+
+.popup h2 {
+    font-size: 15px;
+    margin: 0;
+}
+
+.popup h3 {
+    font-size: 13px;
+    margin: var(--fw-space-2) 0 0;
+}
+
+.popup ul {
+    margin: 0;
+    padding-inline-start: 18px;
+}
+
+.popup li {
+    margin-block: 2px;
+}
+
+.fw-result {
+    border: 1px solid var(--fw-color-border);
+    padding: var(--fw-space-3);
+}
+
+.fw-summary {
+    color: var(--fw-color-text);
+}
+
+.fw-findings {
+    list-style: none;
+    padding-inline-start: 0;
+}
+
+.fw-finding {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--fw-space-2);
+    padding-block: var(--fw-space-2);
+    border-block-start: 1px solid var(--fw-color-border);
+}
+
+.fw-finding span:last-child {
+    flex-basis: 100%;
+    color: var(--fw-color-text-secondary);
+}
+
+.fw-severity {
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border: 1px solid currentColor;
+}
+
+.fw-severity[data-severity="high"] {
+    color: var(--fw-color-danger);
+}
+
+.fw-open-link {
+    color: var(--fw-color-accent);
+    text-underline-offset: 2px;
+}
+
+.fw-details summary {
+    cursor: pointer;
+    color: var(--fw-color-text-secondary);
+}
+
+.fw-history {
+    border-block-start: 1px solid var(--fw-color-border);
+    padding-block-start: var(--fw-space-3);
+}
+
+.fw-history__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fw-clear {
+    min-block-size: 32px;
+    padding-inline: var(--fw-space-2);
+    background: var(--fw-color-surface-secondary);
+    color: var(--fw-color-text);
+}
+
+.fw-recent-list {
+    list-style: none;
+    padding-inline-start: 0;
+}
+
+.fw-recent-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-block: var(--fw-space-2);
+    border-block-start: 1px solid var(--fw-color-border);
+}
+
+.fw-recent__meta,
+.fw-recent__count,
+.fw-note {
+    color: var(--fw-color-text-secondary);
+    font-size: 12px;
+}
+
+.fw-note {
+    margin: 0;
+}
+
 @media (max-width: 360px) {
     .popup {
         inline-size: 100%;
