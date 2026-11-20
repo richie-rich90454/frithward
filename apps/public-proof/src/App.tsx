@@ -1,7 +1,7 @@
 import { For, Show, createSignal, onCleanup } from "solid-js";
 import { ProvenanceController } from "./presentation/controllers/ProvenanceController";
 import type { ProvenanceResult } from "./presentation/controllers/ProvenanceController";
-import { wasmC2paVerifier } from "./infrastructure/wasmC2paVerifier.js";
+import { wasmC2paVerifier } from "./adapters/wasmC2paVerifier.js";
 import { ThemeToggle } from "./theme.jsx";
 
 interface ProofViewProps {
