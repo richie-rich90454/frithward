@@ -29,6 +29,7 @@
         "@solid-primitives/i18n": "^2.2.1",
         "@solidjs/router": "^1.0.1",
         "@tanstack/solid-query": "latest",
+        "@tesseract.js-data/eng": "1.0.0",
         "@zip.js/zip.js": "^2.25.0",
         "comlink": "^4.4.2",
         "dexie": "^4.4.7",
