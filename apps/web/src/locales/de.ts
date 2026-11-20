@@ -48,6 +48,16 @@ export const de: Record<string, string> = {
     "check.guidedBack": "Vorheriger Schritt",
     "check.guidedDone": "Diesen Schritt als erledigt markieren",
     "check.guidedComplete": "Sie haben alle Schritte abgeschlossen.",
+    "check.clipboardUnavailable":
+        "Zugriff auf die Zwischenablage ist in diesem Browser nicht verfügbar. Nutzen Sie stattdessen die Dateioption.",
+    "check.pasteFailed":
+        "Der Zugriff auf die Zwischenablage wurde verweigert. Erlauben Sie den Zugriff oder fügen Sie den Text manuell in das Feld ein.",
+    "check.fileTypeUnsupported": "Nur .txt-, .eml- und .json-Dateien werden unterstützt.",
+    "check.fileReadFailed": "Die Datei konnte nicht gelesen werden. Bitte versuchen Sie es erneut.",
+    "check.pasteButton": "Aus Zwischenablage einfügen",
+    "check.dropHint":
+        "Ziehen Sie eine .txt-, .eml- oder .json-Datei hierher, um ihren Text lokal zu prüfen. Es wird nichts hochgeladen.",
+    "check.chooseFile": "Textdatei auswählen (.txt, .eml, .json)",
     "protect.title": "Freigabeprüfung",
     "protect.intro":
         "Wählen Sie die Metadaten aus, die geteilt werden sollen, und prüfen Sie, ob sie sicher sind.",
@@ -871,6 +881,14 @@ export const de: Record<string, string> = {
         "Kontaktieren Sie die Person über einen bekannten Kanal, um die Anfrage zu bestätigen.",
     "result.SCAM_NEXT_NO_SEND": "Senden Sie kein Geld, keine Codes und keine Zugangsdaten.",
     "result.SCAM_NEXT_KEEP_EVIDENCE": "Bewahren Sie die ursprüngliche Nachricht als Beweis auf.",
+    "result.SCAM_INDICATOR_URGENCY_LABEL": "Zeitdruck",
+    "result.SCAM_INDICATOR_URGENCY_DETAIL": "Die Nachricht drängt Sie, schnell zu handeln.",
+    "result.SCAM_INDICATOR_PAYMENT_LABEL": "Zahlungsaufforderung",
+    "result.SCAM_INDICATOR_PAYMENT_DETAIL": "Die Nachricht fordert eine Zahlung.",
+    "result.SCAM_INDICATOR_CREDENTIAL_LABEL": "Aufforderung nach Zugangsdaten",
+    "result.SCAM_INDICATOR_CREDENTIAL_DETAIL": "Die Nachricht fragt nach Zugangsdaten.",
+    "result.SCAM_INDICATOR_SECRECY_LABEL": "Aufforderung zur Geheimhaltung",
+    "result.SCAM_INDICATOR_SECRECY_DETAIL": "Die Nachricht bittet Sie, sie geheim zu halten.",
     "result.GUIDED_PAUSE_TITLE": "Halten Sie inne und atmen Sie",
     "result.GUIDED_PAUSE_PLAIN":
         "Klicken Sie jetzt nicht, antworten Sie nicht und zahlen Sie nichts. Sie können sich Zeit nehmen.",
