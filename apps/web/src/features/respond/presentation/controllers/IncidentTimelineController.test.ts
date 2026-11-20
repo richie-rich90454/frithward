@@ -112,7 +112,12 @@ describe("IncidentTimelineController report history", () => {
     it("loads saved entries and ignores malformed ones", () => {
         const storage = memoryStorage({
             "frithward.report-history": JSON.stringify([
-                { id: "saved", createdAt: "2026-01-01T00:00:00.000Z", summary: "1 item", sha256: "f".repeat(64) },
+                {
+                    id: "saved",
+                    createdAt: "2026-01-01T00:00:00.000Z",
+                    summary: "1 item",
+                    sha256: "f".repeat(64),
+                },
                 { id: "broken" },
             ]),
         });
