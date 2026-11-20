@@ -101,12 +101,13 @@ test.describe("real browser feature behaviour", () => {
         await expect(page.getByText(/Step\s+2\s*\/\s*\d+/)).toBeVisible();
     });
 
-    test("captions show an honest empty state (no user-supplied model)", async ({ page }) => {
+    test("captions show an honest empty state with local WebGPU default", async ({ page }) => {
         await page.goto("/tools/captions");
         await expect(page.getByRole("heading", { name: "Caption studio" })).toBeVisible();
         await expect(page.getByText(/Status:\s*idle/)).toBeVisible();
+        await expect(page.getByText(/Transcription runs locally with WebGPU/)).toBeVisible();
         await expect(
-            page.getByText(/Local generation needs a Whisper WASM runtime supplied by you/),
+            page.getByText(/model weights are downloaded from Hugging Face on first use/),
         ).toBeVisible();
         await expect(page.getByRole("button", { name: "Generate captions" })).toBeDisabled();
 
