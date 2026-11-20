@@ -5,6 +5,9 @@ import {
     type C2paVerificationPort,
 } from "@frithward/provenance-core";
 import { english, type Translator } from "../../../../i18n/translate.js";
+import { resultList, resultText } from "../../../../i18n/results.js";
+
+const MISSING_FRAGMENT = " Missing info: {n} item(s).";
 
 export interface ProvenanceAssertionView {
     label: string;
@@ -34,8 +37,11 @@ export interface ProvenanceInspectionView {
     transformations: readonly ProvenanceTransformationView[];
     validationFailures: readonly ProvenanceFailureView[];
     missingInfo: readonly string[];
+    missingInfoCodes?: readonly (string | undefined)[] | undefined;
     summary: string;
+    summaryCode?: string | undefined;
     limitations: readonly string[];
+    limitationCodes?: readonly (string | undefined)[] | undefined;
 }
 
 export interface C2paInspector {
@@ -101,7 +107,7 @@ export class ProvenanceCheckController {
             } catch {
                 throw new Error(this.translate("verify.error.manifestJson"));
             }
-            this.result = toView(await this.inspector.execute({ manifest }));
+            this.result = toView(this.translate, await this.inspector.execute({ manifest }));
             this.error = null;
         } catch (cause) {
             this.result = null;
@@ -125,7 +131,10 @@ export class ProvenanceCheckController {
                 }
             } else if (this.fileInspector) {
                 // Binary assets go through the real byte-level cryptographic verifier.
-                this.result = toView(await this.fileInspector.execute({ manifest: input.bytes }));
+                this.result = toView(
+                    this.translate,
+                    await this.fileInspector.execute({ manifest: input.bytes }),
+                );
                 this.error = null;
                 this.notify();
                 return;
@@ -138,7 +147,7 @@ export class ProvenanceCheckController {
                     return;
                 }
             }
-            this.result = toView(await this.inspector.execute({ manifest }));
+            this.result = toView(this.translate, await this.inspector.execute({ manifest }));
             this.error = null;
         } catch (cause) {
             this.result = null;
@@ -155,7 +164,20 @@ export class ProvenanceCheckController {
     }
 }
 
-function toView(result: C2paInspectionResult): ProvenanceInspectionView {
+function toView(t: Translator, result: C2paInspectionResult): ProvenanceInspectionView {
+    const missing = result.missingInfo.length
+        ? resultText(t, MISSING_FRAGMENT, "C2PA_SUMMARY_MISSING_FRAGMENT", {
+              n: result.missingInfo.length,
+          })
+        : "";
+    const summaryParams = {
+        signer: result.signer ?? t("check.unknown"),
+        n:
+            result.signatureStatus === "invalid"
+                ? result.validationFailures.length
+                : result.assertions.length,
+        missing,
+    };
     return {
         signatureStatus: result.signatureStatus,
         signer: result.signer,
@@ -175,11 +197,11 @@ function toView(result: C2paInspectionResult): ProvenanceInspectionView {
         })),
         validationFailures: result.validationFailures.map((failure) => ({
             code: failure.code,
-            message: failure.message,
+            message: resultText(t, failure.message),
         })),
-        missingInfo: [...result.missingInfo],
-        summary: result.summary,
-        limitations: [...result.limitations],
+        missingInfo: resultList(t, result.missingInfo, result.missingInfoCodes),
+        summary: resultText(t, result.summary, result.summaryCode, summaryParams),
+        limitations: resultList(t, result.limitations, result.limitationCodes),
     };
 }
 
