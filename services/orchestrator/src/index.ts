@@ -1,38 +1,8 @@
-import { Hono } from "hono";
 import { serve } from "@hono/node-server";
-import { OrchestratorRoutes } from "./presentation/OrchestratorRoutes.js";
-import { DispatchAnalysisUseCase } from "./application/DispatchAnalysisUseCase.js";
-import { HttpWorkerClient } from "./infrastructure/HttpWorkerClient.js";
-import { errorHandler } from "./presentation/errorHandler.js";
-
-const workerUrl = process.env.INFERENCE_WORKER_URL ?? "http://localhost:3003";
-
-const app = new Hono();
-app.onError(errorHandler);
-app.route(
-    "/",
-    new OrchestratorRoutes(new DispatchAnalysisUseCase(new HttpWorkerClient(workerUrl))),
-);
-
-const serviceName = "orchestrator";
-app.get("/metrics", (context) =>
-    context.text(
-        [
-            "# HELP frithward_service_up Whether the service is serving (1 while it answers).",
-            "# TYPE frithward_service_up gauge",
-            `frithward_service_up{service="${serviceName}"} 1`,
-            "# HELP process_uptime_seconds Process uptime in seconds.",
-            "# TYPE process_uptime_seconds gauge",
-            `process_uptime_seconds ${process.uptime().toFixed(3)}`,
-            "",
-        ].join("\n"),
-        200,
-        { "Content-Type": "text/plain; version=0.0.4; charset=utf-8" },
-    ),
-);
+import { createApp } from "./app.js";
 
 const server = serve({
-    fetch: app.fetch,
+    fetch: createApp().fetch,
     port: Number(process.env.PORT ?? 3001),
 });
 
