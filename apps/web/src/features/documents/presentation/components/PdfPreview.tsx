@@ -1,6 +1,7 @@
 import { Show, createEffect, createSignal, onCleanup } from "solid-js";
 import { PdfRenderController } from "../../application/PdfRenderController";
 import { useI18n } from "../../../../i18n/index.js";
+import { translatedError } from "../../../../i18n/errors.js";
 
 type Status = "idle" | "loading" | "ready" | "error";
 
@@ -28,7 +29,7 @@ export function PdfPreview(props: { pdf: ArrayBuffer }) {
             .catch((cause: unknown) => {
                 if (cancelled) return;
                 setStatus("error");
-                setDetail(cause instanceof Error ? cause.message : t("pdf.error.render"));
+                setDetail(translatedError(cause, t, "pdf.error.render"));
             });
         onCleanup(() => {
             cancelled = true;
