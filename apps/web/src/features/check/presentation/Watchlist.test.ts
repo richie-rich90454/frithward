@@ -14,6 +14,7 @@ describe("Watchlist markup", () => {
         expect(source).toContain("loadWatchlist()");
         expect(source).toContain("addToWatchlist(entry)");
         expect(source).toContain("removeFromWatchlist(id)");
+        expect(source).toContain("subscribeWatchlist(setEntries)");
         expect(source).toContain('t("watchlist.empty")');
         expect(source).toContain('t("watchlist.lastChecked")');
         expect(source).toContain('import "./watchlist.css"');
