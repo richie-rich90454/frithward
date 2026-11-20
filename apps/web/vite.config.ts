@@ -4,6 +4,9 @@ import { defineConfig, type Plugin } from "vite";
 import solid from "vite-plugin-solid";
 
 // whisper.cpp uses pthreads + SharedArrayBuffer, which browsers expose only in a cross-origin isolated context.
+// COEP stays `require-corp` (not `credentialless`): every runtime asset is same-origin, so the stricter
+// policy blocks nothing and has wider browser support. These headers cover dev/preview only — a static
+// host must send them too; see the shipped public/_headers, vercel.json and netlify.toml.
 const isolationHeaders = {
     "Cross-Origin-Opener-Policy": "same-origin",
     "Cross-Origin-Embedder-Policy": "require-corp",
