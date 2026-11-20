@@ -46,4 +46,21 @@ describe("migrations", () => {
         for (const table of ["community_reports", "incident_reports", "cases"])
             expect(statements.some((statement) => statement.includes(table))).toBe(true);
     });
+
+    it("ships an idempotent auth schema upgrade as the third migration", async () => {
+        const file = MIGRATION_FILES[2];
+        expect(file).toBeDefined();
+        if (file === undefined) throw new Error("Third migration file is missing");
+        const sql = await readFile(file, "utf8");
+        const statements = migrationStatements(sql);
+        expect(statements.length).toBeGreaterThan(0);
+        expect(statements.every((statement) => statement.includes("if not exists"))).toBe(true);
+        for (const fragment of [
+            'alter table "user" add column if not exists name',
+            "alter table session add column if not exists token",
+            "create table if not exists account",
+            "create table if not exists verification",
+        ])
+            expect(sql).toContain(fragment);
+    });
 });
