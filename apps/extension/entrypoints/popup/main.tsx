@@ -2,6 +2,8 @@ import { Show, createSignal, onCleanup } from "solid-js";
 import { render } from "solid-js/web";
 import { PopupController } from "./PopupController";
 import type { PageInfo } from "./PopupController";
+import { initTheme, ThemeToggle } from "./theme.jsx";
+import "./popup.css";
 
 interface PopupViewProps {
     info: PageInfo | null;
@@ -11,8 +13,11 @@ interface PopupViewProps {
 
 function PopupView(props: PopupViewProps) {
     return (
-        <main>
-            <h1>Frithward</h1>
+        <main class="popup">
+            <div class="popup__header">
+                <h1>Frithward</h1>
+                <ThemeToggle />
+            </div>
             <p>Keep people safe. Keep media honest.</p>
             <button type="button" onClick={() => props.onCheck()} disabled={props.busy}>
                 {props.busy ? "Checking…" : "Check this page"}
@@ -51,4 +56,5 @@ export function Popup() {
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Missing root element.");
+initTheme();
 render(() => <Popup />, root);
