@@ -2,6 +2,7 @@ import { For, Show, createSignal, onCleanup } from "solid-js";
 import { BadgeCheck } from "lucide-solid";
 import { useCases } from "../../../../cases/CaseProvider.js";
 import { ProvenanceCheckController } from "../controllers/ProvenanceCheckController";
+import { wasmC2paVerifier } from "../../infrastructure/wasmC2paVerifier.js";
 import { useI18n } from "../../../../i18n/index.js";
 import type { ProvenanceInspectionView } from "../controllers/ProvenanceCheckController";
 
@@ -234,7 +235,7 @@ async function sha256(bytes: Uint8Array): Promise<string> {
 
 export function ProvenanceCheckPage() {
     const { t } = useI18n();
-    const controller = new ProvenanceCheckController({ translate: t });
+    const controller = new ProvenanceCheckController({ translate: t, verifier: wasmC2paVerifier });
     const { saveCase } = useCases();
     const [result, setResult] = createSignal(controller.getResult());
     const [error, setError] = createSignal(controller.getError());
