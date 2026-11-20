@@ -1,6 +1,7 @@
 import { Hono } from "hono";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { errorHandler } from "../../middleware/errorHandler.js";
+import { createAuth } from "./auth.js";
 import { createAuthModule } from "./composition/createAuthModule.js";
 import { AuthRoutes } from "./presentation/AuthRoutes.js";
 
@@ -32,5 +33,35 @@ describe("createAuthModule", () => {
         app.route("/", createAuthModule(undefined).routes);
         const response = await app.request("/api/auth/session");
         expect(response.status).toBe(503);
+    });
+});
+
+describe("createAuth secret resolution", () => {
+    afterEach(() => vi.unstubAllEnvs());
+
+    const url = "postgres://user:pass@localhost:5432/frithward";
+
+    it("requires a secret in production", () => {
+        vi.stubEnv("NODE_ENV", "production");
+        vi.stubEnv("BETTER_AUTH_SECRET", "");
+        expect(() => createAuthModule(url)).toThrow(
+            "BETTER_AUTH_SECRET must be set in production.",
+        );
+    });
+
+    it("honors a configured secret in production", () => {
+        vi.stubEnv("NODE_ENV", "production");
+        vi.stubEnv("BETTER_AUTH_SECRET", "configured-secret");
+        expect(createAuthModule(url).auth).not.toBeNull();
+    });
+
+    it("uses an ephemeral secret outside production", () => {
+        vi.stubEnv("NODE_ENV", "development");
+        vi.stubEnv("BETTER_AUTH_SECRET", "");
+        expect(createAuthModule(url).auth).not.toBeNull();
+    });
+
+    it("rejects an empty database URL", () => {
+        expect(() => createAuth("")).toThrow("Database URL is required for authentication.");
     });
 });
