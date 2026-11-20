@@ -795,26 +795,33 @@ export const ar: Record<string, string> = {
     "result.GUIDED_PAUSE_ACTION": "ضع الهاتف أو الفأرة جانباً للحظة.",
     "result.GUIDED_REVIEW_TITLE": "انظر إلى علامات التحذير",
     "result.GUIDED_REVIEW_PLAIN": "{findings}",
-    "result.GUIDED_REVIEW_NO_FINDINGS": "لم نعثر على علامات تحذير واضحة، لكن هذا لا يعني أن الرسالة آمنة.",
+    "result.GUIDED_REVIEW_NO_FINDINGS":
+        "لم نعثر على علامات تحذير واضحة، لكن هذا لا يعني أن الرسالة آمنة.",
     "result.GUIDED_REVIEW_ACTION": "اقرأ كل نقطة ببطء. يمكنك أن تطلب من شخص آخر القراءة معك.",
     "result.GUIDED_CHECK_TITLE": "تحقق مع شخص تثق به",
-    "result.GUIDED_CHECK_PLAIN": "اتصل بأحد أفراد الأسرة أو صديق برقم تعرفه بالفعل. لا تستخدم رقماً من الرسالة.",
+    "result.GUIDED_CHECK_PLAIN":
+        "اتصل بأحد أفراد الأسرة أو صديق برقم تعرفه بالفعل. لا تستخدم رقماً من الرسالة.",
     "result.GUIDED_CHECK_ACTION": "قم بهذا الاتصال قبل أي شيء آخر.",
     "result.GUIDED_PROTECT_TITLE": "احمِ حساباتك",
-    "result.GUIDED_PROTECT_PLAIN": "إذا أدخلت كلمة مرور أو رمزاً، فغيّره الآن على الموقع أو التطبيق الرسمي. لا تستخدم الروابط من الرسالة.",
+    "result.GUIDED_PROTECT_PLAIN":
+        "إذا أدخلت كلمة مرور أو رمزاً، فغيّره الآن على الموقع أو التطبيق الرسمي. لا تستخدم الروابط من الرسالة.",
     "result.GUIDED_PROTECT_ACTION": "غيّر كلمات المرور وفعّل الأمان الإضافي إذا كان متاحاً.",
     "result.GUIDED_REPORT_TITLE": "أبلغ عنها",
     "result.GUIDED_REPORT_PLAIN": "احتفظ بالرسالة وأبلغ عنها.{reportLine}",
     "result.GUIDED_REPORT_ACTION": "احفظ الرسالة وجميع لقطات الشاشة.",
     "result.GUIDED_SUPPORT_TITLE": "لست وحدك",
-    "result.GUIDED_SUPPORT_PLAIN": "التعرض للاحتيال يحدث لأشخاص حذرين أيضاً. إذا أُرسل المال، اتصل ببنكك فوراً وأبلغ عن ذلك.",
+    "result.GUIDED_SUPPORT_PLAIN":
+        "التعرض للاحتيال يحدث لأشخاص حذرين أيضاً. إذا أُرسل المال، اتصل ببنكك فوراً وأبلغ عن ذلك.",
     "result.GUIDED_SUPPORT_ACTION": "أبقِ هذه الصفحة مفتوحة واتخذ خطوة واحدة في كل مرة.",
-    "result.PROTECTION_SUMMARY_APPLIED": "تم تطبيق الحماية بشكل تجريبي باستخدام {method}. هذا لا يضمن منع سوء الاستخدام.",
-    "result.PROTECTION_SUMMARY_UNAVAILABLE": "الحماية غير متاحة لهذا الأصل. هذا لا يثبت أن الوسائط آمنة للنشر.",
+    "result.PROTECTION_SUMMARY_APPLIED":
+        "تم تطبيق الحماية بشكل تجريبي باستخدام {method}. هذا لا يضمن منع سوء الاستخدام.",
+    "result.PROTECTION_SUMMARY_UNAVAILABLE":
+        "الحماية غير متاحة لهذا الأصل. هذا لا يثبت أن الوسائط آمنة للنشر.",
     "result.PROTECTION_LIMIT_EXPERIMENTAL": "الحماية تجريبية ولا تضمن منع سوء الاستخدام.",
     "result.PROTECTION_NEXT_KEEP_ARTIFACTS": "احتفظ بالأصل والنسخ المحمية معاً.",
     "result.PROTECTION_NEXT_REEVALUATE": "أعد تقييم الحماية بعد أي تحديث للنموذج أو السياسة.",
-    "result.DETECTION_SUMMARY_SIGNALS": "تمت ملاحظة {n} إشارة(ات) للمراجعة. هذا لا يثبت الأصالة ولا يحدد أي شخص.",
+    "result.DETECTION_SUMMARY_SIGNALS":
+        "تمت ملاحظة {n} إشارة(ات) للمراجعة. هذا لا يثبت الأصالة ولا يحدد أي شخص.",
     "result.DETECTION_SUMMARY_NONE": "لم تُلاحظ أي إشارات تلاعب. غياب الإشارات لا يثبت الأصالة.",
     "result.DETECTION_NEXT_REVIEW_AUDIO": "راجع مقاطع الصوت المحددة مع التسجيل الأصلي.",
     "result.DETECTION_NEXT_PROVENANCE_AUDIO": "قارن التسجيل بسجلات المنشأ حيث تتوفر.",
@@ -825,7 +832,8 @@ export const ar: Record<string, string> = {
     "result.DETECTION_NEXT_REVIEW_MULTIMODAL": "راجع مقاطع الصوت والفيديو المحددة معاً.",
     "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL": "قارن الوسائط بسجلات المنشأ حيث تتوفر.",
     "result.ANALYSIS_LIMIT_EVIDENCE": "نتائج الكشف دليل للمراجعة، وليست إثباتاً للأصالة.",
-    "result.ANALYSIS_LIMIT_MODEL_VARIATION": "يختلف أداء النموذج باختلاف مجموعات البيانات واللغات وظروف التسجيل.",
+    "result.ANALYSIS_LIMIT_MODEL_VARIATION":
+        "يختلف أداء النموذج باختلاف مجموعات البيانات واللغات وظروف التسجيل.",
     "result.ANALYSIS_LIMIT_HUMAN_REVIEW": "تتطلب القرارات المهمة مراجعة بشرية مستقلة.",
     "result.ANALYSIS_LIMIT_AUDIO": "درجات نموذج صوتي واحد لا تثبت التوليد أو تحويل الصوت.",
     "result.ANALYSIS_LIMIT_IMAGE": "درجات الصور على مستوى الإطار لا تثبت التلاعب.",
