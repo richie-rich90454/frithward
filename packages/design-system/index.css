@@ -23,6 +23,12 @@
 @import "./accessibility/base.css";
 @import "./icons/base.css";
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
     background: var(--fw-color-canvas);
     color: var(--fw-color-text);
