@@ -36,7 +36,8 @@ describe("migrations", () => {
     it("ships idempotent case and report tables in the second migration", async () => {
         const file = MIGRATION_FILES[1];
         expect(file).toBeDefined();
-        const sql = await readFile(file!, "utf8");
+        if (file === undefined) throw new Error("Second migration file is missing");
+        const sql = await readFile(file, "utf8");
         const statements = migrationStatements(sql);
         expect(statements).toHaveLength(3);
         expect(
