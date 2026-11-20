@@ -13,6 +13,7 @@ import type {
     TranscodeResult,
 } from "../../ports/TranscoderPort";
 import { english, interpolate, type Translator } from "../../../../i18n/translate.js";
+import { translatedError } from "../../../../i18n/errors.js";
 
 export interface RuntimeState {
     storageMessage: string | null;
@@ -21,10 +22,6 @@ export interface RuntimeState {
     transcode: TranscodeResult | null;
     gpu: GpuReport | null;
     error: string | null;
-}
-
-function message(cause: unknown): string {
-    return cause instanceof Error ? cause.message : String(cause);
 }
 
 export class RuntimeController {
@@ -126,7 +123,7 @@ export class RuntimeController {
     }
 
     private fail(cause: unknown): void {
-        this.state = { ...this.state, error: message(cause) };
+        this.state = { ...this.state, error: translatedError(cause, this.translate) };
     }
 
     private notify(): void {
