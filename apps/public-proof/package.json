@@ -9,11 +9,13 @@
         "start": "vite preview --host 0.0.0.0 --port 4175"
     },
     "dependencies": {
+        "@contentauth/c2pa-wasm": "0.15.1",
+        "@frithward/provenance-core": "workspace:*",
         "solid-js": "1.9.18",
         "vite-plugin-solid": "latest"
     },
     "devDependencies": {
-        "vite": "latest",
-        "typescript": "latest"
+        "typescript": "latest",
+        "vite": "latest"
     }
 }
