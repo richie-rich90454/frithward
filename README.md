@@ -24,15 +24,33 @@ This is the current state of the repository, not a roadmap. Capabilities are des
 | Caption studio | Create subtitle segments in the browser, edit timing and text, and export to common formats | Transcription runs through browser adapters; quality depends on the model in use |
 | Audio, video, image, and document workshops | Local workbenches to inspect, enhance, and redact media, plus document extraction and OCR hooks | Enhancement and detection are experimental, not validated detectors |
 | Metadata inspection | Inspect file metadata and flag GPS or location leakage | Reads what is present; it cannot prove what was removed |
-| Share check | Review a file for privacy exposure before sharing | Runs locally with no network call |
-| Scam check | Inspect messages, URLs, and QR content against reviewed patterns and give guided guidance | Pattern-based guidance, not a verdict; the hosted API and the local path share the same domain logic |
-| C2PA inspection | Read embedded C2PA manifests and show signature status in plain language | Cryptographic signature verification requires the native `@contentauth/c2pa-node` SDK, which is not built in this checkout |
-| Provenance | Record and verify provenance records with human-readable status | Cryptographic verification depends on the native C2PA SDK |
-| Local model manager | Inventory installed models, sizes, stages, licenses, and limitations | Manages metadata; it does not download or run models itself |
+| Share check | Read real EXIF/IPTC/PNG metadata from a selected JPEG or PNG, flag GPS/device/time exposure, and download a re-encoded, metadata-stripped copy | Redaction rebuilds the image from decoded pixels; unsupported formats are not silently copied, and no file is uploaded |
+| Scam check | Inspect messages, URLs, and QR content with local domain logic plus a reviewed rule catalog (urgency, lookalike domains, homoglyphs, mismatched links, and more), with a guided walkthrough | Pattern-based guidance, not a verdict or a prediction of intent; results stay in local recent checks and can be downloaded as a JSON report |
+| C2PA inspection | Read C2PA fields from a supplied manifest and show signature status in plain language | No cryptographic signature verification in the browser; it needs the native `@contentauth/c2pa-node` SDK, which is not built in this checkout |
+| Provenance | Inspect a JSON manifest or a selected file locally and report what is actually present | Binary files with no locally readable manifest return an honest "unavailable" result, never "valid"; a SHA-256 hash of the file is computed and saved with the case |
+| Case store | Browser-local cases in IndexedDB (`frithward-cases`) with autosave and the eight most recent cases on the home page; provenance checks save a case with a SHA-256 artifact hash | Scam checks keep their own recent-check list in `localStorage`; neither path uploads anything. The hosted `/api/cases` store is opt-in |
+| Incident response | Build a timeline, import a downloaded scam report as evidence, hash files with `crypto.subtle` SHA-256, and export an evidence report | Hashes are integrity records for human review, not proof of origin; export history is kept in `localStorage` |
+| Dark mode and mobile layout | Theme toggle cycles system / light / dark, follows `prefers-color-scheme` on "system", and persists in `localStorage`; the docs site has a dark palette | Verified in Chromium at a 375px viewport across 16 routes (`e2e/mobile.spec.ts`) with no horizontal overflow; real phones are not in the matrix |
 | Internationalization | English, Chinese, Spanish, French, German, Hindi, Japanese, and Arabic, with right-to-left layout for Arabic | Translations are community maintained |
-| Python engines | 18 packages across audio, image, video, document, text, and provenance | Interface scaffolds with ports, policies, and CLI contracts today; no model inference is wired in |
+| Browser extension | Analyze the current page or a selection locally, keep a recent-check history in `browser.storage.local`, and open the text in the web app via a `/check#text=` deep link | The web-app URL defaults to `http://localhost:4173` and must be configured for a real deployment; no analysis is uploaded |
+| Desktop app | Renders the full toolkit — the same pages as the web app, including the case store and theme toggle | Frontend build only; the native Tauri bundle needs the host-installed Tauri CLI |
+| Public proof page | Reads a selected media file or manifest JSON in the browser, computes its SHA-256, and summarizes manifest fields | No upload and no cryptographic verification; missing manifests are reported as unavailable |
+| Docs site | VitePress docs with a system-following light/dark appearance and a dark accent palette | Dark mode uses VitePress's built-in appearance control |
+| Python engines | 18 packages across audio, image, video, document, text, and provenance | Several now perform deterministic local computation (PCM gain, resize geometry, language heuristics, trim geometry); model-backed detection remains unavailable |
 | Rust crates | CLI, media, privacy, provenance, runtime, and the Tauri desktop shell | Five shared crates plus the desktop shell under `apps/desktop` |
-| HTTP services | Six Hono services: API (3000), orchestrator (3001), media worker (3002), inference worker (3003), community (3004), incident (3005) | Most expose health endpoints; the API adds scam analysis and a session probe |
+| HTTP services | Six Hono services: API (3000), orchestrator (3001), media worker (3002), inference worker (3003), community (3004), incident (3005) | The API adds session-guarded, opt-in `/api/cases` CRUD; community/incident reports persist only when `DATABASE_URL` is set. Worker metrics are minimal |
+
+Honest limits across the whole table: there is no cryptographic C2PA verification in the browser, detection scores are evidence for a person to review rather than proof of identity or authenticity, and unmeasured results are labelled "not measured". Nothing is uploaded unless you explicitly use a hosted service.
+
+## Daily workflow
+
+A typical local session follows these steps, with no account and no upload:
+
+1. **Check a message** — paste a message, link, or QR payload on `/check`. Local rules flag suspicious wording and links; the result is kept in browser-local recent checks, and you can download a scam report JSON.
+2. **Saved case** — provenance inspections save a case with a SHA-256 artifact hash to the shared IndexedDB Case store; the eight most recent cases appear on the home page. (Scam checks use their own `localStorage` recent-check list.)
+3. **Check a file** — on `/protect`, inspect a JPEG or PNG for EXIF/GPS and other exposure, then download a re-encoded copy with embedded metadata stripped. The original is never modified.
+4. **Hashed evidence** — on `/respond`, import the downloaded scam report or add files as evidence; each item is hashed with SHA-256 in the browser.
+5. **Exported report** — export the evidence report JSON. A hash of each export is recorded in local report history for later verification.
 
 ## Quick start
 
