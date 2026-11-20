@@ -18,6 +18,8 @@ import { DatabaseJobStatusStore } from "./jobs/DatabaseJobStatusStore.js";
 import { sharedJobStore, type JobStatusStore } from "./jobs/jobStore.js";
 import { GarageObjectStorage } from "./modules/storage/GarageObjectStorage.js";
 import { StorageRoutes } from "./modules/storage/StorageRoutes.js";
+import { CaseRoutes } from "./modules/cases/CaseRoutes.js";
+import { createCaseStore } from "./modules/cases/DatabaseCaseStore.js";
 import { openApiDocument } from "./openapi.js";
 import { createMetricsRoutes, metricsMiddleware } from "./telemetry/metrics.js";
 import { registerGracefulShutdown } from "./middleware/shutdown.js";
@@ -51,11 +53,15 @@ const scams = createScamModule(queue, jobStore);
 const auth = createAuthModule(databaseUrl);
 const garage = GarageObjectStorage.fromEnv();
 const databaseHealth = createDatabaseHealthCheck(databaseUrl);
+const caseStore = createCaseStore(databaseUrl);
 
 app.use("/api/privacy/*", requireSession(auth.sessionPort));
 app.use("/api/provenance/*", requireSession(auth.sessionPort));
 app.use("/api/captions/*", requireSession(auth.sessionPort));
 app.use("/api/storage/*", requireSession(auth.sessionPort));
+// Case CRUD is opt-in for clients and requires a session just like the other DB-backed APIs.
+app.use("/api/cases", requireSession(auth.sessionPort));
+app.use("/api/cases/*", requireSession(auth.sessionPort));
 
 app.route("/", createMetricsRoutes());
 app.route("/", new HealthRoutes(databaseHealth.check, databaseHealth.configured));
@@ -66,6 +72,7 @@ app.route("/", new ProvenanceRoutes());
 app.route("/", new CaptionRoutes());
 app.route("/", new StorageRoutes(garage));
 app.route("/", new JobsRoutes(jobStore));
+app.route("/", new CaseRoutes(caseStore));
 
 // Mount the real Better Auth handler only with a database. Without one the /api/auth/session
 // route above stays honest and returns 503 (EXTERNAL_UNAVAILABLE).
@@ -81,5 +88,6 @@ const server = serve({
 
 registerGracefulShutdown(server, async () => {
     if (jobStore instanceof DatabaseJobStatusStore) await jobStore.close();
+    await caseStore?.close();
     await databaseHealth.close();
 });
