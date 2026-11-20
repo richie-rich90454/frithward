@@ -327,6 +327,9 @@ importers:
       '@tanstack/solid-query':
         specifier: latest
         version: 5.108.0(solid-js@1.9.18)
+      '@tesseract.js-data/eng':
+        specifier: 1.0.0
+        version: 1.0.0
       '@zip.js/zip.js':
         specifier: ^2.25.0
         version: 2.25.0
@@ -3021,6 +3024,9 @@ packages:
     resolution: {integrity: sha512-uzv/nPNdNuK7Z3FfR379A2eFEfmOX49q8N3GXNKTuOCnlyW5nA7eerEeRrZHjX6b2t1DeuGMi1OwvZsoZiVkrg==}
     peerDependencies:
       solid-js: ^1.6.0
+
+  '@tesseract.js-data/eng@1.0.0':
+    resolution: {integrity: sha512-mbTumm6KQPUHyzTPQaF3ObXYnx0SqqfV2nabqFVQBwD6Kl7PhGSLSzOlfFTWy0P3BjghaSKA2W9GB19Jk+ZcTg==}
 
   '@testing-library/dom@10.4.2':
     resolution: {integrity: sha512-yzr2S9HyAIdhz2/6qHgbs665Q7PKVcDF05vsOlHPxG1mo36gKVesdYVeDLnXgfjJ03CrKRk08knc6+E/9m8v2Q==}
@@ -8557,6 +8563,8 @@ snapshots:
     dependencies:
       '@tanstack/query-core': 5.108.0
       solid-js: 1.9.18
+
+  '@tesseract.js-data/eng@1.0.0': {}
 
   '@testing-library/dom@10.4.2':
     dependencies:
