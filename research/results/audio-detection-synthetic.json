@@ -1,0 +1,133 @@
+{
+  "note": "Harness smoke test on a SYNTHETIC fixture. NOT a real evaluation and NOT a performance claim. All scores and labels are hand-written placeholders used only to exercise the harness code paths.",
+  "synthetic": true,
+  "fixture": "research/results/synthetic-fixture.jsonl",
+  "harness": "research/benchmarks/harness.py",
+  "command": "Import research/benchmarks/harness.py and call load_predictions, rates, confusion, calibration_buckets, and cross_dataset_table on research/results/synthetic-fixture.jsonl.",
+  "datasets": [
+    "synthetic-a",
+    "synthetic-b"
+  ],
+  "n": 12,
+  "overall": {
+    "precision": 0.8571428571428571,
+    "recall": 1.0,
+    "fpr": 0.16666666666666666,
+    "fnr": 0.0,
+    "threshold": 0.5,
+    "n": 12
+  },
+  "confusion": {
+    "tp": 6,
+    "fp": 1,
+    "tn": 5,
+    "fn": 0
+  },
+  "calibration_buckets": [
+    {
+      "bucket": 0,
+      "low": 0.0,
+      "high": 0.1,
+      "count": 0,
+      "mean_score": null,
+      "positive_rate": null
+    },
+    {
+      "bucket": 1,
+      "low": 0.1,
+      "high": 0.2,
+      "count": 1,
+      "mean_score": 0.18,
+      "positive_rate": 0.0
+    },
+    {
+      "bucket": 2,
+      "low": 0.2,
+      "high": 0.3,
+      "count": 2,
+      "mean_score": 0.255,
+      "positive_rate": 0.0
+    },
+    {
+      "bucket": 3,
+      "low": 0.3,
+      "high": 0.4,
+      "count": 1,
+      "mean_score": 0.34,
+      "positive_rate": 0.0
+    },
+    {
+      "bucket": 4,
+      "low": 0.4,
+      "high": 0.5,
+      "count": 1,
+      "mean_score": 0.44,
+      "positive_rate": 0.0
+    },
+    {
+      "bucket": 5,
+      "low": 0.5,
+      "high": 0.6,
+      "count": 1,
+      "mean_score": 0.55,
+      "positive_rate": 1.0
+    },
+    {
+      "bucket": 6,
+      "low": 0.6,
+      "high": 0.7,
+      "count": 2,
+      "mean_score": 0.64,
+      "positive_rate": 0.5
+    },
+    {
+      "bucket": 7,
+      "low": 0.7,
+      "high": 0.8,
+      "count": 1,
+      "mean_score": 0.73,
+      "positive_rate": 1.0
+    },
+    {
+      "bucket": 8,
+      "low": 0.8,
+      "high": 0.9,
+      "count": 2,
+      "mean_score": 0.845,
+      "positive_rate": 1.0
+    },
+    {
+      "bucket": 9,
+      "low": 0.9,
+      "high": 1.0,
+      "count": 1,
+      "mean_score": 0.92,
+      "positive_rate": 1.0
+    }
+  ],
+  "cross_dataset": [
+    {
+      "dataset": "synthetic-a",
+      "precision": 0.75,
+      "recall": 1.0,
+      "fpr": 0.3333333333333333,
+      "fnr": 0.0,
+      "threshold": 0.5,
+      "n": 6
+    },
+    {
+      "dataset": "synthetic-b",
+      "precision": 1.0,
+      "recall": 1.0,
+      "fpr": 0.0,
+      "fnr": 0.0,
+      "threshold": 0.5,
+      "n": 6
+    }
+  ],
+  "not_measured": [
+    "no real model was run",
+    "no real dataset was used",
+    "no hardware, runtime, warm-up policy, or repeated-run spread was recorded"
+  ]
+}
