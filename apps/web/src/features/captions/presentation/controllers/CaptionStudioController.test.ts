@@ -3,6 +3,10 @@ import { AppError } from "@frithward/contracts";
 import type { CaptionRepository, RecognizedUtterance } from "@frithward/media-core";
 import type { LocalModelResult, ModelResolver } from "../../infrastructure/LocalModelResolver";
 import {
+    LocalStorageCaptionRepository,
+    type StorageLike,
+} from "../../infrastructure/LocalStorageCaptionRepository.js";
+import {
     CaptionStudioController,
     type CaptionGenerationRecognizer,
 } from "./CaptionStudioController";
@@ -326,6 +330,22 @@ describe("CaptionStudioController undo and redo", () => {
         expect(controller.canRedo()).toBe(false);
     });
 
+    it("undoes a deletion triggered by the Delete shortcut action", () => {
+        const controller = new CaptionStudioController({ repository: fakeRepository() });
+        controller.addSegment({ startMs: 0, endMs: 1000, text: "keep" });
+        controller.addSegment({ startMs: 1000, endMs: 2000, text: "delete me" });
+        const id = controller.getViewModel().segments[1]?.id as string;
+
+        controller.removeSegment(id);
+        expect(controller.getViewModel().segments.map((segment) => segment.text)).toEqual(["keep"]);
+
+        controller.undo();
+        expect(controller.getViewModel().segments.map((segment) => segment.text)).toEqual([
+            "keep",
+            "delete me",
+        ]);
+    });
+
     it("clears the redo stack on a new edit", () => {
         const controller = new CaptionStudioController({ repository: fakeRepository() });
         controller.addSegment({ startMs: 0, endMs: 1000, text: "one" });
@@ -359,5 +379,62 @@ describe("CaptionStudioController undo and redo", () => {
             "seg-0",
         ]);
         expect(controller.canUndo()).toBe(false);
+    });
+});
+
+describe("CaptionStudioController persistence", () => {
+    function memoryStorage(): StorageLike {
+        const values = new Map<string, string>();
+        return {
+            getItem: (key) => values.get(key) ?? null,
+            setItem: (key, value) => {
+                values.set(key, value);
+            },
+        };
+    }
+
+    it("restores the locally saved project through hydrate()", async () => {
+        const storage = memoryStorage();
+        const first = new CaptionStudioController({
+            repository: new LocalStorageCaptionRepository(storage),
+        });
+        first.addSegment({ startMs: 0, endMs: 1000, text: "Persisted caption" });
+
+        const second = new CaptionStudioController({
+            repository: new LocalStorageCaptionRepository(storage),
+        });
+        expect(second.getViewModel().segments).toHaveLength(0);
+
+        await second.hydrate();
+
+        expect(second.getViewModel().segments).toMatchObject([
+            { startMs: 0, endMs: 1000, text: "Persisted caption" },
+        ]);
+        expect(second.canUndo()).toBe(false);
+        expect(second.getError()).toBeNull();
+    });
+
+    it("leaves a fresh project untouched when nothing was stored", async () => {
+        const controller = new CaptionStudioController({
+            repository: new LocalStorageCaptionRepository(memoryStorage()),
+        });
+
+        await controller.hydrate();
+
+        expect(controller.getViewModel().segments).toHaveLength(0);
+        expect(controller.getError()).toBeNull();
+    });
+
+    it("surfaces corrupt saved state instead of fabricating captions", async () => {
+        const storage = memoryStorage();
+        storage.setItem("frithward.caption.caption-studio", "{not json");
+        const controller = new CaptionStudioController({
+            repository: new LocalStorageCaptionRepository(storage),
+        });
+
+        await controller.hydrate();
+
+        expect(controller.getError()).toContain("not valid JSON");
+        expect(controller.getViewModel().segments).toHaveLength(0);
     });
 });
