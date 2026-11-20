@@ -1,6 +1,6 @@
 # Video detection engine
 
-Experimental temporal and frame-level synthetic media detection. The engine validates the video id and sample count and returns indicators and limitations. Model-backed inference is not wired yet.
+Experimental temporal and frame-level synthetic media detection. With supplied raw grayscale frame buffers the engine computes genuine frame statistics (mean luma, luma variance, black-frame count and duplicate-frame ratio) labelled `frame-signal-statistics`. These are not detection scores: `indicators` stays empty and no model inference is wired.
 
 ## Intended use
 
@@ -16,9 +16,9 @@ Experimental temporal and frame-level synthetic media detection. The engine vali
 
 | Item            | Value                                                                          |
 | --------------- | ------------------------------------------------------------------------------ |
-| Request         | `DetectionRequest { video_id, sample_frames = 8, video_path?, frame_base64? }` |
-| Response        | `DetectionResult { video_id, indicators, limitations, status, reason }`        |
-| Validation      | Non-empty video id; positive sample count                                      |
+| Request         | `DetectionRequest { video_id, sample_frames = 8, video_path?, frame_base64?, frames_base64?, width?, height? }` |
+| Response        | `DetectionResult { video_id, indicators, statistics?, method, limitations, status, reason }` |
+| Validation      | Non-empty video id; positive sample count; width/height required for frames     |
 | Complexity      | O(f·p) in sampled frames and pixels                                            |
 | Streaming       | Sampled frames                                                                 |
 | Cancellation    | Between frames                                                                 |
@@ -34,6 +34,7 @@ Temporal and frame-level classifiers. Datasets require licensing and consent rev
 
 ## Limitations
 
-- No indicators are produced without a configured model.
+- Frame statistics cannot establish whether media is synthetic or manipulated; `indicators` is always empty.
+- Frames must be raw 8-bit grayscale bytes of exactly `width x height`; duplicate ratio compares exact bytes.
 - Sampling may miss brief manipulations.
 - Performance varies with codec, resolution, and compression.
