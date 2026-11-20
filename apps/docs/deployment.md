@@ -20,6 +20,26 @@ The optional Hono services (API, orchestrator, media/inference workers, communit
 
 `e2e/browser-only.spec.ts` exercises this static build with `vite preview` and proves there are no `/api/` calls, no external requests, and browser-local persistence. Offline reloads depend on service-worker/browser caching and are not asserted by that suite.
 
+### Cross-origin isolation (COOP/COEP) headers
+
+Whisper pthreads transcription needs `SharedArrayBuffer`, which browsers expose only on a cross-origin isolated page. That requires three response headers from the host:
+
+| Header | Value |
+| --- | --- |
+| `Cross-Origin-Opener-Policy` | `same-origin` |
+| `Cross-Origin-Embedder-Policy` | `require-corp` |
+| `Cross-Origin-Resource-Policy` | `same-origin` |
+
+Only the host can set these response headers — a `<meta http-equiv>` tag or a service worker cannot. The build ships ready-to-use config for common static hosts:
+
+- `apps/web/public/_headers` — Netlify and Cloudflare Pages (copied into `dist` on build).
+- `apps/web/netlify.toml` — Netlify site configuration.
+- `apps/web/vercel.json` — Vercel configuration.
+- `infrastructure/deployment/Caddyfile` — self-hosted Caddy (already sets them).
+- `apps/web/public/hosting-headers.json` — the exact name/value pairs to copy for any other host.
+
+On a host that cannot set arbitrary response headers (for example GitHub Pages), the app still runs every non-`SharedArrayBuffer` feature normally: caption editing and export, document generation, diagrams, charts, media tooling, analysis, and provenance inspection. Only Whisper pthreads transcription is unavailable there; the browser-whisper/WebGPU transcription path does not need COOP/COEP. All runtime assets are same-origin, so `require-corp` blocks nothing and is kept over `credentialless` for broader browser support. `getIsolationStatus()` in `apps/web/src/offline/isolation.ts` lets the UI check this at runtime.
+
 ## 1. Prerequisites
 
 | Component | Version | Notes |
