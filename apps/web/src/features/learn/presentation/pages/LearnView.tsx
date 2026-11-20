@@ -1,4 +1,4 @@
-import { For, createSignal, onCleanup } from "solid-js";
+import { For, Show, createSignal, onCleanup } from "solid-js";
 import { GraduationCap } from "lucide-solid";
 import { useI18n } from "../../../../i18n/index.js";
 import { Quiz } from "../components/Quiz";
@@ -15,6 +15,14 @@ export function LearnView() {
     );
     const lessons = controller.getLessons();
     const questions = controller.getQuestions();
+    const completedCount = () => {
+        state();
+        return lessons.filter((lesson) => controller.getProgress()[lesson.id]?.completed).length;
+    };
+    const hasIncomplete = () => {
+        state();
+        return controller.getNextIncompleteLessonIndex() >= 0;
+    };
 
     return (
         <section>
@@ -23,6 +31,18 @@ export function LearnView() {
                 {t("learn.title")}
             </h1>
             <p>{t("learn.intro")}</p>
+
+            <p role="status">
+                Progress: {completedCount()} / {lessons.length} lessons complete
+            </p>
+            <Show when={hasIncomplete()}>
+                <button type="button" onClick={() => controller.continueLearning()}>
+                    Continue learning
+                </button>
+            </Show>
+            <button type="button" onClick={() => controller.resetProgress()}>
+                Reset progress
+            </button>
 
             <For each={lessons}>
                 {(lesson) => (
