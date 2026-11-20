@@ -1,0 +1,108 @@
+/* Local mirror of the design-system colour tokens; this package is not a dependency of the extension. */
+:root {
+    --fw-color-canvas: #ffffff;
+    --fw-color-surface: #ffffff;
+    --fw-color-surface-secondary: #e6e6e6;
+    --fw-color-text: #000000;
+    --fw-color-text-secondary: #4a4a4a;
+    --fw-color-border: #bdbdbd;
+    --fw-color-accent: #a3481b;
+    --fw-color-accent-contrast: #ffffff;
+    --fw-color-danger-surface: #f7e2e2;
+    --fw-color-danger: #a32121;
+    --fw-space-2: 8px;
+    --fw-space-3: 12px;
+    --fw-space-4: 16px;
+    --fw-touch-min: 44px;
+}
+
+[data-theme="dark"] {
+    --fw-color-canvas: #000000;
+    --fw-color-surface: #0a0a0a;
+    --fw-color-surface-secondary: #242424;
+    --fw-color-text: #ffffff;
+    --fw-color-text-secondary: #c2c2c2;
+    --fw-color-border: #666666;
+    --fw-color-accent: #e69a6c;
+    --fw-color-accent-contrast: #241207;
+    --fw-color-danger-surface: #2c1414;
+    --fw-color-danger: #ff7a73;
+}
+
+body {
+    background: var(--fw-color-canvas);
+    color: var(--fw-color-text);
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.popup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fw-space-3);
+    inline-size: 320px;
+    max-inline-size: 100%;
+    padding: var(--fw-space-4);
+    padding-inline-start: max(var(--fw-space-4), env(safe-area-inset-inline-start, 0px));
+    padding-inline-end: max(var(--fw-space-4), env(safe-area-inset-inline-end, 0px));
+}
+
+.popup__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--fw-space-2);
+}
+
+.popup__header h1 {
+    font-size: 18px;
+    margin: 0;
+}
+
+.popup p {
+    margin: 0;
+    color: var(--fw-color-text-secondary);
+}
+
+.popup code {
+    display: inline-block;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+}
+
+.popup [role="alert"] {
+    background: var(--fw-color-danger-surface);
+    color: var(--fw-color-danger);
+    padding: var(--fw-space-2);
+}
+
+.popup button {
+    min-block-size: var(--fw-touch-min);
+    padding-inline: var(--fw-space-3);
+    background: var(--fw-color-accent);
+    color: var(--fw-color-accent-contrast);
+    border: 1px solid var(--fw-color-border);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.popup button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.fw-theme-toggle {
+    min-inline-size: var(--fw-touch-min);
+    background: var(--fw-color-surface-secondary);
+    color: var(--fw-color-text);
+    text-transform: capitalize;
+}
+
+@media (max-width: 360px) {
+    .popup {
+        inline-size: 100%;
+        gap: var(--fw-space-2);
+    }
+}
