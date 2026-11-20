@@ -16,7 +16,7 @@ vi.mock("browser-whisper", () => ({
 }));
 
 import { BrowserWhisper } from "browser-whisper";
-import { BrowserWhisperAdapter } from "../../../../../../packages/media-core/src/infrastructure/browser/BrowserWhisperAdapter.js";
+import { BrowserWhisperAdapter } from "../BrowserWhisperAdapter.js";
 
 function setWebGpu(available: boolean): void {
     Object.defineProperty(globalThis, "navigator", {
