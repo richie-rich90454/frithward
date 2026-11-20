@@ -8,6 +8,17 @@ function bufferOf(text: string): ArrayBuffer {
     return buffer;
 }
 
+function memoryStorage(initial: Record<string, string> = {}) {
+    const values = new Map(Object.entries(initial));
+    return {
+        getItem: (key: string) => values.get(key) ?? null,
+        setItem: (key: string, value: string) => {
+            values.set(key, value);
+        },
+        read: (key: string) => values.get(key),
+    };
+}
+
 describe("IncidentTimelineController evidence", () => {
     it("hashes file content with SHA-256 locally", async () => {
         const controller = new IncidentTimelineController();
@@ -62,5 +73,50 @@ describe("IncidentTimelineController evidence", () => {
             }),
         ).rejects.toThrow("Evidence file name required.");
         expect(controller.getEvidence()).toEqual([]);
+    });
+});
+
+describe("IncidentTimelineController report history", () => {
+    it("records only real exports with a matching SHA-256 and persists them", async () => {
+        const storage = memoryStorage();
+        const controller = new IncidentTimelineController({ storage });
+        expect(controller.getReportHistory()).toEqual([]);
+
+        await expect(controller.exportReport()).rejects.toThrow("No evidence to export.");
+        expect(controller.getReportHistory()).toEqual([]);
+
+        await controller.addEvidence({
+            fileName: "invoice.png",
+            content: bufferOf("evidence bytes"),
+            source: "email",
+        });
+        const json = await controller.exportReport();
+        const digest = await globalThis.crypto.subtle.digest(
+            "SHA-256",
+            new TextEncoder().encode(json),
+        );
+        const expected = [...new Uint8Array(digest)]
+            .map((byte) => byte.toString(16).padStart(2, "0"))
+            .join("");
+        const history = controller.getReportHistory();
+        expect(history).toHaveLength(1);
+        expect(history[0]).toMatchObject({
+            summary: "1 evidence item(s) recorded.",
+            sha256: expected,
+        });
+        expect(history[0]?.id).toBeTruthy();
+        expect(history[0]?.createdAt).toBeTruthy();
+        expect(JSON.parse(storage.read("frithward.report-history") ?? "[]")).toEqual(history);
+    });
+
+    it("loads saved entries and ignores malformed ones", () => {
+        const storage = memoryStorage({
+            "frithward.report-history": JSON.stringify([
+                { id: "saved", createdAt: "2026-01-01T00:00:00.000Z", summary: "1 item", sha256: "f".repeat(64) },
+                { id: "broken" },
+            ]),
+        });
+        const controller = new IncidentTimelineController({ storage });
+        expect(controller.getReportHistory().map((entry) => entry.id)).toEqual(["saved"]);
     });
 });
