@@ -61,6 +61,8 @@ self.addEventListener("fetch", (event) => {
     const url = new URL(request.url);
     if (url.origin !== self.location.origin) return;
 
+    // Share-target navigations (e.g. /check?text=...) keep navigate mode; a query string never
+    // matches a cached URL, so the fallback below serves the cached shell offline as intended.
     if (request.mode === "navigate") {
         event.respondWith(
             (async () => {
