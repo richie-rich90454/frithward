@@ -1,6 +1,6 @@
 # Image privacy engine
 
-Exposure detection for faces, license plates, and documents. The engine validates an image id and returns findings. The scaffold returns no findings.
+Local metadata inspection for caller-supplied JPEG/PNG bytes. The engine parses EXIF directly with the standard library (JPEG APP1 and PNG eXIf) and reports GPS, camera make/model, and capture-date fields when present, with an explicit `no_metadata` status when none are found. It does not analyze pixels or detect faces, plates, or documents.
 
 ## Intended use
 
@@ -16,17 +16,17 @@ Exposure detection for faces, license plates, and documents. The engine validate
 
 | Item            | Value                                             |
 | --------------- | ------------------------------------------------- |
-| Request         | `PrivacyRequest { image_id: str }`                |
-| Response        | `PrivacyResult { image_id, findings: list[str] }` |
-| Validation      | `image_id` must be non-empty                      |
-| Complexity      | O(p) in pixels                                    |
-| Streaming       | Frame                                             |
-| Cancellation    | Between regions                                   |
-| Model lifecycle | Stage-gated; load once, warm up, infer, release   |
+| Request         | `PrivacyRequest { image_id: str, image_base64: str \| None, image_path: str \| None }` |
+| Response        | `PrivacyResult { image_id, findings: list[str], status, detail, metadata: list[MetadataField], limitations }` |
+| Validation      | `image_id` must be non-empty; base64 must be valid |
+| Complexity      | O(b) in supplied bytes                            |
+| Streaming       | Block                                             |
+| Cancellation    | Not cancellable                                   |
+| Model lifecycle | No model; standard-library EXIF parsing only      |
 
 ## Metrics
 
-Precision and recall at a documented IoU threshold, reported per class and demographic group where evaluation data permits.
+Not applicable: fields are read directly, not inferred. Evaluation would measure parser coverage against a documented image corpus.
 
 ## Model candidates and datasets
 
@@ -34,6 +34,6 @@ No fixed candidate. Training and evaluation data must be licensed and consented;
 
 ## Limitations
 
-- The scaffold detects nothing.
-- Region hints are not pixel-accurate masks.
-- Demographic performance differences must be documented.
+- Metadata can be stripped or forged; findings are not proof of origin or consent.
+- XMP and IPTC blocks are not decoded; only EXIF is parsed.
+- An absent field is not evidence that the data never existed.
