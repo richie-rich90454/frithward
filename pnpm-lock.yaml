@@ -162,6 +162,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  image-size: ^2.1.0
+
 importers:
 
   .:
@@ -257,6 +260,12 @@ importers:
 
   apps/public-proof:
     dependencies:
+      '@contentauth/c2pa-wasm':
+        specifier: 0.15.1
+        version: 0.15.1
+      '@frithward/provenance-core':
+        specifier: workspace:*
+        version: link:../../packages/provenance-core
       solid-js:
         specifier: 1.9.18
         version: 1.9.18
@@ -273,6 +282,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@contentauth/c2pa-wasm':
+        specifier: 0.15.1
+        version: 0.15.1
       '@ffmpeg/ffmpeg':
         specifier: ^0.12.15
         version: 0.12.15
@@ -503,9 +515,16 @@ importers:
       '@contentauth/c2pa-node':
         specifier: ^0.12.1
         version: 0.12.1(supports-color@7.2.0)
+      '@contentauth/c2pa-wasm':
+        specifier: 0.15.1
+        version: 0.15.1
       '@frithward/contracts':
         specifier: workspace:*
         version: link:../contracts
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.6
+        version: 26.6.6
 
   packages/runtime: {}
 
@@ -1202,6 +1221,9 @@ packages:
 
   '@contentauth/c2pa-utilities@0.5.2':
     resolution: {integrity: sha512-ioNqRyL2IbSfNOYUz9Rh9uBUWQLcBKK9ItENlVSmQMg1YGDSh4CK06gZlaqNfpvtusebUdt2AQQiP5/RYWjEiw==}
+
+  '@contentauth/c2pa-wasm@0.15.1':
+    resolution: {integrity: sha512-Qa6/ILQcPlDx/8f3Af2rQVCZ9Df8cfOoclXUqW1JFNuXozyCDCmV8BfGO9ES246KTgunetyKjs/zhiDWx7T1TQ==}
 
   '@corvu/utils@0.4.2':
     resolution: {integrity: sha512-Ox2kYyxy7NoXdKWdHeDEjZxClwzO4SKM8plAaVwmAJPxHMqA0rLOoAsa+hBDwRLpctf+ZRnAd/ykguuJidnaTA==}
@@ -4780,9 +4802,9 @@ packages:
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
 
-  image-size@1.2.1:
-    resolution: {integrity: sha512-rH+46sQJ2dlwfjfhCyNx5thzrv+dtmBIhPHk0zgRUukHzZ/kRueTJXoYYsclBaKcSMBWuGbOFXtioLpzTb5euw==}
-    engines: {node: '>=16.x'}
+  image-size@2.1.0:
+    resolution: {integrity: sha512-6Dbisa46RsgeAh3TMSFL2i8+uIFG+/LRmz6Q2oscSJJvXo1sOw3EgNO4M8jPl1P+gR1atJLDPrpclX4IHz63sA==}
+    engines: {node: '>=18'}
     hasBin: true
 
   immediate@3.0.6:
@@ -5674,9 +5696,6 @@ packages:
 
   quansync@0.2.11:
     resolution: {integrity: sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==}
-
-  queue@6.0.2:
-    resolution: {integrity: sha512-iHZWu+q3IdFZFX36ro/lKBkSvfkztY5Y7HMiPlOUjhupPcG2JMfst2KKEpu5XndviX/3UhFbRngUPNKtgvtZiA==}
 
   rc9@3.1.0:
     resolution: {integrity: sha512-ufjkNVzbRHKcCOmTahZkmVsyc3W+MSk3jY03m+a7tGHkIsdVMG9l10/3HvFbWkkKzY5VFp3pkRsIo/UYgmFL7Q==}
@@ -7050,6 +7069,8 @@ snapshots:
     dependencies:
       '@contentauth/c2pa-types': 0.8.0
       ts-deepmerge: 8.0.0
+
+  '@contentauth/c2pa-wasm@0.15.1': {}
 
   '@corvu/utils@0.4.2(solid-js@1.9.18)':
     dependencies:
@@ -10430,9 +10451,7 @@ snapshots:
 
   ieee754@1.2.1: {}
 
-  image-size@1.2.1:
-    dependencies:
-      queue: 6.0.2
+  image-size@2.1.0: {}
 
   immediate@3.0.6: {}
 
@@ -11277,7 +11296,7 @@ snapshots:
     dependencies:
       '@types/node': 22.20.5
       https: 1.0.0
-      image-size: 1.2.1
+      image-size: 2.1.0
       jszip: 3.10.2
 
   preact@10.29.8: {}
@@ -11322,10 +11341,6 @@ snapshots:
   punycode@2.3.1: {}
 
   quansync@0.2.11: {}
-
-  queue@6.0.2:
-    dependencies:
-      inherits: 2.0.4
 
   rc9@3.1.0:
     dependencies:
