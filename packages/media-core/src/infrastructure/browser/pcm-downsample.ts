@@ -20,8 +20,7 @@ export function downsampleToPcm16(
         let sample = 0;
         for (let channel = 0; channel < channels; channel++) {
             const first = input[Math.min(frame * channels + channel, input.length - 1)] ?? 0;
-            const second =
-                input[Math.min((frame + 1) * channels + channel, input.length - 1)] ?? 0;
+            const second = input[Math.min((frame + 1) * channels + channel, input.length - 1)] ?? 0;
             sample += first + (second - first) * fraction;
         }
         sample /= channels;
