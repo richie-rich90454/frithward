@@ -653,4 +653,61 @@ export const fr: Record<string, string> = {
     "watchlist.unchecked": "pas encore vérifié",
     "watchlist.invalid": "Saisissez un domaine ou un expéditeur.",
     "watchlist.added": "Ajouté à la liste",
+    "error.CHART_NO_DATA": "Aucune donnée à tracer.",
+    "error.CHART_AXIS_LABELS_REQUIRED": "Les deux axes ont besoin d'étiquettes.",
+    "error.CHART_Y_AXIS_MIN_INVALID":
+        "L'axe des valeurs doit commencer à zéro ou moins pour une échelle honnête.",
+    "error.CHART_SERIES_NAME_REQUIRED": "Chaque série a besoin d'un nom.",
+    "error.CHART_SERIES_LENGTH_MISMATCH": "Chaque série doit avoir une valeur par catégorie.",
+    "error.CHART_SERIES_VALUES_NON_FINITE":
+        "Les valeurs de la série doivent être des nombres finis.",
+    "error.DOCUMENT_TITLE_REQUIRED": "Un titre de document est requis.",
+    "error.DOCUMENT_SECTION_REQUIRED": "Au moins une section est requise.",
+    "error.DOCUMENT_SECTION_HEADING_REQUIRED": "Chaque section a besoin d'un titre.",
+    "error.DOCUMENT_COLUMN_REQUIRED": "Au moins une colonne est requise.",
+    "error.DOCUMENT_ROW_REQUIRED": "Au moins une ligne est requise.",
+    "error.DOCUMENT_ROW_COLUMN_MISMATCH": "Chaque ligne doit correspondre au nombre de colonnes.",
+    "error.DOCUMENT_SLIDE_REQUIRED": "Au moins une diapositive est requise.",
+    "error.DOCUMENT_SLIDE_TITLE_REQUIRED": "Chaque diapositive a besoin d'un titre.",
+    "error.PDF_EMPTY": "Le PDF est vide.",
+    "error.PDF_OPEN_FAILED": "Impossible d'ouvrir le PDF : {detail}",
+    "error.PDF_RENDER_FAILED": "Impossible de rendre la page du PDF : {detail}",
+    "error.BUNDLE_EMPTY": "Il n'y a rien à regrouper.",
+    "error.BUNDLE_ENTRY_NAME_REQUIRED": "Chaque entrée de l'archive a besoin d'un nom.",
+    "error.ARCHIVE_EMPTY": "L'archive est vide.",
+    "error.OCR_IMAGE_EMPTY": "L'image sélectionnée est vide.",
+    "error.OCR_LANGUAGE_REQUIRED": "Une langue d'OCR est requise.",
+    "error.DOCX_EMPTY": "Le fichier .docx sélectionné est vide.",
+    "error.OCR_WORKERS_UNAVAILABLE":
+        "L'OCR nécessite les Web Workers, non pris en charge par ce navigateur.",
+    "error.OCR_LANGUAGE_DATA_UNAVAILABLE":
+        "Les données de langue OCR sont indisponibles à {path}. Placez le fichier dans apps/web/public/tessdata et recompilez ; aucune donnée n'est téléchargée automatiquement.",
+    "error.IMAGE_EMPTY": "L'image sélectionnée est vide.",
+    "error.IMAGE_DECODE_UNAVAILABLE":
+        "Le décodage d'image n'est pas disponible dans ce navigateur.",
+    "error.REDACTION_REGION_INVALID":
+        "Fournissez une région valide avec une largeur et une hauteur positives.",
+    "error.REDACTION_REGION_OUTSIDE": "La région de masquage est en dehors de l'image.",
+    "error.CANVAS_2D_UNAVAILABLE": "Canvas 2D n'est pas disponible dans ce navigateur.",
+    "error.REDACTION_ENCODE_FAILED": "Impossible d'encoder l'image masquée.",
+    "error.AUDIO_DECODE_UNAVAILABLE": "Le décodage audio n'est pas disponible dans ce navigateur.",
+    "error.OPFS_UNAVAILABLE":
+        "Le stockage local de fichiers n'est pas disponible dans ce navigateur.",
+    "error.OPFS_OPEN_FAILED": "Impossible d'ouvrir le stockage local de fichiers : {detail}",
+    "error.OPFS_WRITE_FAILED": "Impossible d'écrire la ressource : {detail}",
+    "error.OPFS_READ_FAILED": "Impossible de lire la ressource : {detail}",
+    "error.OPFS_DELETE_FAILED": "Impossible de supprimer la ressource : {detail}",
+    "error.TRANSCODE_ABORTED": "Le transcodage a été annulé.",
+    "error.TRANSCODE_NO_CHUNKS": "Aucun fragment de média à transcoder.",
+    "error.TRANSCODE_BITRATE_INVALID": "Le débit binaire doit être positif.",
+    "error.ASSET_NAME_EMPTY": "Le nom de la ressource ne peut pas être vide.",
+    "error.ASSET_NAME_PATH_SEPARATOR":
+        "Le nom de la ressource ne peut pas contenir de séparateurs de chemin.",
+    "error.GPU_DETECTION_ABORTED": "La détection du GPU a été annulée.",
+    "error.WEBCODECS_VIDEO_UNAVAILABLE":
+        "L'encodage ou le décodage vidéo WebCodecs n'est pas disponible dans ce navigateur.",
+    "error.WEBCODECS_AUDIO_UNAVAILABLE":
+        "L'encodage ou le décodage audio WebCodecs n'est pas disponible dans ce navigateur.",
+    "error.DIAGRAM_SOURCE_REQUIRED": "Saisissez d'abord un diagramme Mermaid.",
+    "error.DIAGRAM_RENDER_FAILED": "Impossible de rendre le diagramme : {detail}",
 };
