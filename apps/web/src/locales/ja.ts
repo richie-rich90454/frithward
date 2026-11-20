@@ -343,7 +343,7 @@ export const ja: Record<string, string> = {
         "リンクの表示テキストと実際のリンク先でドメインが異なります。",
     "patterns.lookalikeDomain.label": "似たドメイン",
     "patterns.lookalikeDomain.rationale":
-        "既知のブランドに似た名前 (0 を o に見せかける之类の類似文字を含む) は、だましの一般的な手がかりです。",
+        "既知のブランドに似た名前 (0 を o に見せかけるような類似文字を含む) は、だましの一般的な手がかりです。",
     "patterns.lookalikeDomain.detail":
         "既知のブランドに似ていますが、その正確な名前ではないドメインがあります。",
     "patterns.ipHost.label": "数値アドレス",
