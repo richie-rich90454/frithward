@@ -2,6 +2,40 @@
 
 These tables describe what the repository actually targets and what has been verified. "Not verified" means there is no test evidence in this repository — it is not a claim of support. Nothing here is a guarantee of detection accuracy.
 
+## Browser-only operation
+
+The built web app is a static site. `apps/web/src` makes no `fetch()` calls, so no Hono service is needed at runtime: caption editing and export, document generation (docx/pdf/xlsx/pptx/zip), diagrams, charts, media inspection, scam/URL/QR analysis, privacy and provenance inspection, the eight-language UI, and the accessibility checks all execute in the browser. **No backend, native install, or global install is required to run it.** Building it once needs Node.js and pnpm locally; hosting it needs only a static file server.
+
+`e2e/browser-only.spec.ts` verifies this against `vite preview`, which serves only `apps/web/dist`. It asserts that all routes render with no page errors and no `/api/` request, that a caption project's `localStorage` record survives a reload, that core routes render with every cross-origin request blocked, and that loading the app makes no requests to external hosts.
+
+### What runs without a network call
+
+Once the page and its same-origin assets have loaded, every implemented feature runs locally: editing captions, generating documents, rendering diagrams and charts, inspecting media metadata, analysing text/URLs/QR content, reading provenance records, and switching languages. No analysis result is uploaded.
+
+Reloading while disconnected is a separate guarantee. It depends on the service worker and browser caching and is **not** asserted by the tests above; treat offline navigation as unverified in this checkout.
+
+### Assets you must supply
+
+| Feature | Requirement | Honest status |
+| --- | --- | --- |
+| Caption generation | A Whisper WASM runtime URL supplied by you, plus a model: either place `whisper-tiny.bin` in `apps/web/public/models/` and rebuild, or supply a model URL. Also needs raw 16-bit little-endian mono PCM at 16 kHz and a cross-origin-isolated page (COOP/COEP) for `SharedArrayBuffer` | Stored captions are edited and exported locally; no model is downloaded automatically, and audio is never uploaded |
+| OCR | tesseract.js worker language data. `eng.traineddata.gz` is bundled at same-origin `/tessdata`; other languages need a file placed in `apps/web/public/tessdata` and a rebuild | English OCR data is local; nothing is downloaded at runtime. Additional languages are not shipped |
+| Local model inference | Model weights and model cards | Model cards are not shipped yet; the manager inventories metadata, it does not download weights |
+
+### Browser APIs that gate features
+
+The minimum versions below are commonly cited baselines, **not** a browser matrix verified in this repository; E2E coverage here runs in Chromium only.
+
+| API | Gates | Minimum version | Notes |
+| --- | --- | --- | --- |
+| `SharedArrayBuffer` | whisper.cpp / threaded WASM transcription | Requires cross-origin isolation: `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` | Vite dev/preview and the shipped Caddyfile set these headers; an arbitrary static host may not |
+| OPFS (Origin Private File System) | local asset storage in the media runtime | Chrome 86, Firefox 111, Safari 15.2 | Storage is per-origin in the browser |
+| WebCodecs | local audio/video transcoding | Chrome 94, Safari 16.4 | Firefox support is not assumed |
+| WebGPU | optional GPU detection/acceleration | Chrome 113 | Optional; the app must remain usable without it |
+| WebAssembly SIMD | WASM-based media and inference libraries | Modern evergreen browsers | Older browsers without SIMD cannot run the local inference path |
+
+None of these gates requires a backend or a native install. There is no server-side fallback: where an API is missing, the affected local feature is unavailable.
+
 ## Browser compatibility (local-first path)
 
 The web app ships WASM-based libraries (`onnxruntime-web`, `@ffmpeg/ffmpeg`, `tesseract.js`, `@mediapipe/tasks-vision`, `@mlc-ai/web-llm`) and requires a cross-origin-isolated page for some of them. Caddy sets `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` for that reason.
