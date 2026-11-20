@@ -1,6 +1,6 @@
 # Document OCR engine
 
-Optical character recognition surface. The engine validates the document id and accepts document bytes or a path, but returns an explicit `unavailable` status and empty text because no OCR engine is configured. Tesseract is the intended backend.
+Optical character recognition surface. The engine performs a read-only host check (`shutil.which('tesseract')`). If a tesseract binary is already present it runs real local OCR via subprocess on supplied bytes; otherwise it returns an explicit `unavailable` status with empty text and reports the exact check. Nothing is installed by the engine.
 
 ## Intended use
 
@@ -17,7 +17,7 @@ Optical character recognition surface. The engine validates the document id and 
 | Item | Value |
 | --- | --- |
 | Request | `OcrRequest { document_id, language = "en", document_base64?, document_path? }` |
-| Response | `OcrResult { document_id, text: str, status, reason, limitations }` |
+| Response | `OcrResult { document_id, text: str, status, reason, tesseract_path?, check, limitations }` |
 | Validation | `document_id` must be non-empty |
 | Complexity | O(p) in pixels per page |
 | Streaming | Per page |
@@ -34,6 +34,7 @@ Tesseract is the intended backend. Language data must be licensed and documented
 
 ## Limitations
 
-- No text is recognized; empty output means unavailable, not a blank document.
+- Empty output means no recognition was performed, not a blank document; `check` records the host lookup used.
+- Tesseract must already exist on PATH; language data must be installed separately.
 - Accuracy varies with scan quality, layout, and language.
 - OCR errors propagate to extraction and redaction.
