@@ -48,6 +48,16 @@ export const fr: Record<string, string> = {
     "check.guidedBack": "Étape précédente",
     "check.guidedDone": "Marquer cette étape comme terminée",
     "check.guidedComplete": "Vous avez terminé toutes les étapes.",
+    "check.clipboardUnavailable":
+        "L'accès au presse-papiers n'est pas disponible dans ce navigateur. Utilisez plutôt l'option fichier.",
+    "check.pasteFailed":
+        "L'autorisation d'accéder au presse-papiers a été refusée. Autorisez l'accès ou collez le texte manuellement dans la zone.",
+    "check.fileTypeUnsupported": "Seuls les fichiers .txt, .eml et .json sont pris en charge.",
+    "check.fileReadFailed": "Impossible de lire ce fichier. Veuillez réessayer.",
+    "check.pasteButton": "Coller depuis le presse-papiers",
+    "check.dropHint":
+        "Déposez ici un fichier .txt, .eml ou .json pour vérifier son texte localement. Rien n'est téléversé.",
+    "check.chooseFile": "Choisir un fichier texte (.txt, .eml, .json)",
     "protect.title": "Vérification du partage",
     "protect.intro": "Sélectionnez les métadonnées à partager, puis vérifiez si elles sont sûres.",
     "protect.button": "Vérifier le partage",
@@ -881,6 +891,14 @@ export const fr: Record<string, string> = {
         "Contactez la personne par un canal connu pour confirmer la demande.",
     "result.SCAM_NEXT_NO_SEND": "N'envoyez ni argent, ni codes, ni identifiants.",
     "result.SCAM_NEXT_KEEP_EVIDENCE": "Conservez le message original comme preuve.",
+    "result.SCAM_INDICATOR_URGENCY_LABEL": "Pression d'urgence",
+    "result.SCAM_INDICATOR_URGENCY_DETAIL": "Le message vous presse d'agir rapidement.",
+    "result.SCAM_INDICATOR_PAYMENT_LABEL": "Demande de paiement",
+    "result.SCAM_INDICATOR_PAYMENT_DETAIL": "Le message demande un paiement.",
+    "result.SCAM_INDICATOR_CREDENTIAL_LABEL": "Demande d'identifiants",
+    "result.SCAM_INDICATOR_CREDENTIAL_DETAIL": "Le message demande vos identifiants.",
+    "result.SCAM_INDICATOR_SECRECY_LABEL": "Demande de secret",
+    "result.SCAM_INDICATOR_SECRECY_DETAIL": "Le message vous demande de garder le secret.",
     "result.GUIDED_PAUSE_TITLE": "Arrêtez et respirez",
     "result.GUIDED_PAUSE_PLAIN":
         "Ne cliquez pas, ne répondez pas et ne payez rien pour le moment. Prenez votre temps.",
