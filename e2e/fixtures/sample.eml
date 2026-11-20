@@ -1,0 +1,21 @@
+From: "Account Security" <security@accounts-example.net>
+To: Bob <bob@example.org>
+Subject: ACTION REQUIRED: verify your account within 24 hours
+Date: Mon, 20 Jan 2026 09:15:00 +0000
+Message-ID: <urgent-verify@accounts-example.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Dear Bob,
+
+We detected an unusual sign-in to your account. Your access will be
+suspended in 24 hours unless you verify your identity immediately.
+
+Please reply with your account password and the 6-digit code from your
+authenticator app so we can restore access. Do not contact support by
+phone; this request is handled only through this email.
+
+Verify here: http://accounts-example-verify.test/confirm?id=8f3a91
+
+Thank you,
+Account Security Team
