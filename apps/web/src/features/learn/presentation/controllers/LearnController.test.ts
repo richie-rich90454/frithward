@@ -1,6 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { en } from "../../../../locales/en.js";
-import { LearnController, LESSONS, QUIZ, dictionaryTranslator } from "./LearnController";
+import {
+    LEARN_PROGRESS_KEY,
+    LearnController,
+    LESSONS,
+    QUIZ,
+    dictionaryTranslator,
+} from "./LearnController";
 
 const translate = dictionaryTranslator(en);
 
@@ -73,5 +79,102 @@ describe("LearnController", () => {
             finished: false,
             feedback: null,
         });
+    });
+});
+
+function memoryStorage() {
+    const values = new Map<string, string>();
+    return {
+        getItem: (key: string) => values.get(key) ?? null,
+        setItem: (key: string, value: string) => {
+            values.set(key, value);
+        },
+        removeItem: (key: string) => {
+            values.delete(key);
+        },
+    };
+}
+
+describe("LearnController progress persistence", () => {
+    afterEach(() => {
+        vi.unstubAllGlobals();
+    });
+
+    it("saves per-lesson completion and score, then reloads them", () => {
+        const storage = memoryStorage();
+        const controller = new LearnController(translate, { storage });
+        const first = QUIZ[0];
+        if (!first) throw new Error("Quiz is empty.");
+        controller.answer(first.correctIndex);
+        expect(controller.getProgress()["sources"]).toEqual({ completed: true, score: 1 });
+        expect(storage.getItem(LEARN_PROGRESS_KEY)).toContain('"sources"');
+
+        const reloaded = new LearnController(translate, { storage });
+        expect(reloaded.getProgress()["sources"]).toEqual({ completed: true, score: 1 });
+        expect(reloaded.getNextIncompleteLessonIndex()).toBe(1);
+    });
+
+    it("resumes the next incomplete lesson", () => {
+        const storage = memoryStorage();
+        const controller = new LearnController(translate, { storage });
+        controller.answer(QUIZ[0]?.correctIndex ?? 0);
+        controller.continueLearning();
+        expect(controller.getState().currentIndex).toBe(1);
+        for (let index = 1; index < QUIZ.length; index += 1) {
+            controller.answer(QUIZ[index]?.correctIndex ?? 0);
+            controller.next();
+        }
+        expect(controller.getNextIncompleteLessonIndex()).toBe(-1);
+    });
+
+    it("clears progress and stored data on reset", () => {
+        const storage = memoryStorage();
+        const controller = new LearnController(translate, { storage });
+        controller.answer(QUIZ[0]?.correctIndex ?? 0);
+        controller.resetProgress();
+        expect(controller.getProgress()).toEqual({});
+        expect(storage.getItem(LEARN_PROGRESS_KEY)).toBeNull();
+        expect(controller.getState().currentIndex).toBe(0);
+        expect(controller.getNextIncompleteLessonIndex()).toBe(0);
+    });
+
+    it("ignores malformed and out-of-range stored progress", () => {
+        const storage = memoryStorage();
+        storage.setItem(LEARN_PROGRESS_KEY, "not json");
+        expect(new LearnController(translate, { storage }).getProgress()).toEqual({});
+
+        storage.setItem(
+            LEARN_PROGRESS_KEY,
+            JSON.stringify({
+                sources: { completed: true, score: 99 },
+                pressure: { completed: "yes", score: 1 },
+                unknown: { completed: true, score: 1 },
+                privacy: { completed: false, score: -1 },
+            }),
+        );
+        const progress = new LearnController(translate, { storage }).getProgress();
+        expect(progress).toEqual({
+            sources: { completed: true, score: 0 },
+            privacy: { completed: false, score: 0 },
+        });
+    });
+
+    it("does not throw when storage is unavailable", () => {
+        const blocked = {
+            getItem: () => {
+                throw new Error("blocked");
+            },
+            setItem: () => {
+                throw new Error("blocked");
+            },
+            removeItem: () => {
+                throw new Error("blocked");
+            },
+        };
+        vi.stubGlobal("localStorage", blocked);
+        const controller = new LearnController(translate);
+        expect(controller.getProgress()).toEqual({});
+        expect(() => controller.answer(QUIZ[0]?.correctIndex ?? 0)).not.toThrow();
+        expect(() => controller.resetProgress()).not.toThrow();
     });
 });
