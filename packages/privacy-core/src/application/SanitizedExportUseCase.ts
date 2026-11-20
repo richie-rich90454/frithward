@@ -1,4 +1,4 @@
-import { AppError } from "@frithward/contracts";
+import { AppError, RESULT_CODES, resultCodeForText } from "@frithward/contracts";
 import type {
     MetadataFinding,
     MetadataFindingKind,
@@ -10,6 +10,7 @@ import type { RedactionRegion } from "../domain/RedactionRegion.js";
 export interface SanitizationAction {
     kind: MetadataFindingKind | "strip-metadata";
     description: string;
+    descriptionCode?: string | undefined;
 }
 
 export interface SanitizedOutputDescriptor {
@@ -19,6 +20,7 @@ export interface SanitizedOutputDescriptor {
     redactionRegions: readonly RedactionRegion[];
     safeToShare: boolean;
     summary: string;
+    summaryCode?: string | undefined;
 }
 
 export class SanitizedExportUseCase {
@@ -51,13 +53,18 @@ export class SanitizedExportUseCase {
                 });
             } else {
                 stripKinds.add(finding.kind);
-                actions.push({ kind: finding.kind, description: finding.remediation });
+                actions.push({
+                    kind: finding.kind,
+                    description: finding.remediation,
+                    descriptionCode: resultCodeForText(finding.remediation),
+                });
             }
         }
         if (stripKinds.size > 0) {
             actions.push({
                 kind: "strip-metadata",
                 description: "Strip identifying metadata from the exported file.",
+                descriptionCode: RESULT_CODES.PRIVACY_EXPORT_STRIP,
             });
         }
 
@@ -73,6 +80,9 @@ export class SanitizedExportUseCase {
             redactionRegions: [...regions],
             safeToShare,
             summary,
+            summaryCode: safeToShare
+                ? RESULT_CODES.PRIVACY_EXPORT_SAFE
+                : RESULT_CODES.PRIVACY_EXPORT_ACTIONS,
         };
     }
 }
