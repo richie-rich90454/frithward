@@ -1,0 +1,60 @@
+name: release
+
+on:
+    push:
+        tags: ["v*"]
+
+permissions:
+    contents: write
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        env:
+            COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
+            COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 12.14.0
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 26
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm run check
+            - run: pnpm run build
+            - name: Generate SBOM (Syft)
+              uses: anchore/sbom-action@v0
+              with:
+                  path: .
+                  format: spdx-json
+                  output-file: frithward.spdx.json
+                  artifact-name: frithward-release-spdx
+            - name: Package web dist
+              run: tar -czf frithward-web.tar.gz -C apps/web/dist .
+            - name: Install cosign
+              if: env.COSIGN_KEY != '' && env.COSIGN_PASSWORD != ''
+              uses: sigstore/cosign-installer@v3
+            - name: Sign SBOM with cosign (when signing secrets are configured)
+              if: env.COSIGN_KEY != '' && env.COSIGN_PASSWORD != ''
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  printf '%s' "$COSIGN_KEY" > "$RUNNER_TEMP/cosign.key"
+                  cosign sign-blob --yes --key "$RUNNER_TEMP/cosign.key" \
+                    frithward.spdx.json --output-signature frithward.spdx.json.sig
+                  echo "Signed frithward.spdx.json"
+            - name: Create GitHub Release
+              shell: bash
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  set -euo pipefail
+                  files=(frithward-web.tar.gz frithward.spdx.json)
+                  if [ -f frithward.spdx.json.sig ]; then
+                    files+=(frithward.spdx.json.sig)
+                  fi
+                  gh release create "$GITHUB_REF_NAME" "${files[@]}" \
+                    --title "$GITHUB_REF_NAME" --generate-notes
