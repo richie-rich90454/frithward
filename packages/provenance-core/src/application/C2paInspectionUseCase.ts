@@ -1,3 +1,4 @@
+import { RESULT_CODES, resultCodeForText } from "@frithward/contracts";
 import type {
     C2paInspectionResult,
     C2paSignatureStatus,
@@ -48,6 +49,19 @@ function asValidationEntries(value: unknown): C2paValidationEntry[] {
         });
     }
     return entries;
+}
+
+function summaryCodeFor(status: C2paSignatureStatus, summary: string): string {
+    return (
+        resultCodeForText(summary) ??
+        (status === "valid"
+            ? RESULT_CODES.C2PA_SUMMARY_VALID
+            : status === "invalid"
+              ? RESULT_CODES.C2PA_SUMMARY_INVALID
+              : status === "unverified"
+                ? RESULT_CODES.C2PA_SUMMARY_UNVERIFIED
+                : RESULT_CODES.C2PA_SUMMARY_MISSING)
+    );
 }
 
 function isFailureCode(code: string): boolean {
@@ -196,6 +210,15 @@ export class C2paInspectionUseCase {
                 ],
                 summary: "No readable C2PA manifest was provided.",
                 limitations,
+                summaryCode: RESULT_CODES.C2PA_SUMMARY_MISSING,
+                limitationCodes: limitations.map(resultCodeForText),
+                missingInfoCodes: [
+                    RESULT_CODES.C2PA_MISSING_MANIFEST,
+                    RESULT_CODES.C2PA_MISSING_SIGNER,
+                    RESULT_CODES.C2PA_MISSING_TIMESTAMP,
+                    RESULT_CODES.C2PA_MISSING_ASSERTIONS,
+                    RESULT_CODES.C2PA_MISSING_HASH,
+                ],
             };
             await this.persist(result, input.manifest, input.id);
             return result;
@@ -263,6 +286,9 @@ export class C2paInspectionUseCase {
             missingInfo,
             summary,
             limitations,
+            summaryCode: summaryCodeFor(signatureStatus, summary),
+            limitationCodes: limitations.map(resultCodeForText),
+            missingInfoCodes: missingInfo.map(resultCodeForText),
         };
         await this.persist(result, input.manifest, input.id);
         return result;
@@ -304,6 +330,13 @@ export class C2paInspectionUseCase {
             );
         }
 
+        const summary = this.summarize(
+            verification.signatureStatus,
+            verification.signer,
+            verification.assertions.length,
+            verification.validationFailures.length,
+            missingInfo.length,
+        );
         const result: C2paInspectionResult = {
             signatureStatus: verification.signatureStatus,
             signer: verification.signer,
@@ -313,14 +346,11 @@ export class C2paInspectionUseCase {
             transformations,
             validationFailures: verification.validationFailures,
             missingInfo,
-            summary: this.summarize(
-                verification.signatureStatus,
-                verification.signer,
-                verification.assertions.length,
-                verification.validationFailures.length,
-                missingInfo.length,
-            ),
+            summary,
             limitations,
+            summaryCode: summaryCodeFor(verification.signatureStatus, summary),
+            limitationCodes: limitations.map(resultCodeForText),
+            missingInfoCodes: missingInfo.map(resultCodeForText),
         };
         await this.persist(result, input.manifest, input.id);
         return result;
