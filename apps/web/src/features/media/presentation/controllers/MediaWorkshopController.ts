@@ -59,7 +59,10 @@ function amplitudeEnvelope(channels: readonly Float32Array[]): number[] {
     const envelope = new Array<number>(WAVEFORM_BUCKETS).fill(0);
     if (frames === 0) return envelope;
     for (let frame = 0; frame < frames; frame += 1) {
-        const bucket = Math.min(WAVEFORM_BUCKETS - 1, Math.floor((frame / frames) * WAVEFORM_BUCKETS));
+        const bucket = Math.min(
+            WAVEFORM_BUCKETS - 1,
+            Math.floor((frame / frames) * WAVEFORM_BUCKETS),
+        );
         let peak = 0;
         for (const channel of channels) {
             const value = Math.abs(channel[frame] ?? 0);
