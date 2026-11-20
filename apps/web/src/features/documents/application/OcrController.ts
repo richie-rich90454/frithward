@@ -21,7 +21,7 @@ export interface OcrRecognition {
 
 export const OCR_LIMITATIONS: readonly string[] = [
     "OCR accuracy depends on image quality, font and language coverage.",
-    "Recognition runs locally with tesseract.js; language data is downloaded on first use.",
+    "Recognition runs locally with tesseract.js using bundled language data; nothing is downloaded.",
 ];
 
 export class OcrController {
