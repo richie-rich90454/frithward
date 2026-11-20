@@ -17,7 +17,7 @@ Experimental synthetic image detection. The engine validates an image id and run
 | Item | Value |
 | --- | --- |
 | Request | `DetectionRequest { image_id, model_path?, model_name?, model_version?, image_base64?, image_path? }` |
-| Response | `DetectionResult { image_id, model_name, model_version, scores: list[float], limitations }` |
+| Response | `DetectionResult { image_id, model_name, model_version, scores: list[float], status = "ok", limitations }` |
 | Validation | Non-empty `image_id`; a model path and a tensor input are required |
 | Tensor input | Base64 or file bytes interpreted as little-endian float32 |
 | Model loading | `torch.jit.load` on CPU, falling back to `torch.load` on CPU |
@@ -36,6 +36,7 @@ Precision, recall, and cross-generator performance. Report the generator or data
 
 ## Limitations
 
+- Absence of a model path raises an explicit error; no fallback scores are produced.
 - Frame-level scores are evidence, not proof.
 - Performance drops on unseen generators and heavy compression.
 - No model weights are distributed with the repository.
