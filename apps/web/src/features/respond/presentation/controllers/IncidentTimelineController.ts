@@ -1,3 +1,5 @@
+import { english, interpolate, type Translator } from "../../../../i18n/translate.js";
+
 /**
  * Local structural type for the JSON downloaded from /check.
  * Declared here so the respond feature does not import from features/check.
@@ -62,6 +64,7 @@ export interface HistoryStorage {
 
 export interface IncidentTimelineControllerOptions {
     storage?: HistoryStorage;
+    translate?: Translator;
 }
 
 const HISTORY_KEY = "frithward.report-history";
@@ -103,6 +106,7 @@ function toHex(buffer: ArrayBuffer): string {
 
 export class IncidentTimelineController {
     private readonly storage: HistoryStorage | null;
+    private readonly translate: Translator;
     private readonly listeners = new Set<() => void>();
     private entries: IncidentTimelineEntry[] = [];
     private evidence: EvidenceItem[] = [];
@@ -111,6 +115,7 @@ export class IncidentTimelineController {
 
     public constructor(options: IncidentTimelineControllerOptions = {}) {
         this.storage = options.storage ?? browserStorage();
+        this.translate = options.translate ?? english;
         this.history = readHistory(this.storage);
     }
 
@@ -140,13 +145,21 @@ export class IncidentTimelineController {
     // Analysis lives in the check feature; importing its report is the supported path.
     public analyze(input: { text: string; receivedAt: string }): void {
         if (input.text.trim().length === 0) {
-            this.error = "Message text required.";
+            this.error = this.translate("respond.error.messageRequired");
             this.notify();
             return;
         }
         this.entries = [
-            { id: "received", title: "Message recorded", detail: input.receivedAt },
-            { id: "message", title: "Message text", detail: input.text },
+            {
+                id: "received",
+                title: this.translate("respond.entry.messageRecorded"),
+                detail: input.receivedAt,
+            },
+            {
+                id: "message",
+                title: this.translate("respond.entry.messageText"),
+                detail: input.text,
+            },
         ];
         this.error = null;
         this.notify();
@@ -157,18 +170,19 @@ export class IncidentTimelineController {
         content: ArrayBuffer;
         report: unknown;
     }): Promise<EvidenceItem> {
-        if (!isImportedScamReport(input.report)) throw new Error("Invalid scam check report JSON.");
+        if (!isImportedScamReport(input.report))
+            throw new Error(this.translate("respond.error.invalidReport"));
         const report = input.report;
         const item = await this.addEvidence({
             fileName: input.fileName,
             content: input.content,
-            source: "Scam check report",
+            source: this.translate("respond.source.scamReport"),
         });
         this.entries = [
             ...this.entries,
             {
                 id: `report-${report.id}`,
-                title: "Scam check report imported",
+                title: this.translate("respond.entry.reportImported"),
                 detail: `${report.id} | ${report.reportedAt} | ${report.status}`,
             },
         ];
@@ -178,9 +192,11 @@ export class IncidentTimelineController {
 
     public async addEvidence(input: EvidenceInput): Promise<EvidenceItem> {
         const subtle = globalThis.crypto?.subtle;
-        if (!subtle) throw new Error("SHA-256 hashing is unavailable in this browser.");
-        if (input.fileName.trim().length === 0) throw new Error("Evidence file name required.");
-        if (input.source.trim().length === 0) throw new Error("Evidence source required.");
+        if (!subtle) throw new Error(this.translate("respond.error.hashUnavailable"));
+        if (input.fileName.trim().length === 0)
+            throw new Error(this.translate("respond.error.fileNameRequired"));
+        if (input.source.trim().length === 0)
+            throw new Error(this.translate("respond.error.sourceRequired"));
 
         const digest = await subtle.digest("SHA-256", input.content);
         const item: EvidenceItem = {
@@ -203,22 +219,24 @@ export class IncidentTimelineController {
     }
 
     public async exportReport(): Promise<string> {
-        if (this.evidence.length === 0) throw new Error("No evidence to export.");
+        if (this.evidence.length === 0) throw new Error(this.translate("respond.error.noEvidence"));
         const subtle = globalThis.crypto?.subtle;
-        if (!subtle) throw new Error("SHA-256 hashing is unavailable in this browser.");
+        if (!subtle) throw new Error(this.translate("respond.error.hashUnavailable"));
         const json = this.buildEvidenceReport();
         const digest = await subtle.digest("SHA-256", new TextEncoder().encode(json));
         const entry: ReportHistoryEntry = {
             id: globalThis.crypto.randomUUID(),
             createdAt: new Date().toISOString(),
-            summary: `${this.evidence.length} evidence item(s) recorded.`,
+            summary: interpolate(this.translate("respond.summary.itemsRecorded"), {
+                n: this.evidence.length,
+            }),
             sha256: toHex(digest),
         };
         this.history = [...this.history, entry];
         try {
             this.storage?.setItem(HISTORY_KEY, JSON.stringify(this.history));
         } catch {
-            this.error = "Report exported, but the local history could not be saved.";
+            this.error = this.translate("respond.error.historySave");
         }
         this.notify();
         return json;
