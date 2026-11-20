@@ -1,5 +1,6 @@
 import { ChartDataPolicy } from "../domain/ChartDataPolicy";
 import type { ChartDataset } from "../domain/ChartDataPolicy";
+import { english, type Translator } from "../../../i18n/translate.js";
 
 export interface ChartViewState {
     dataset: ChartDataset | null;
@@ -8,8 +9,13 @@ export interface ChartViewState {
 
 export class ChartDataController {
     private readonly policy = new ChartDataPolicy();
+    private readonly translate: Translator;
     private readonly listeners = new Set<() => void>();
     private state: ChartViewState = { dataset: null, error: null };
+
+    public constructor(translate: Translator = english) {
+        this.translate = translate;
+    }
 
     public subscribe(listener: () => void): () => void {
         this.listeners.add(listener);
@@ -44,14 +50,14 @@ export class ChartDataController {
         if (categories.length === 0) {
             this.state = {
                 dataset: null,
-                error: "No data to display. Enter one 'label,value' line per row.",
+                error: this.translate("charts.error.noData"),
             };
             this.notify();
             return;
         }
         const dataset: ChartDataset = {
             categories,
-            series: [{ name: "Reported value", values }],
+            series: [{ name: this.translate("charts.seriesName"), values }],
             xAxisLabel,
             yAxisLabel,
             yAxisMin: 0,
@@ -62,7 +68,8 @@ export class ChartDataController {
         } catch (cause) {
             this.state = {
                 dataset: null,
-                error: cause instanceof Error ? cause.message : "Invalid chart data.",
+                error:
+                    cause instanceof Error ? cause.message : this.translate("charts.error.invalid"),
             };
         }
         this.notify();
