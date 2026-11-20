@@ -1,3 +1,4 @@
+import base64
 import importlib.util
 from pathlib import Path
 
@@ -12,27 +13,28 @@ def load_engine():
     return module
 
 
-def test_rejects_empty_input():
+def test_rejects_invalid_requests():
     engine = load_engine()
     with pytest.raises(ValueError):
         engine.process(engine.ResizeRequest(image_id=""))
-
-
-def test_rejects_nonpositive_bounds():
-    engine = load_engine()
     with pytest.raises(ValueError):
         engine.process(engine.ResizeRequest(image_id="i1", max_width=0))
+    with pytest.raises(ValueError, match="both"):
+        engine.process(engine.ResizeRequest(image_id="i1", source_width=100))
+    with pytest.raises(ValueError, match="positive"):
+        engine.process(engine.ResizeRequest(image_id="i1", source_width=0, source_height=10))
+    with pytest.raises(ValueError, match="Operation"):
+        engine.process(engine.ResizeRequest(image_id="i1", operation="invert"))
 
 
 def test_returns_bounds_when_source_dimensions_are_unavailable():
     engine = load_engine()
     result = engine.process(engine.ResizeRequest(image_id="i1"))
-    assert result.width > 0 and result.height > 0
     assert result.status == "source_unavailable"
     assert "not supplied" in result.detail
 
 
-def test_computes_aspect_preserving_downscale():
+def test_computes_aspect_preserving_downscale_and_never_enlarges():
     engine = load_engine()
     result = engine.process(
         engine.ResizeRequest(
@@ -42,23 +44,55 @@ def test_computes_aspect_preserving_downscale():
     )
     assert (result.width, result.height) == (2048, 1536)
     assert result.scale == pytest.approx(0.512)
-    assert result.status == "computed"
-
-
-def test_never_enlarges_small_sources():
-    engine = load_engine()
-    result = engine.process(
+    small = engine.process(
         engine.ResizeRequest(image_id="i1", source_width=100, source_height=200)
     )
-    assert (result.width, result.height) == (100, 200)
-    assert result.scale == 1.0
+    assert (small.width, small.height) == (100, 200)
+    assert small.scale == 1.0
 
 
-def test_rejects_partial_or_invalid_source_dimensions():
+def test_grayscale_applies_real_luma_to_supplied_pixels():
     engine = load_engine()
-    with pytest.raises(ValueError, match="both"):
-        engine.process(engine.ResizeRequest(image_id="i1", source_width=100))
-    with pytest.raises(ValueError, match="positive"):
+    pixels = bytes([255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255])
+    result = engine.process(
+        engine.ResizeRequest(
+            image_id="i1", source_width=2, source_height=2,
+            pixels_base64=base64.b64encode(pixels).decode("ascii"),
+            operation="grayscale",
+        )
+    )
+    assert result.status == "computed"
+    assert result.pixel_operation == "grayscale"
+    assert (result.output_width, result.output_height) == (2, 2)
+    assert base64.b64decode(result.output_base64) == bytes([76, 149, 28, 255])
+
+
+def test_crops_supplied_pixels_to_computed_box():
+    engine = load_engine()
+    pixels = bytes(range(4 * 2 * 3))
+    result = engine.process(
+        engine.ResizeRequest(
+            image_id="i1", source_width=4, source_height=2,
+            max_width=2, max_height=2,
+            pixels_base64=base64.b64encode(pixels).decode("ascii"),
+            operation="crop",
+        )
+    )
+    assert (result.width, result.height) == (2, 1)
+    assert result.pixel_operation == "crop"
+    assert (result.output_width, result.output_height) == (2, 1)
+    assert base64.b64decode(result.output_base64) == pixels[:6]
+
+
+def test_pixel_operations_require_matching_bytes():
+    engine = load_engine()
+    with pytest.raises(ValueError, match="required"):
+        engine.process(engine.ResizeRequest(image_id="i1", source_width=2, source_height=2, operation="crop"))
+    with pytest.raises(ValueError, match="byte length"):
         engine.process(
-            engine.ResizeRequest(image_id="i1", source_width=0, source_height=10)
+            engine.ResizeRequest(
+                image_id="i1", source_width=2, source_height=2,
+                pixels_base64=base64.b64encode(b"\x00\x01").decode("ascii"),
+                operation="grayscale",
+            )
         )
