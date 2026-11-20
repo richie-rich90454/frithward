@@ -10,8 +10,8 @@ Deterministic pattern libraries plus reviewed examples. No statistical model car
 
 ## Dataset candidates
 
-| Dataset | License status | Consent status |
-| --- | --- | --- |
+| Dataset                                | License status  | Consent status  |
+| -------------------------------------- | --------------- | --------------- |
 | Reviewed examples only; no victim data | review required | review required |
 
 Victim data is prohibited. No dataset has been approved or downloaded in this repository.
