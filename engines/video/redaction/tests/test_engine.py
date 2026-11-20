@@ -1,4 +1,6 @@
+import hashlib
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
@@ -18,18 +20,34 @@ def test_rejects_empty_input():
         engine.redact(engine.RedactionRequest(video_id=""))
 
 
-def test_does_not_claim_redacted_regions():
+def test_manifest_is_real_but_no_redaction_is_claimed():
     engine = load_engine()
     result = engine.redact(
-        engine.RedactionRequest(video_id="v1", regions=["r1"], video_path="/tmp/v.mp4")
+        engine.RedactionRequest(video_id="v1", regions=["10,20,100,200", "face", "5,5,1,1"])
     )
     assert result.redacted_regions == []
     assert result.status == "unavailable"
     assert "No local" in result.reason
-    assert result.limitations
+    assert result.manifest.region_count == 3
+    items = {item.label: item for item in result.manifest.items}
+    assert items["10,20,100,200"].kind == "rectangle"
+    assert items["10,20,100,200"].valid is True
+    assert items["face"].kind == "label"
+    assert items["face"].valid is True
+    assert items["5,5,1,1"].valid is False
+    expected = hashlib.sha256(
+        json.dumps(
+            {"video_id": "v1", "regions": ["10,20,100,200", "5,5,1,1", "face"]},
+            sort_keys=True,
+        ).encode("utf-8")
+    ).hexdigest()
+    assert result.manifest.sha256 == expected
 
 
-def test_rejects_whitespace_id():
+def test_manifest_is_deterministic_and_changes_with_regions():
     engine = load_engine()
-    with pytest.raises(ValueError):
-        engine.redact(engine.RedactionRequest(video_id="   "))
+    a = engine.redact(engine.RedactionRequest(video_id="v1", regions=["face"]))
+    b = engine.redact(engine.RedactionRequest(video_id="v1", regions=["face"]))
+    c = engine.redact(engine.RedactionRequest(video_id="v1", regions=["plate"]))
+    assert a.manifest.sha256 == b.manifest.sha256
+    assert a.manifest.sha256 != c.manifest.sha256
