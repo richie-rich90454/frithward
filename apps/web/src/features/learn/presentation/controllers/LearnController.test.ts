@@ -18,7 +18,9 @@ describe("LearnController", () => {
     });
 
     it("uses the injected dictionary instead of hardcoded strings", () => {
-        const controller = new LearnController((key) => (key === "learn.lesson.sources.title" ? "Quellen" : translate(key)));
+        const controller = new LearnController((key) =>
+            key === "learn.lesson.sources.title" ? "Quellen" : translate(key),
+        );
         expect(controller.getLessons()[0]?.title).toBe("Quellen");
     });
 
