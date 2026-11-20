@@ -1,6 +1,6 @@
 # Text scam analysis engine
 
-Experimental text analysis for suspicious messages. The engine validates the payload and returns indicators. The scaffold flags the word `password` as a credential request.
+Local reviewed-pattern analysis for suspicious messages. The engine validates the payload and returns indicators, each with a severity, rationale, and matched text. It checks urgency, payment or gift-card demands, credential requests, mismatched links, and lookalike domains. It is rule-based: no model, no network, and no accuracy claims.
 
 ## Intended use
 
@@ -18,8 +18,8 @@ Experimental text analysis for suspicious messages. The engine validates the pay
 | Item | Value |
 | --- | --- |
 | Request | `ScamText { text: str, indicators: list[str] = [] }` |
-| Response | `ScamText` with indicators |
-| Validation | Pydantic model validation |
+| Response | `ScamText { text, indicators (pattern names), findings: list[Indicator], limitations }`; `Indicator { name, severity, rationale, matched_text }` |
+| Validation | Pydantic model validation; non-empty text |
 | Complexity | O(n) in characters |
 | Streaming | Block |
 | Cancellation | Not cancellable |
@@ -35,6 +35,6 @@ Pattern libraries with reviewed examples. No victim data. See `research/scam-det
 
 ## Limitations
 
-- The scaffold detects one pattern only.
+- Patterns are English-keyword oriented and may produce false positives or miss obfuscated wording.
 - Text patterns cannot prove intent.
 - Accuracy of guidance matters more than automated verdicts.
