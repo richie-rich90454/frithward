@@ -4,7 +4,8 @@ import { english } from "./translate.js";
 
 describe("translateMediaAnalysisText", () => {
     const result = {
-        summary: "Protection applied on an experimental basis using voice-seal. This does not guarantee prevention of misuse.",
+        summary:
+            "Protection applied on an experimental basis using voice-seal. This does not guarantee prevention of misuse.",
         summaryCode: "PROTECTION_SUMMARY_APPLIED",
         summaryParams: { method: "voice-seal" },
         limitations: ["Protection is experimental and does not guarantee prevention of misuse."],
