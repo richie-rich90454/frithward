@@ -47,11 +47,7 @@ export class TesseractOcrAdapter implements OcrPort {
 
     private async startWorker(language: string): Promise<Tesseract.Worker> {
         try {
-            return await Tesseract.createWorker(
-                language,
-                1,
-                tesseractWorkerOptions(this.langPath),
-            );
+            return await Tesseract.createWorker(language, 1, tesseractWorkerOptions(this.langPath));
         } catch (cause) {
             throw new Error(
                 `OCR language data is unavailable at ${this.langPath}/${language}.traineddata.gz. ` +
