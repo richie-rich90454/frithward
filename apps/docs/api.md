@@ -187,7 +187,7 @@ Finding kinds: `exif-gps`, `exif-device`, `exif-timestamp`, `pii-email`, `pii-ph
 
 ### Provenance detail
 
-`ProvenanceRecord` carries `signatureStatus` (`valid`, `invalid`, or `missing`), `signer`, `assetSha256`, and `manifest`. `describe` returns a plain-language status. Signature verification itself is performed separately; the current use case does not verify a manifest signature.
+`ProvenanceRecord` carries `signatureStatus` (`valid`, `invalid`, `missing`, or `unverified`), `signer`, `assetSha256`, `manifest`, and `transformations`. `C2paInspectionUseCase` parses `c2pa.actions` assertions from a supplied manifest into `TransformationStep` entries (`action`, `actor`, `timestamp`, `assetHashBefore`, `assetHashAfter`, `detail`). Steps are read from the manifest only; when no `c2pa.actions` assertion is present the list is empty and a limitation note is recorded. No step is inferred or independently verified. `describe` appends a one-line summary: `N transformation(s) recorded` or `No transformation history available`. Signature verification itself is performed separately; the current use case does not verify a manifest signature. The provenance engine also parses an explicitly supplied `transformations` list from manifest JSON, without cryptographic verification.
 
 ### Captions detail
 
