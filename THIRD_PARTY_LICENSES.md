@@ -89,10 +89,6 @@ All `@frithward/*` packages are first-party and Apache-2.0: `@frithward/contract
 
 ## How to regenerate
 
-```sh
-# In CI: anchore/sbom-action@v0 writes frithward.spdx.json and uploads it as
-# the "frithward-spdx" artifact on every run. Locally, with syft installed:
-syft . -o spdx-json > frithward.spdx.json
-```
+The SPDX SBOM (`frithward.spdx.json`) is generated in CI by `anchore/sbom-action@v0` and uploaded as the `frithward-spdx` artifact on every run. No local Syft installation is needed, and no global install is required — download the artifact from the CI run to review it.
 
 Review the SBOM plus each model card before publishing a release. Do not treat this table as complete: version ranges (`latest`, `^`) mean the resolved license set can change between installs.
