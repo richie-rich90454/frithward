@@ -1,5 +1,11 @@
+import { readFile } from "node:fs/promises";
 import { describe, expect, it, vi } from "vitest";
-import { migrationStatements, runMigrations, type SqlExecutor } from "./migrate.js";
+import {
+    MIGRATION_FILES,
+    migrationStatements,
+    runMigrations,
+    type SqlExecutor,
+} from "./migrate.js";
 
 describe("migrations", () => {
     it("splits the DDL file into statements", () => {
@@ -25,5 +31,18 @@ describe("migrations", () => {
             },
         };
         await expect(runMigrations(executor, "create table a ();")).rejects.toThrow("db down");
+    });
+
+    it("ships idempotent case and report tables in the second migration", async () => {
+        const file = MIGRATION_FILES[1];
+        expect(file).toBeDefined();
+        const sql = await readFile(file!, "utf8");
+        const statements = migrationStatements(sql);
+        expect(statements).toHaveLength(3);
+        expect(
+            statements.every((statement) => statement.includes("create table if not exists")),
+        ).toBe(true);
+        for (const table of ["community_reports", "incident_reports", "cases"])
+            expect(statements.some((statement) => statement.includes(table))).toBe(true);
     });
 });
