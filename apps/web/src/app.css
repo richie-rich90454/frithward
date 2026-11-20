@@ -21,6 +21,10 @@ h2 {
     max-width: 1440px;
     margin: 0 auto;
     padding: 32px;
+    padding-block-start: 32px;
+    padding-inline-start: max(32px, env(safe-area-inset-left));
+    padding-inline-end: max(32px, env(safe-area-inset-right));
+    padding-block-end: max(32px, env(safe-area-inset-bottom));
     display: grid;
     gap: 24px;
 }
@@ -63,7 +67,7 @@ h2 {
 
 .app-shell nav a.is-active {
     background: var(--fw-accent);
-    color: #ffffff;
+    color: var(--fw-color-accent-contrast);
     border-color: var(--fw-accent);
 }
 
@@ -176,6 +180,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 8px;
+    min-height: 44px;
 }
 
 .app-shell .check-option input {
@@ -195,4 +200,112 @@ h2 {
     border-radius: var(--fw-radius);
     color: var(--fw-success);
     padding: 8px 12px;
+}
+
+.app-shell button {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.app-shell table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.app-shell canvas,
+.app-shell [data-chart],
+.app-shell .chart-container,
+.app-shell .waveform-canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.code-highlight {
+    overflow-x: auto;
+    padding: 12px;
+    border: 1px solid var(--fw-border);
+    border-radius: var(--fw-radius);
+    background: var(--fw-color-surface-secondary);
+}
+
+.code-highlight pre {
+    margin: 0;
+    background: transparent !important;
+}
+
+html[data-theme="dark"] .code-highlight,
+html[data-theme="dark"] .code-highlight span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+.fw-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--fw-color-overlay);
+}
+
+.fw-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 101;
+    width: fit-content;
+    height: fit-content;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+    margin: auto;
+    overflow-y: auto;
+}
+
+@media (max-width: 900px) {
+    .app-shell {
+        padding-block-start: 16px;
+        padding-inline-start: max(16px, env(safe-area-inset-left));
+        padding-inline-end: max(16px, env(safe-area-inset-right));
+        padding-block-end: max(16px, env(safe-area-inset-bottom));
+    }
+
+    .app-shell nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        min-width: 0;
+        max-width: 100%;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .app-shell nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .app-shell nav a {
+        flex: 0 0 auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .app-shell {
+        --fw-type-meta: 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    .app-shell {
+        padding-block-start: 12px;
+        padding-inline-start: max(12px, env(safe-area-inset-left));
+        padding-inline-end: max(12px, env(safe-area-inset-right));
+        padding-block-end: max(12px, env(safe-area-inset-bottom));
+    }
 }
