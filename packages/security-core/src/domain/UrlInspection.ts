@@ -7,6 +7,7 @@ export interface UrlFinding {
     severity: UrlRiskLevel;
     labelCode?: string | undefined;
     detailCode?: string | undefined;
+    detailParams?: Readonly<Record<string, string | number>> | undefined;
 }
 
 export interface UrlInspectionResult {
