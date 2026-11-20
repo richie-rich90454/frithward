@@ -263,7 +263,10 @@ describe("ScamCheckController translated presentation", () => {
             };
             return values[key] ?? key;
         };
-        const controller = new ScamCheckController({ translate: t, recentChecks: memoryRepository() });
+        const controller = new ScamCheckController({
+            translate: t,
+            recentChecks: memoryRepository(),
+        });
         controller.check("URGENT: send your password");
         expect(controller.getAnalysis()?.nextSteps).toEqual([
             "Confirma por un canal conocido.",
