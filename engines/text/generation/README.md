@@ -1,6 +1,6 @@
 # Text generation engine
 
-Experimental assistant generation with explicit limits. The engine validates the prompt and token budget and returns generated text. The scaffold returns empty text.
+Text generation surface with explicit limits. The engine validates the prompt and token budget but returns an `unavailable` status and empty output because no local model is configured. A supplied `model_path` is not executed.
 
 ## Intended use
 
@@ -16,8 +16,8 @@ Experimental assistant generation with explicit limits. The engine validates the
 
 | Item            | Value                                                      |
 | --------------- | ---------------------------------------------------------- |
-| Request         | `GenerationRequest { prompt: str, max_tokens: int = 256 }` |
-| Response        | `GenerationResult { text: str, tokens: int }`              |
+| Request         | `GenerationRequest { prompt: str, max_tokens: int = 256, model_path? }` |
+| Response        | `GenerationResult { text, tokens, status, reason, limitations }` |
 | Validation      | Non-empty prompt; positive token budget                    |
 | Complexity      | O(max_tokens) decode steps                                 |
 | Streaming       | Token streaming                                            |
@@ -34,6 +34,6 @@ No fixed candidate. Training data must be licensed and documented. No training o
 
 ## Limitations
 
-- The scaffold does not generate text.
+- No text is generated; empty output means unavailable, not an empty answer.
 - Generated text is assistance, never verified fact.
 - Output quality and safety vary by prompt and language.
