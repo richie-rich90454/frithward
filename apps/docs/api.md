@@ -115,7 +115,7 @@ Reports whether an auth database is configured. The handler constructs `better-a
                                     type: boolean
 ```
 
-`DATABASE_URL` defaults to a local development DSN. `BETTER_AUTH_SECRET` falls back to a development secret and must be overridden in deployment.
+`DATABASE_URL` has no default and is read only from the environment. `BETTER_AUTH_SECRET` is also read from the environment and is required when `NODE_ENV=production`; in development an ephemeral per-process secret is generated, so sessions do not survive a restart. There is no hardcoded secret or development DSN.
 
 ## Component schemas
 
