@@ -1,4 +1,4 @@
-import { AppError } from "@frithward/contracts";
+import { AppError, RESULT_CODES, resultCodeForText } from "@frithward/contracts";
 import type { UrlRiskLevel } from "../domain/UrlInspection.js";
 import { UrlInspectionUseCase } from "./UrlInspectionUseCase.js";
 
@@ -9,6 +9,8 @@ export interface QrFinding {
     label: string;
     detail: string;
     severity: UrlRiskLevel;
+    labelCode?: string | undefined;
+    detailCode?: string | undefined;
 }
 
 export interface QrInspectionResult {
@@ -18,6 +20,8 @@ export interface QrInspectionResult {
     findings: readonly QrFinding[];
     summary: string;
     limitations: readonly string[];
+    summaryCode?: string | undefined;
+    limitationCodes?: readonly (string | undefined)[] | undefined;
 }
 
 const CRYPTO_PATTERN =
@@ -85,6 +89,8 @@ export class QrInspectionUseCase {
                     label: finding.label,
                     detail: finding.detail,
                     severity: finding.severity,
+                    labelCode: finding.labelCode,
+                    detailCode: finding.detailCode,
                 })),
             );
             limitations.push(...urlResult.limitations);
@@ -147,9 +153,15 @@ export class QrInspectionUseCase {
             payload: trimmed,
             payloadKind,
             riskLevel,
-            findings,
+            findings: findings.map((finding) => ({
+                ...finding,
+                labelCode: finding.labelCode ?? resultCodeForText(finding.label),
+                detailCode: finding.detailCode ?? resultCodeForText(finding.detail),
+            })),
             summary,
             limitations,
+            summaryCode: resultCodeForText(summary) ?? RESULT_CODES.QR_SUMMARY_FOUND,
+            limitationCodes: limitations.map(resultCodeForText),
         };
     }
 }
