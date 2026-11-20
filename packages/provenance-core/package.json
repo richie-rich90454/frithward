@@ -5,10 +5,15 @@
     "type": "module",
     "exports": {
         ".": "./src/index.ts",
-        "./c2pa-sdk-adapter": "./src/infrastructure/C2paSdkAdapter.ts"
+        "./c2pa-sdk-adapter": "./src/infrastructure/C2paSdkAdapter.ts",
+        "./wasm-c2pa-verifier": "./src/infrastructure/WasmC2paVerifier.ts"
     },
     "dependencies": {
         "@contentauth/c2pa-node": "^0.12.1",
+        "@contentauth/c2pa-wasm": "0.15.1",
         "@frithward/contracts": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/node": "^26.6.6"
     }
 }
