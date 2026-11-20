@@ -1,7 +1,8 @@
-import { For, Show, createSignal, onCleanup } from "solid-js";
+import { For, Show, createEffect, createSignal, onCleanup } from "solid-js";
 import { Clapperboard } from "lucide-solid";
 import { MediaWorkshopController } from "../controllers/MediaWorkshopController";
 import type { MediaWorkshopSegment } from "../controllers/MediaWorkshopController";
+import { paintWaveform } from "../painters/WaveformPainter";
 
 interface MediaWorkshopViewProps {
     segments: readonly MediaWorkshopSegment[];
@@ -10,6 +11,9 @@ interface MediaWorkshopViewProps {
     transcodeStatus: string | null;
     redactionStatus: string | null;
     previewUrl: string | null;
+    waveformData: readonly number[] | null;
+    canDownloadAudio: boolean;
+    canDownloadImage: boolean;
     onAddSegment: (input: { startMs: string; endMs: string; text: string }) => void;
     onSelect: (segmentId: string) => void;
     onApplyEdit: (input: { segmentId: string; text: string }) => void;
@@ -21,6 +25,8 @@ interface MediaWorkshopViewProps {
         width: string;
         height: string;
     }) => void;
+    onDownloadTranscodedAudio: () => void;
+    onDownloadRedactedImage: () => void;
 }
 
 export function MediaWorkshopView(props: MediaWorkshopViewProps) {
@@ -33,6 +39,12 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
     const [y, setY] = createSignal("0");
     const [width, setWidth] = createSignal("");
     const [height, setHeight] = createSignal("");
+    const [waveformCanvas, setWaveformCanvas] = createSignal<HTMLCanvasElement>();
+    createEffect(() => {
+        const samples = props.waveformData;
+        const canvas = waveformCanvas();
+        if (canvas && samples) paintWaveform(canvas, samples);
+    });
     return (
         <section>
             <h1>
@@ -101,6 +113,31 @@ export function MediaWorkshopView(props: MediaWorkshopViewProps) {
             <Show when={props.previewUrl}>
                 {(url) => <img src={url()} alt="Redacted preview" />}
             </Show>
+            <Show when={props.waveformData}>
+                <canvas
+                    ref={setWaveformCanvas}
+                    width={512}
+                    height={128}
+                    role="img"
+                    aria-label="Audio waveform"
+                />
+            </Show>
+            <div>
+                <button
+                    type="button"
+                    disabled={!props.canDownloadAudio}
+                    onClick={props.onDownloadTranscodedAudio}
+                >
+                    Download transcoded audio
+                </button>
+                <button
+                    type="button"
+                    disabled={!props.canDownloadImage}
+                    onClick={props.onDownloadRedactedImage}
+                >
+                    Download redacted image
+                </button>
+            </div>
             <p>
                 Processing is local: audio uses AudioContext and WebCodecs (AAC), and redaction uses
                 createImageBitmap and Canvas 2D. Unsupported browsers report an error instead of a
@@ -192,6 +229,13 @@ export function MediaWorkshopPage() {
     const [transcodeStatus, setTranscodeStatus] = createSignal(controller.getTranscodeStatus());
     const [redactionStatus, setRedactionStatus] = createSignal(controller.getRedactionStatus());
     const [previewUrl, setPreviewUrl] = createSignal(controller.getPreviewUrl());
+    const [waveformData, setWaveformData] = createSignal(controller.getWaveformData());
+    const [canDownloadAudio, setCanDownloadAudio] = createSignal(
+        controller.getTranscodedAudio() !== null,
+    );
+    const [canDownloadImage, setCanDownloadImage] = createSignal(
+        controller.getRedactedImage() !== null,
+    );
     onCleanup(
         controller.subscribe(() => {
             setSegments(controller.getSegments());
@@ -200,9 +244,23 @@ export function MediaWorkshopPage() {
             setTranscodeStatus(controller.getTranscodeStatus());
             setRedactionStatus(controller.getRedactionStatus());
             setPreviewUrl(controller.getPreviewUrl());
+            setWaveformData(controller.getWaveformData());
+            setCanDownloadAudio(controller.getTranscodedAudio() !== null);
+            setCanDownloadImage(controller.getRedactedImage() !== null);
         }),
     );
     onCleanup(() => controller.dispose());
+    const download = (artifact: { blob: Blob; fileName: string } | null): void => {
+        if (!artifact) return;
+        const url = URL.createObjectURL(artifact.blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = artifact.fileName;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        URL.revokeObjectURL(url);
+    };
     return (
         <MediaWorkshopView
             segments={segments()}
@@ -211,11 +269,16 @@ export function MediaWorkshopPage() {
             transcodeStatus={transcodeStatus()}
             redactionStatus={redactionStatus()}
             previewUrl={previewUrl()}
+            waveformData={waveformData()}
+            canDownloadAudio={canDownloadAudio()}
+            canDownloadImage={canDownloadImage()}
             onAddSegment={(input) => controller.addSegment(input)}
             onSelect={(segmentId) => controller.select(segmentId)}
             onApplyEdit={(input) => void controller.applyEdit(input)}
             onAudioSelected={(file) => void controller.transcodeAudio(file)}
             onRedactImage={(input) => void controller.redactImage(input)}
+            onDownloadTranscodedAudio={() => download(controller.getTranscodedAudio())}
+            onDownloadRedactedImage={() => download(controller.getRedactedImage())}
         />
     );
 }
