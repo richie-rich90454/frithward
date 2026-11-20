@@ -6,7 +6,10 @@ import type {
     ProtectedExportView,
     ProtectionResultView,
 } from "../controllers/MediaProtectionController";
+import { useCases } from "../../../../cases/CaseProvider.js";
+import type { Case } from "@frithward/contracts";
 import { ShareCheckController } from "../controllers/ShareCheckController";
+import { metadataInspectionToCaseInput, redactionCaseInput } from "../toCaseInput.js";
 import type {
     MetadataInspectionView,
     RedactionResultView,
@@ -25,11 +28,14 @@ interface ShareCheckViewProps {
     faceResult: ProtectionResultView | null;
     exportView: ProtectedExportView | null;
     protectionError: string | null;
+    saveError: string | null;
+    saved: boolean;
     onToggle: (optionId: string) => void;
     onCheck: () => void;
     onInspect: (file: File) => Promise<void>;
     onPlanExport: () => void;
     onExecuteRedaction: () => void;
+    onDownload: () => void;
     onProtectVoice: (input: {
         assetId: string;
         consentDocumented: boolean;
@@ -47,10 +53,12 @@ interface ShareCheckViewProps {
 
 const experimentalNote =
     "Experimental: protection is not independently evaluated, does not guarantee prevention of misuse, and requires documented consent. The engine may be unavailable in this build.";
+const SAVED_MESSAGE = "Saved to cases";
 
 export function ShareCheckView(props: ShareCheckViewProps) {
     const { t } = useI18n();
     const [selectedFile, setSelectedFile] = createSignal<File | null>(null);
+    const [downloaded, setDownloaded] = createSignal(false);
     const [voiceAssetId, setVoiceAssetId] = createSignal("");
     const [voiceFile, setVoiceFile] = createSignal<File | null>(null);
     const [voiceConsent, setVoiceConsent] = createSignal(false);
@@ -61,6 +69,7 @@ export function ShareCheckView(props: ShareCheckViewProps) {
 
     const selectFile = async (file: File | null) => {
         setSelectedFile(file);
+        setDownloaded(false);
         if (file) await props.onInspect(file);
     };
 
@@ -71,6 +80,8 @@ export function ShareCheckView(props: ShareCheckViewProps) {
         anchor.download = artifact.fileName;
         anchor.click();
         URL.revokeObjectURL(url);
+        setDownloaded(true);
+        props.onDownload();
     };
 
     const protectVoice = async () => {
@@ -134,20 +145,42 @@ export function ShareCheckView(props: ShareCheckViewProps) {
             <Show when={props.error}>
                 <p role="alert">{props.error}</p>
             </Show>
+            <Show when={props.saveError}>
+                <p role="alert">{props.saveError}</p>
+            </Show>
+            <Show when={props.saved}>
+                <p role="status">{SAVED_MESSAGE}</p>
+            </Show>
 
             <h2>{t("protect.metadataTitle")}</h2>
             <p role="note">
                 Choose a file to inspect in your browser. Supported formats are JPEG and PNG (EXIF
                 and IPTC); other formats are labelled as unverified.
             </p>
-            <label>
-                Image file to inspect
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(event) => void selectFile(event.currentTarget.files?.[0] ?? null)}
-                />
-            </label>
+            <fieldset>
+                <legend>{t("share.fileLabel")}</legend>
+                <label>
+                    {t("share.chooseFile")}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) =>
+                            void selectFile(event.currentTarget.files?.[0] ?? null)
+                        }
+                    />
+                </label>
+                <label>
+                    {t("share.takePhoto")}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        onChange={(event) =>
+                            void selectFile(event.currentTarget.files?.[0] ?? null)
+                        }
+                    />
+                </label>
+            </fieldset>
             <Show when={selectedFile()}>
                 {(file) => <p role="status">Selected: {file().name}</p>}
             </Show>
@@ -169,8 +202,8 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                                         <th scope="col">Detected</th>
                                         <th scope="col">Value</th>
                                         <th scope="col">Where</th>
-                                        <th scope="col">Why it matters</th>
-                                        <th scope="col">Risk</th>
+                                        <th scope="col">{t("share.whyItMatters")}</th>
+                                        <th scope="col">{t("share.risk")}</th>
                                         <th scope="col">How to resolve</th>
                                     </tr>
                                 </thead>
@@ -194,7 +227,7 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                             {t("protect.planExport")}
                         </button>
                         <button type="button" onClick={props.onExecuteRedaction}>
-                            Execute redaction
+                            {t("share.redactAndDownload")}
                         </button>
                     </div>
                 )}
@@ -233,6 +266,9 @@ export function ShareCheckView(props: ShareCheckViewProps) {
                         <button type="button" onClick={() => download(redaction.artifact)}>
                             Download sanitized file
                         </button>
+                        <Show when={downloaded()}>
+                            <p role="status">{t("share.redactedDownloaded")}</p>
+                        </Show>
                         <p role="note">{redaction.note}</p>
                     </div>
                 )}
@@ -357,8 +393,10 @@ export function ShareCheckView(props: ShareCheckViewProps) {
 }
 
 export function ShareCheckPage() {
-    const controller = new ShareCheckController();
+    const { t } = useI18n();
+    const controller = new ShareCheckController({ translate: t });
     const protection = new MediaProtectionController();
+    const { saveCase } = useCases();
     const [options, setOptions] = createSignal(controller.getOptions());
     const [passed, setPassed] = createSignal(controller.getPassed());
     const [error, setError] = createSignal(controller.getError());
@@ -369,6 +407,9 @@ export function ShareCheckPage() {
     const [faceResult, setFaceResult] = createSignal(protection.getFaceResult());
     const [exportView, setExportView] = createSignal(protection.getExportView());
     const [protectionError, setProtectionError] = createSignal(protection.getError());
+    const [saveError, setSaveError] = createSignal<string | null>(null);
+    const [saved, setSaved] = createSignal(false);
+    const [savedCase, setSavedCase] = createSignal<Case | null>(null);
     const sync = () => {
         setOptions(controller.getOptions());
         setPassed(controller.getPassed());
@@ -383,6 +424,35 @@ export function ShareCheckPage() {
     };
     onCleanup(controller.subscribe(sync));
     onCleanup(protection.subscribe(sync));
+
+    const persistInspection = async (): Promise<void> => {
+        const view = controller.getMetadataView();
+        if (!view) return;
+        setSaveError(null);
+        setSaved(false);
+        setSavedCase(null);
+        try {
+            const record = await saveCase(metadataInspectionToCaseInput(view));
+            setSavedCase(record);
+            setSaved(true);
+        } catch (cause) {
+            setSaveError(cause instanceof Error ? cause.message : t("verify.saveCaseFailed"));
+        }
+    };
+
+    const persistRedaction = async (): Promise<void> => {
+        const result = controller.getRedaction();
+        if (!result) return;
+        setSaveError(null);
+        setSaved(false);
+        try {
+            await saveCase(redactionCaseInput(result, savedCase()));
+            setSaved(true);
+        } catch (cause) {
+            setSaveError(cause instanceof Error ? cause.message : t("verify.saveCaseFailed"));
+        }
+    };
+
     return (
         <ShareCheckView
             options={options()}
@@ -395,11 +465,17 @@ export function ShareCheckPage() {
             faceResult={faceResult()}
             exportView={exportView()}
             protectionError={protectionError()}
+            saveError={saveError()}
+            saved={saved()}
             onToggle={(optionId) => controller.toggle(optionId)}
             onCheck={() => controller.check()}
-            onInspect={(file) => controller.inspectFile(file)}
+            onInspect={async (file) => {
+                await controller.inspectFile(file);
+                if (!controller.getError()) await persistInspection();
+            }}
             onPlanExport={() => controller.planSanitizedExport(controller.getMetadataFindings())}
             onExecuteRedaction={() => void controller.executeRedaction()}
+            onDownload={() => void persistRedaction()}
             onProtectVoice={(input) => protection.protectVoice(input)}
             onProtectFace={(input) => protection.protectFace(input)}
         />
