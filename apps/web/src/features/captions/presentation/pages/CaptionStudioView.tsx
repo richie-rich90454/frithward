@@ -105,9 +105,7 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                 Status: {props.generationStage}
                 <Show when={props.generationMessage}>{(message) => ` - ${message()}`}</Show>
             </p>
-            <p>
-                Transcription runs locally with WebGPU (Chrome/Edge 113+). No upload.
-            </p>
+            <p>Transcription runs locally with WebGPU (Chrome/Edge 113+). No upload.</p>
             <p>
                 The default engine needs no model files from you: model weights are downloaded from
                 Hugging Face on first use and cached in the browser, so the first run needs network
