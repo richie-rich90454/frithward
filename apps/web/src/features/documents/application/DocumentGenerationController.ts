@@ -7,6 +7,7 @@ import type { DocumentInput, SlideInput, SpreadsheetInput } from "../domain/Docu
 import { DocxReader } from "./DocxReader";
 import { OcrController } from "./OcrController";
 import { ZipController } from "./ZipController";
+import { english, interpolate, type Translator } from "../../../i18n/translate.js";
 
 export type ExportFormat = "docx" | "pdf" | "xlsx" | "pptx";
 
@@ -41,9 +42,11 @@ export class DocumentGenerationController {
     private readonly listeners = new Set<() => void>();
     private state: DocumentWorkshopState = INITIAL_STATE;
     private ocr: OcrController | null;
+    private readonly translate: Translator;
 
-    public constructor(ocr?: OcrController) {
+    public constructor(ocr?: OcrController, translate: Translator = english) {
         this.ocr = ocr ?? null;
+        this.translate = translate;
     }
 
     public subscribe(listener: () => void): () => void {
@@ -87,7 +90,10 @@ export class DocumentGenerationController {
             this.state = {
                 ...this.state,
                 busy: false,
-                error: cause instanceof Error ? cause.message : "Could not read .docx file.",
+                error:
+                    cause instanceof Error
+                        ? cause.message
+                        : this.translate("documents.error.readDocx"),
             };
         }
         this.notify();
@@ -98,7 +104,7 @@ export class DocumentGenerationController {
             ...this.state,
             busy: true,
             error: null,
-            ocrStatus: "Recognizing text from image...",
+            ocrStatus: this.translate("documents.ocr.recognizing"),
         };
         this.notify();
         try {
@@ -110,18 +116,25 @@ export class DocumentGenerationController {
                 ...this.state,
                 busy: false,
                 sectionsText: existing.length > 0 ? `${existing}\n\n${ocrSection}` : ocrSection,
-                ocrStatus: `OCR complete${
-                    result.confidence === undefined
-                        ? ""
-                        : ` (confidence ${Math.round(result.confidence)}%)`
-                }. ${result.limitations.join(" ")}`,
+                ocrStatus: interpolate(this.translate("documents.ocr.complete"), {
+                    confidence:
+                        result.confidence === undefined
+                            ? ""
+                            : interpolate(this.translate("documents.ocr.confidence"), {
+                                  n: Math.round(result.confidence),
+                              }),
+                    limitations: result.limitations.join(" "),
+                }),
             };
         } catch (cause) {
             this.state = {
                 ...this.state,
                 busy: false,
                 ocrStatus: null,
-                error: cause instanceof Error ? cause.message : "Image OCR failed.",
+                error:
+                    cause instanceof Error
+                        ? cause.message
+                        : this.translate("documents.error.ocrFailed"),
             };
         }
         this.notify();
@@ -290,7 +303,10 @@ export class DocumentGenerationController {
             this.state = {
                 ...this.state,
                 busy: false,
-                error: cause instanceof Error ? cause.message : "Export failed.",
+                error:
+                    cause instanceof Error
+                        ? cause.message
+                        : this.translate("documents.error.exportFailed"),
             };
         }
         this.notify();
