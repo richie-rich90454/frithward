@@ -24,6 +24,7 @@
         "start:worker": "pnpm --filter @frithward/api run start:worker",
         "start:docs": "pnpm --filter frithward-docs exec vitepress preview . --host 0.0.0.0 --port 4176",
         "db:migrate": "pnpm --filter @frithward/api run db:migrate",
+        "test:integration:postgres": "node scripts/verify-postgres-integration.mjs",
         "lint": "oxlint .",
         "format": "oxfmt -c oxfmt.json .",
         "format:check": "oxfmt --check -c oxfmt.json .",
