@@ -1,0 +1,12 @@
+/* Align VitePress accent colours with the shared design-system palette. */
+:root {
+    --vp-c-brand-1: #a3481b;
+    --vp-c-brand-2: #a3481b;
+    --vp-c-brand-3: #a3481b;
+}
+
+.dark {
+    --vp-c-brand-1: #e69a6c;
+    --vp-c-brand-2: #e69a6c;
+    --vp-c-brand-3: #e69a6c;
+}
