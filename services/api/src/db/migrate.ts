@@ -12,6 +12,9 @@ export const MIGRATION_FILES = [
     fileURLToPath(
         new URL("../../../../infrastructure/database/0002_cases_and_reports.sql", import.meta.url),
     ),
+    fileURLToPath(
+        new URL("../../../../infrastructure/database/0003_auth_schema.sql", import.meta.url),
+    ),
 ];
 
 /** Splits the idempotent DDL file into individual statements. */
