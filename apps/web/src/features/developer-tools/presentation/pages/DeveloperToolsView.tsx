@@ -10,41 +10,32 @@ import {
     Trigger,
 } from "@kobalte/core/dialog";
 import { Captions, Info, Terminal, Wrench } from "lucide-solid";
+import { useI18n } from "../../../../i18n/index.js";
 
 export function DeveloperToolsView() {
+    const { t } = useI18n();
     return (
         <section>
             <h1>
                 <Wrench class="fw-icon" />
-                Developer tools
+                {t("tools.title")}
             </h1>
-            <p>Local-first packages and interfaces for building with Frithward.</p>
+            <p>{t("tools.intro")}</p>
             <Root>
                 <Trigger class="fw-button fw-button-secondary">
-                    <Info class="fw-icon" /> About Frithward
+                    <Info class="fw-icon" /> {t("tools.about")}
                 </Trigger>
                 <Portal>
                     <Overlay class="fw-dialog-overlay" />
                     <Content class="fw-dialog">
-                        <Title>About Frithward</Title>
-                        <Description>Keep people safe. Keep media honest.</Description>
-                        <p>
-                            Frithward is an open-source toolkit for inspecting media, checking
-                            provenance, and spotting scams. Processing runs on your device by
-                            default: no account and no upload.
-                        </p>
-                        <p>
-                            Results are evidence for a person to review, never a verdict. Every
-                            claim shows its limitations, and unmeasured data is labelled as such.
-                            The code is Apache-2.0 and the interface is available in eight
-                            languages.
-                        </p>
-                        <p>
-                            Cryptographic C2PA signature verification needs the native{" "}
-                            <code>@contentauth/c2pa-node</code> SDK; without it, signature status is
-                            reported as unverified rather than valid.
-                        </p>
-                        <CloseButton class="fw-button fw-button-secondary">Close</CloseButton>
+                        <Title>{t("tools.about")}</Title>
+                        <Description>{t("tools.dialogDescription")}</Description>
+                        <p>{t("tools.aboutP1")}</p>
+                        <p>{t("tools.aboutP2")}</p>
+                        <p>{t("tools.aboutP3")}</p>
+                        <CloseButton class="fw-button fw-button-secondary">
+                            {t("tools.close")}
+                        </CloseButton>
                     </Content>
                 </Portal>
             </Root>
@@ -53,9 +44,9 @@ export function DeveloperToolsView() {
                     <Captions class="fw-icon" />
                     <div>
                         <h2>
-                            <A href="/tools/captions">Caption studio</A>
+                            <A href="/tools/captions">{t("tools.captionStudio")}</A>
                         </h2>
-                        <p>Generate and edit captions in the browser.</p>
+                        <p>{t("tools.captionStudioDesc")}</p>
                     </div>
                 </li>
                 <li>
@@ -63,10 +54,10 @@ export function DeveloperToolsView() {
                     <div>
                         <h2>
                             <a href="https://github.com/richie-rich90454/frithward/tree/main/packages">
-                                Core packages
+                                {t("tools.corePackages")}
                             </a>
                         </h2>
-                        <p>Media, security, privacy, and provenance logic runs locally.</p>
+                        <p>{t("tools.corePackagesDesc")}</p>
                     </div>
                 </li>
                 <li>
@@ -74,10 +65,10 @@ export function DeveloperToolsView() {
                     <div>
                         <h2>
                             <a href="https://github.com/richie-rich90454/frithward/blob/main/docs/compatibility.md">
-                                Compatibility
+                                {t("tools.compatibility")}
                             </a>
                         </h2>
-                        <p>Browser API minimums and local runtime requirements.</p>
+                        <p>{t("tools.compatibilityDesc")}</p>
                     </div>
                 </li>
                 <li>
@@ -85,10 +76,10 @@ export function DeveloperToolsView() {
                     <div>
                         <h2>
                             <a href="https://github.com/richie-rich90454/frithward/blob/main/docs/deployment.md">
-                                Self-hosting and deployment
+                                {t("tools.selfHosting")}
                             </a>
                         </h2>
-                        <p>How to run Frithward on your own infrastructure.</p>
+                        <p>{t("tools.selfHostingDesc")}</p>
                     </div>
                 </li>
                 <li>
@@ -96,10 +87,10 @@ export function DeveloperToolsView() {
                     <div>
                         <h2>
                             <a href="https://github.com/richie-rich90454/frithward/blob/main/packages/sdk/examples/typed.ts">
-                                TypeScript SDK example
+                                {t("tools.tsSdk")}
                             </a>
                         </h2>
-                        <p>Typed client usage in TypeScript.</p>
+                        <p>{t("tools.tsSdkDesc")}</p>
                     </div>
                 </li>
                 <li>
@@ -107,55 +98,55 @@ export function DeveloperToolsView() {
                     <div>
                         <h2>
                             <a href="https://github.com/richie-rich90454/frithward/blob/main/packages/sdk-python/examples/typed_example.py">
-                                Python SDK example
+                                {t("tools.pythonSdk")}
                             </a>
                         </h2>
-                        <p>Typed client usage in Python.</p>
+                        <p>{t("tools.pythonSdkDesc")}</p>
                     </div>
                 </li>
                 <li>
                     <Wrench class="fw-icon" />
                     <div>
                         <h2>
-                            <A href="/tools/documents">Document workshop</A>
+                            <A href="/tools/documents">{t("tools.documentWorkshop")}</A>
                         </h2>
-                        <p>Generate and read DOCX, PDF, XLSX, and PPTX files locally.</p>
+                        <p>{t("tools.documentWorkshopDesc")}</p>
                     </div>
                 </li>
                 <li>
                     <Wrench class="fw-icon" />
                     <div>
                         <h2>
-                            <A href="/tools/diagrams">Diagram workshop</A>
+                            <A href="/tools/diagrams">{t("tools.diagramWorkshop")}</A>
                         </h2>
-                        <p>Render Mermaid diagrams with accessible text.</p>
+                        <p>{t("tools.diagramWorkshopDesc")}</p>
                     </div>
                 </li>
                 <li>
                     <Wrench class="fw-icon" />
                     <div>
                         <h2>
-                            <A href="/tools/charts">Charts</A>
+                            <A href="/tools/charts">{t("tools.charts")}</A>
                         </h2>
-                        <p>Plot real data with honest scales and labeled axes.</p>
+                        <p>{t("tools.chartsDesc")}</p>
                     </div>
                 </li>
                 <li>
                     <Wrench class="fw-icon" />
                     <div>
                         <h2>
-                            <A href="/tools/runtime">Browser runtime</A>
+                            <A href="/tools/runtime">{t("tools.browserRuntime")}</A>
                         </h2>
-                        <p>Check OPFS, WebCodecs, and WebGPU support and run local operations.</p>
+                        <p>{t("tools.browserRuntimeDesc")}</p>
                     </div>
                 </li>
                 <li>
                     <Wrench class="fw-icon" />
                     <div>
                         <h2>
-                            <A href="/tools/models">Model manager</A>
+                            <A href="/tools/models">{t("tools.modelManager")}</A>
                         </h2>
-                        <p>Inspect installed models, licenses, stages, and limitations.</p>
+                        <p>{t("tools.modelManagerDesc")}</p>
                     </div>
                 </li>
             </ul>
