@@ -13,7 +13,7 @@ interface CaptionStudioViewProps {
     onApplyEdit: (input: { segmentId: string; text: string }) => void;
     onGenerateCaptions: (input: {
         file: File;
-        modelUrl: string;
+        modelUrl?: string;
         wasmUrl: string;
         language: string;
     }) => void;
@@ -39,10 +39,10 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                 onSubmit={(event) => {
                     event.preventDefault();
                     const file = audioFile();
-                    if (!file || !modelUrl() || !wasmUrl()) return;
+                    if (!file || !wasmUrl()) return;
                     props.onGenerateCaptions({
                         file,
-                        modelUrl: modelUrl(),
+                        ...(modelUrl().trim().length > 0 ? { modelUrl: modelUrl() } : {}),
                         wasmUrl: wasmUrl(),
                         language: language(),
                     });
@@ -57,7 +57,7 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     />
                 </label>
                 <label>
-                    Whisper model URL
+                    Whisper model URL (optional; blank uses /models/whisper-tiny.bin if installed)
                     <input
                         value={modelUrl()}
                         onInput={(event) => setModelUrl(event.currentTarget.value)}
@@ -81,7 +81,6 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                     type="submit"
                     disabled={
                         !audioFile() ||
-                        !modelUrl() ||
                         !wasmUrl() ||
                         props.generationStage === "loading model" ||
                         props.generationStage === "transcribing"
@@ -105,9 +104,11 @@ export function CaptionStudioView(props: CaptionStudioViewProps) {
                 <Show when={props.generationMessage}>{(message) => ` - ${message()}`}</Show>
             </p>
             <p>
-                Local generation needs a Whisper model and WASM runtime supplied by you, a
-                cross-origin-isolated page (COOP/COEP) for SharedArrayBuffer, and raw 16-bit
-                little-endian mono audio at 16 kHz. No audio is uploaded.
+                Local generation needs a Whisper WASM runtime supplied by you and a model: either
+                place whisper-tiny.bin in public/models/ and rebuild, or supply a model URL. No
+                model is downloaded automatically. A cross-origin-isolated page (COOP/COEP) and
+                raw 16-bit little-endian mono audio at 16 kHz are also required. No audio is
+                uploaded.
             </p>
             <ul>
                 <For each={props.viewModel.segments}>
