@@ -115,9 +115,7 @@ describe("FrithwardClient", () => {
     it("getSession() parses the session payload", async () => {
         const client = new FrithwardClient({
             baseUrl: "http://localhost:3000",
-            fetch: stubFetch(() =>
-                jsonResponse({ authenticated: false, user: null }),
-            ),
+            fetch: stubFetch(() => jsonResponse({ authenticated: false, user: null })),
         });
 
         expect(await client.getSession()).toEqual({ authenticated: false, user: null });
@@ -183,7 +181,10 @@ describe("FrithwardClient", () => {
     it("exportCaptions() returns the raw subtitle text", async () => {
         const client = new FrithwardClient({
             baseUrl: "http://localhost:3000",
-            fetch: stubFetch(() => new Response("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nHello", { status: 200 })),
+            fetch: stubFetch(
+                () =>
+                    new Response("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nHello", { status: 200 }),
+            ),
         });
 
         const result = await client.exportCaptions({
