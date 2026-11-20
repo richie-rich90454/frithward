@@ -136,6 +136,62 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                                 </small>
                             </dd>
                         </dl>
+                        <h2>Transformation history</h2>
+                        <Show
+                            when={result.transformations.length > 0}
+                            fallback={
+                                <p role="note">
+                                    No transformation history available. The supplied manifest had
+                                    no c2pa.actions assertion, so no steps could be parsed.
+                                </p>
+                            }
+                        >
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Action</th>
+                                        <th scope="col">Actor</th>
+                                        <th scope="col">Timestamp</th>
+                                        <th scope="col">Hash (before to after)</th>
+                                        <th scope="col">Detail</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <For each={result.transformations}>
+                                        {(step) => (
+                                            <tr>
+                                                <td>{step.action}</td>
+                                                <td>
+                                                    <Value value={step.actor} />
+                                                </td>
+                                                <td>
+                                                    <Value value={step.timestamp} />
+                                                </td>
+                                                <td>
+                                                    <Show
+                                                        when={
+                                                            step.assetHashBefore ||
+                                                            step.assetHashAfter
+                                                        }
+                                                        fallback={<span>Not provided</span>}
+                                                    >
+                                                        <Value value={step.assetHashBefore} /> to{" "}
+                                                        <Value value={step.assetHashAfter} />
+                                                    </Show>
+                                                </td>
+                                                <td>
+                                                    <Value value={step.detail} />
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </For>
+                                </tbody>
+                            </table>
+                        </Show>
+                        <small>
+                            Steps are read from the supplied c2pa.actions assertion; they were not
+                            independently verified.
+                        </small>
                         <h2>Limitations</h2>
                         <ul>
                             <For each={result.limitations}>{(limit) => <li>{limit}</li>}</For>
