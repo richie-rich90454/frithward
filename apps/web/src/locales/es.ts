@@ -615,4 +615,9 @@ export const es: Record<string, string> = {
     "share.noMetadata": "No se encontraron metadatos",
     "share.couldNotRead": "No se pudo leer el archivo",
     "share.redactedDownloaded": "Archivo ocultado descargado",
+    "captions.untitled": "Subtítulos sin título",
+    "charts.seriesName": "Valor informado",
+    "runtime.storedFile": "Se guardó «{name}» ({n} bytes).",
+    "runtime.notFound": "No se encontró ningún activo llamado «{name}».",
+    "runtime.readAsset": "Se leyó «{name}».",
 };
