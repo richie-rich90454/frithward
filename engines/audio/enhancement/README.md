@@ -1,6 +1,6 @@
 # Audio enhancement engine
 
-Gain and noise-floor controls. The engine validates the request and echoes the requested gain. Signal processing is not implemented in the scaffold.
+Deterministic gain processing on caller-supplied little-endian PCM bytes (8-bit unsigned, 16/32-bit signed). The engine applies linear gain, clamps safely to the sample range, and reports counts and peak levels. No noise reduction or learned enhancement is performed.
 
 ## Intended use
 
@@ -16,9 +16,9 @@ Gain and noise-floor controls. The engine validates the request and echoes the r
 
 | Item | Value |
 | --- | --- |
-| Request | `EnhancementRequest { audio_id: str, gain_db: float = 0.0 }` |
-| Response | `EnhancementResult { audio_id, gain_db }` |
-| Validation | `audio_id` must be non-empty |
+| Request | `EnhancementRequest { audio_id: str, gain_db: float = 0.0, pcm_base64: str \| None, sample_width: int = 2 }` |
+| Response | `EnhancementResult { audio_id, gain_db, sample_count, processed_pcm_base64, peak_before, peak_after, clipped_count, limitations }` |
+| Validation | `audio_id` non-empty; `sample_width` in {1, 2, 4}; `-120 <= gain_db <= 120` |
 | Complexity | O(n) in samples |
 | Streaming | Chunked with bounded memory |
 | Cancellation | `AbortSignal` at chunk boundaries |
@@ -34,6 +34,6 @@ No fixed candidate. Deterministic gain and noise-floor processing is the default
 
 ## Limitations
 
-- The current function does not modify audio.
+- Gain is a linear scale with clamping; the result is deterministic but can distort.
 - Enhancement can obscure artifacts; keep originals for evidence.
-- No quality metric is computed in the scaffold.
+- Peak levels are reported, but no perceptual quality metric is computed.
