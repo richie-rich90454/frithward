@@ -7,7 +7,8 @@ import { IncidentRoutes } from "../presentation/IncidentRoutes.js";
 import { IncidentService } from "./IncidentService.js";
 import { parseEmail } from "./parseEmail.js";
 
-const EML = "From: Alice <alice@example.com>\nTo: Bob <bob@example.org>\nSubject: Test incident\nContent-Type: text/plain; charset=utf-8\n\nPlease review the attached details.\n";
+const EML =
+    "From: Alice <alice@example.com>\nTo: Bob <bob@example.org>\nSubject: Test incident\nContent-Type: text/plain; charset=utf-8\n\nPlease review the attached details.\n";
 
 describe("parseEmail", () => {
     it("reads headers and body from a .eml fixture", async () => {
