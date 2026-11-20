@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { AppError } from "@frithward/contracts";
+import { createApp } from "./app.js";
 import { DispatchAnalysisUseCase } from "./application/DispatchAnalysisUseCase.js";
 import { OrchestratorRoutes } from "./presentation/OrchestratorRoutes.js";
 import { errorHandler } from "./presentation/errorHandler.js";
@@ -53,5 +54,33 @@ describe("DispatchAnalysisUseCase", () => {
         });
         expect(response.status).toBe(400);
         expect(worker.analyze).not.toHaveBeenCalled();
+    });
+});
+
+describe("worker metrics", () => {
+    const app = createApp();
+
+    it("exposes request, latency, uptime and service-up metrics", async () => {
+        const response = await app.request("/metrics");
+        expect(response.status).toBe(200);
+        expect(response.headers.get("content-type")).toContain("text/plain; version=0.0.4");
+        const body = await response.text();
+        expect(body).toContain("http_requests_total");
+        expect(body).toContain("http_request_duration_seconds");
+        expect(body).toContain("process_uptime_seconds");
+        expect(body).toContain('frithward_service_up{service="orchestrator"} 1');
+    });
+
+    it("counts requests to other routes, including 404s", async () => {
+        await app.request("/health");
+        await app.request("/does-not-exist");
+        const body = await (await app.request("/metrics")).text();
+        const counted = body.split("\n").filter((line) => line.startsWith("http_requests_total{"));
+        expect(
+            counted.some(
+                (line) => line.includes('path="/health"') && line.includes('status="200"'),
+            ),
+        ).toBe(true);
+        expect(counted.some((line) => line.includes('status="404"'))).toBe(true);
     });
 });
