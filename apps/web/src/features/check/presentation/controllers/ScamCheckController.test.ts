@@ -11,7 +11,7 @@ const urlResult: UrlInspectionResult = {
         {
             id: "brand-lookalike-paypal",
             label: "Lookalike domain",
-            detail: "The domain resembles \"paypal\" but is not the official domain.",
+            detail: 'The domain resembles "paypal" but is not the official domain.',
             severity: "high",
         },
     ],
