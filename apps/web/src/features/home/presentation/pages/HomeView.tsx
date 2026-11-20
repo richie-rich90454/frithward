@@ -18,19 +18,19 @@ import "../home.css";
 const TASKS = [
     {
         href: "/check",
-        title: "Check a message or link",
+        titleKey: "home.task.checkMessage",
         descKey: "home.check.desc",
         icon: ScanSearch,
     },
     {
         href: "/protect",
-        title: "Check a file before sharing",
+        titleKey: "home.task.checkFile",
         descKey: "home.protect.desc",
         icon: Lock,
     },
     {
         href: "/respond",
-        title: "Track an incident",
+        titleKey: "home.task.trackIncident",
         descKey: "home.respond.desc",
         icon: HeartHandshake,
     },
@@ -102,7 +102,7 @@ export function HomeView() {
             </h1>
             <p>{t("home.intro")}</p>
             <div class="home-start">
-                <h2>Start here</h2>
+                <h2>{t("home.startHere")}</h2>
                 <ul class="home-start__grid">
                     <For each={TASKS}>
                         {(task) => (
@@ -110,7 +110,7 @@ export function HomeView() {
                                 <A href={task.href}>
                                     <task.icon class="fw-icon" />
                                     <span>
-                                        <strong>{task.title}</strong>
+                                        <strong>{t(task.titleKey)}</strong>
                                         <span class="home-start__desc">{t(task.descKey)}</span>
                                     </span>
                                 </A>
@@ -120,7 +120,7 @@ export function HomeView() {
                 </ul>
             </div>
             <div class="home-recent">
-                <h2>Recent cases</h2>
+                <h2>{t("cases.recent")}</h2>
                 <RecentCases
                     cases={recent()}
                     onOpen={(record) => navigate(routeForCase(record.kind))}
