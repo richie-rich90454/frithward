@@ -3,7 +3,7 @@ import { Captions } from "lucide-solid";
 import type { CaptionStudioViewModel } from "@frithward/media-core";
 import type { CaptionGenerationStage } from "../controllers/CaptionStudioController";
 import { CaptionStudioController } from "../controllers/CaptionStudioController";
-import "./captions.css";
+import "../captions.css";
 
 // Solid's JSX types restrict capture to "user"/"environment"; pass the requested
 // "microphone" hint through to the DOM unchanged.
