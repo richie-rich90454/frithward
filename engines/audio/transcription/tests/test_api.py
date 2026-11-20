@@ -27,9 +27,11 @@ def test_transcribe_is_honest_without_a_model():
         "/transcribe", json={"audio_id": "a1", "language": "en"}
     )
     assert response.status_code == 200
-    utterances = response.json()["utterances"]
-    assert len(utterances) == 1
-    assert utterances[0]["text"] == ""
+    body = response.json()
+    assert body["utterances"] == []
+    assert body["status"] == "unavailable"
+    assert body["reason"]
+    assert body["limitations"]
 
 
 def test_transcribe_rejects_unsupported_language():
