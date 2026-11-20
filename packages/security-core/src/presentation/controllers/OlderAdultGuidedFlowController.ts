@@ -124,7 +124,9 @@ export class OlderAdultGuidedFlowController {
                 title: "Look at the warning signs",
                 titleCode: "GUIDED_REVIEW_TITLE",
                 plainLanguage: findingLines,
-                plainLanguageCode: hasFindings ? "GUIDED_REVIEW_PLAIN" : "GUIDED_REVIEW_NO_FINDINGS",
+                plainLanguageCode: hasFindings
+                    ? "GUIDED_REVIEW_PLAIN"
+                    : "GUIDED_REVIEW_NO_FINDINGS",
                 plainLanguageParams: hasFindings ? { findings: findingLines } : undefined,
                 action: "Read each point slowly. You can ask someone to read it with you.",
                 actionCode: "GUIDED_REVIEW_ACTION",
