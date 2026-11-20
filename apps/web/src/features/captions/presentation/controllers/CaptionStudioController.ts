@@ -9,10 +9,7 @@ import {
 } from "@frithward/media-core";
 import type { CaptionRepository, SpeechRecognitionPort } from "@frithward/media-core";
 import { LocalStorageCaptionRepository } from "../../infrastructure/LocalStorageCaptionRepository.js";
-import {
-    LocalModelResolver,
-    type ModelResolver,
-} from "../../infrastructure/LocalModelResolver.js";
+import { LocalModelResolver, type ModelResolver } from "../../infrastructure/LocalModelResolver.js";
 
 export interface CaptionGenerationRecognizer extends SpeechRecognitionPort {
     start?(): Promise<void>;
