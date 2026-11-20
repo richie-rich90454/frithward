@@ -1,4 +1,4 @@
-import { AppError } from "@frithward/contracts";
+import { AppError, RESULT_CODES } from "@frithward/contracts";
 import type {
     MetadataFinding,
     MetadataFindingKind,
@@ -16,6 +16,8 @@ interface FindingDetail {
     severity: MetadataFindingSeverity;
     detail: string;
     remediation: string;
+    detailCode: string;
+    remediationCode: string;
 }
 
 const FINDING_DETAILS: Record<MetadataFindingKind, FindingDetail> = {
@@ -23,36 +25,50 @@ const FINDING_DETAILS: Record<MetadataFindingKind, FindingDetail> = {
         severity: "high",
         detail: "The file stores GPS coordinates of where it was captured.",
         remediation: "Strip GPS coordinates or avoid sharing the original file.",
+        detailCode: RESULT_CODES.PRIVACY_GPS_DETAIL,
+        remediationCode: RESULT_CODES.PRIVACY_GPS_REMEDIATION,
     },
     "exif-device": {
         severity: "low",
         detail: "The file stores camera or device details.",
         remediation: "Remove device metadata if it is not needed.",
+        detailCode: RESULT_CODES.PRIVACY_DEVICE_DETAIL,
+        remediationCode: RESULT_CODES.PRIVACY_DEVICE_REMEDIATION,
     },
     "exif-timestamp": {
         severity: "low",
         detail: "The file stores capture timestamps.",
         remediation: "Remove timestamps that reveal personal routines.",
+        detailCode: RESULT_CODES.PRIVACY_TIME_DETAIL,
+        remediationCode: RESULT_CODES.PRIVACY_TIME_REMEDIATION,
     },
     "pii-email": {
         severity: "high",
         detail: "The file contains an email address.",
         remediation: "Remove email addresses from metadata before sharing.",
+        detailCode: RESULT_CODES.PRIVACY_EMAIL_DETAIL,
+        remediationCode: RESULT_CODES.PRIVACY_EMAIL_REMEDIATION,
     },
     "pii-phone": {
         severity: "high",
         detail: "The file contains a phone number.",
         remediation: "Remove phone numbers from metadata before sharing.",
+        detailCode: RESULT_CODES.PRIVACY_PHONE_DETAIL,
+        remediationCode: RESULT_CODES.PRIVACY_PHONE_REMEDIATION,
     },
     "pii-address": {
         severity: "high",
         detail: "The file contains a street address.",
         remediation: "Remove addresses from metadata before sharing.",
+        detailCode: RESULT_CODES.PRIVACY_ADDRESS_DETAIL,
+        remediationCode: RESULT_CODES.PRIVACY_ADDRESS_REMEDIATION,
     },
     "pii-name": {
         severity: "medium",
         detail: "The file contains a personal name.",
         remediation: "Remove personal names from metadata before sharing.",
+        detailCode: RESULT_CODES.PRIVACY_NAME_DETAIL,
+        remediationCode: RESULT_CODES.PRIVACY_NAME_REMEDIATION,
     },
 };
 
