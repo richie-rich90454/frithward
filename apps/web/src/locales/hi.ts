@@ -799,27 +799,37 @@ export const hi: Record<string, string> = {
     "result.GUIDED_PAUSE_ACTION": "थोड़े समय के लिए फ़ोन या माउस नीचे रखें।",
     "result.GUIDED_REVIEW_TITLE": "चेतावनी के संकेत देखें",
     "result.GUIDED_REVIEW_PLAIN": "{findings}",
-    "result.GUIDED_REVIEW_NO_FINDINGS": "हमें स्पष्ट चेतावनी संकेत नहीं मिले, लेकिन इसका मतलब यह नहीं है कि संदेश सुरक्षित है।",
+    "result.GUIDED_REVIEW_NO_FINDINGS":
+        "हमें स्पष्ट चेतावनी संकेत नहीं मिले, लेकिन इसका मतलब यह नहीं है कि संदेश सुरक्षित है।",
     "result.GUIDED_REVIEW_ACTION": "हर बिंदु धीरे-धीरे पढ़ें। आप किसी से कह सकते हैं कि वह आपके साथ पढ़े।",
     "result.GUIDED_CHECK_TITLE": "किसी भरोसेमंद व्यक्ति से जाँच करें",
-    "result.GUIDED_CHECK_PLAIN": "पहले से ज्ञात नंबर से परिवार के सदस्य या मित्र को कॉल करें। संदेश का नंबर न इस्तेमाल करें।",
+    "result.GUIDED_CHECK_PLAIN":
+        "पहले से ज्ञात नंबर से परिवार के सदस्य या मित्र को कॉल करें। संदेश का नंबर न इस्तेमाल करें।",
     "result.GUIDED_CHECK_ACTION": "कुछ और करने से पहले यह कॉल करें।",
     "result.GUIDED_PROTECT_TITLE": "अपने खातों की सुरक्षा करें",
-    "result.GUIDED_PROTECT_PLAIN": "अगर आपने पासवर्ड या कोड डाला है, तो आधिकारिक वेबसाइट या ऐप पर अभी उसे बदलें। संदेश के लिंक न इस्तेमाल करें।",
+    "result.GUIDED_PROTECT_PLAIN":
+        "अगर आपने पासवर्ड या कोड डाला है, तो आधिकारिक वेबसाइट या ऐप पर अभी उसे बदलें। संदेश के लिंक न इस्तेमाल करें।",
     "result.GUIDED_PROTECT_ACTION": "पासवर्ड बदलें और अतिरिक्त सुरक्षा दी जाए तो उसे चालू करें।",
     "result.GUIDED_REPORT_TITLE": "इसकी रिपोर्ट करें",
     "result.GUIDED_REPORT_PLAIN": "संदेश रखें और इसकी रिपोर्ट करें।{reportLine}",
     "result.GUIDED_REPORT_ACTION": "संदेश और सभी स्क्रीनशॉट सहेजें।",
     "result.GUIDED_SUPPORT_TITLE": "आप अकेले नहीं हैं",
-    "result.GUIDED_SUPPORT_PLAIN": "सावधान लोगों के साथ भी घोटाले होते हैं। अगर पैसे भेजे गए हैं, तो तुरंत अपने बैंक से संपर्क करें और रिपोर्ट करें।",
+    "result.GUIDED_SUPPORT_PLAIN":
+        "सावधान लोगों के साथ भी घोटाले होते हैं। अगर पैसे भेजे गए हैं, तो तुरंत अपने बैंक से संपर्क करें और रिपोर्ट करें।",
     "result.GUIDED_SUPPORT_ACTION": "यह पेज खुला रखें और एक-एक कदम आगे बढ़ें।",
-    "result.PROTECTION_SUMMARY_APPLIED": "{method} का उपयोग करके प्रायोगिक आधार पर सुरक्षा लागू की गई। यह दुरुपयोग को रोकने की गारंटी नहीं देता।",
-    "result.PROTECTION_SUMMARY_UNAVAILABLE": "इस एसेट के लिए सुरक्षा उपलब्ध नहीं है। इससे यह साबित नहीं होता कि मीडिया प्रकाशित करने के लिए सुरक्षित है।",
-    "result.PROTECTION_LIMIT_EXPERIMENTAL": "सुरक्षा प्रायोगिक है और दुरुपयोग को रोकने की गarantee नहीं देती।",
+    "result.PROTECTION_SUMMARY_APPLIED":
+        "{method} का उपयोग करके प्रायोगिक आधार पर सुरक्षा लागू की गई। यह दुरुपयोग को रोकने की गारंटी नहीं देता।",
+    "result.PROTECTION_SUMMARY_UNAVAILABLE":
+        "इस एसेट के लिए सुरक्षा उपलब्ध नहीं है। इससे यह साबित नहीं होता कि मीडिया प्रकाशित करने के लिए सुरक्षित है।",
+    "result.PROTECTION_LIMIT_EXPERIMENTAL":
+        "सुरक्षा प्रायोगिक है और दुरुपयोग को रोकने की गarantee नहीं देती।",
     "result.PROTECTION_NEXT_KEEP_ARTIFACTS": "मूल और सुरक्षित कलाकृतियों को साथ रखें।",
-    "result.PROTECTION_NEXT_REEVALUATE": "किसी भी मॉडल या नीति अपडेट के बाद सुरक्षा का फिर से मूल्यांकन करें।",
-    "result.DETECTION_SUMMARY_SIGNALS": "समीक्षा के लिए {n} संकेत देखे गए। यह प्रामाणिकता स्थापित नहीं करता और किसी व्यक्ति की पहचान नहीं करता।",
-    "result.DETECTION_SUMMARY_NONE": "कोई हेरफेर संकेत नहीं देखा गया। संकेतों की अनुपस्थिति प्रामाणिकता साबित नहीं करती।",
+    "result.PROTECTION_NEXT_REEVALUATE":
+        "किसी भी मॉडल या नीति अपडेट के बाद सुरक्षा का फिर से मूल्यांकन करें।",
+    "result.DETECTION_SUMMARY_SIGNALS":
+        "समीक्षा के लिए {n} संकेत देखे गए। यह प्रामाणिकता स्थापित नहीं करता और किसी व्यक्ति की पहचान नहीं करता।",
+    "result.DETECTION_SUMMARY_NONE":
+        "कोई हेरफेर संकेत नहीं देखा गया। संकेतों की अनुपस्थिति प्रामाणिकता साबित नहीं करती।",
     "result.DETECTION_NEXT_REVIEW_AUDIO": "चिह्नित ऑडियो खंडों को मूल रिकॉर्डिंग के साथ देखें।",
     "result.DETECTION_NEXT_PROVENANCE_AUDIO": "जहाँ उपलब्ध हो, रिकॉर्डिंग की तुलना प्रोवेनेंस रिकॉर्ड से करें।",
     "result.DETECTION_NEXT_REVIEW_IMAGE": "चिह्नित क्षेत्रों को मूल छवि के साथ देखें।",
@@ -827,14 +837,17 @@ export const hi: Record<string, string> = {
     "result.DETECTION_NEXT_REVIEW_VIDEO": "चिह्नित फ्रेम को मूल वीडियो के साथ देखें।",
     "result.DETECTION_NEXT_PROVENANCE_VIDEO": "जहाँ उपलब्ध हो, वीडियो की तुलना प्रोवेनेंस रिकॉर्ड से करें।",
     "result.DETECTION_NEXT_REVIEW_MULTIMODAL": "चिह्नित ऑडियो और वीडियो खंडों को साथ देखें।",
-    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL": "जहाँ उपलब्ध हो, मीडिया की तुलना प्रोवेनेंस रिकॉर्ड से करें।",
+    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL":
+        "जहाँ उपलब्ध हो, मीडिया की तुलना प्रोवेनेंस रिकॉर्ड से करें।",
     "result.ANALYSIS_LIMIT_EVIDENCE": "पहचान परिणाम समीक्षे के लिए सबूत हैं, प्रामाणिकता का प्रमाण नहीं।",
-    "result.ANALYSIS_LIMIT_MODEL_VARIATION": "मॉडल प्रदर्शन डेटासेट, भाषाओं और रिकॉर्डिंग परिस्थितियों के अनुसार बदलता है।",
+    "result.ANALYSIS_LIMIT_MODEL_VARIATION":
+        "मॉडल प्रदर्शन डेटासेट, भाषाओं और रिकॉर्डिंग परिस्थितियों के अनुसार बदलता है।",
     "result.ANALYSIS_LIMIT_HUMAN_REVIEW": "महत्वपूर्ण निर्णयों के लिए स्वतंत्र मानव समीक्षा आवश्यक है।",
     "result.ANALYSIS_LIMIT_AUDIO": "एकल मॉडल के ऑडियो स्कोर संश्लेषण या वॉइस कन्वर्ज़न साबित नहीं करते।",
     "result.ANALYSIS_LIMIT_IMAGE": "फ़्रेम-स्तरीय छवि स्कोर हेरफेर साबित नहीं करते।",
     "result.ANALYSIS_LIMIT_VIDEO": "फ़्रेम सैंपलिंग से छोटे हेरफेर छूट सकते हैं।",
-    "result.ANALYSIS_LIMIT_MULTIMODAL": "ऑडियो-वीडियो सिंक्रोनाइज़ेशन संकेत भाषा और रिकॉर्डिंग गुणवत्ता पर निर्भर करते हैं।",
+    "result.ANALYSIS_LIMIT_MULTIMODAL":
+        "ऑडियो-वीडियो सिंक्रोनाइज़ेशन संकेत भाषा और रिकॉर्डिंग गुणवत्ता पर निर्भर करते हैं।",
     "error.URL_REQUIRED": "URL आवश्यक है।",
     "error.URL_LIMIT_EXCEEDED": "URL जाँच की सीमा से अधिक है।",
     "error.QR_REQUIRED": "QR कोड की सामग्री आवश्यक है।",
