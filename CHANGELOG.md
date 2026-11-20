@@ -23,7 +23,7 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 - Deployment and compatibility docs now describe the default browser-whisper/WebGPU caption path (first run downloads weights) and the optional user-supplied WASM path.
 - Corrected the security, API, and privacy docs: secrets come from the environment only; there is no hardcoded auth secret or built-in development DSN, and `BETTER_AUTH_SECRET` is required when `NODE_ENV=production`.
-- Removed `npx serve` and local Syft instructions: static hosting uses workspace-local tooling, and the SPDX SBOM is generated in CI by `anchore/sbom-action`.
+- Removed the third-party static-server and local Syft instructions: static hosting uses workspace-local tooling, and the SPDX SBOM is generated in CI by `anchore/sbom-action`.
 - Documented that infrastructure binaries are host prerequisites and that services run TypeScript source through workspace-local `tsx` (no compiled server bundle).
 - API, deployment, security, and privacy docs now reflect the session-guarded Case endpoints, local-only case storage, and the two-migration `db:migrate` flow.
 - Engine status wording is now conservative: several engines perform deterministic local computation, while model-backed detection remains unavailable.
