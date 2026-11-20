@@ -125,3 +125,62 @@ describe("IncidentTimelineController report history", () => {
         expect(controller.getReportHistory().map((entry) => entry.id)).toEqual(["saved"]);
     });
 });
+
+const report = {
+    id: "report-1",
+    channel: "message",
+    description: "send your password urgently",
+    source: "Local scam check",
+    evidenceSha256: "a".repeat(64),
+    reportedAt: "2026-01-01T00:00:00.000Z",
+    status: "open",
+};
+
+describe("IncidentTimelineController report import", () => {
+    it("adds an imported check report as evidence with the file's SHA-256", async () => {
+        const controller = new IncidentTimelineController();
+        const content = bufferOf(JSON.stringify(report));
+        const item = await controller.importScamReport({
+            fileName: "scam-report.json",
+            content,
+            report,
+        });
+        const expected = await globalThis.crypto.subtle.digest("SHA-256", content);
+        expect(item.sha256).toBe(
+            [...new Uint8Array(expected)]
+                .map((byte) => byte.toString(16).padStart(2, "0"))
+                .join(""),
+        );
+        expect(item.fileName).toBe("scam-report.json");
+        expect(item.source).toBe("Scam check report");
+        expect(controller.getEvidence()).toEqual([item]);
+        expect(controller.getEntries().map((entry) => entry.title)).toContain(
+            "Scam check report imported",
+        );
+    });
+
+    it("rejects a report with the wrong shape without adding evidence", async () => {
+        const controller = new IncidentTimelineController();
+        await expect(
+            controller.importScamReport({
+                fileName: "bad.json",
+                content: bufferOf("{}"),
+                report: { id: "x", summary: "looks safe" },
+            }),
+        ).rejects.toThrow("Invalid scam check report JSON.");
+        expect(controller.getEvidence()).toEqual([]);
+        expect(controller.getEntries()).toEqual([]);
+    });
+
+    it("records a message without re-running scam heuristics", () => {
+        const controller = new IncidentTimelineController();
+        controller.analyze({
+            text: "URGENT pay the invoice now",
+            receivedAt: "2026-01-01 12:00",
+        });
+        const entries = controller.getEntries();
+        expect(entries.map((entry) => entry.id)).toEqual(["received", "message"]);
+        expect(entries.some((entry) => entry.title === "Urgency pressure")).toBe(false);
+        expect(controller.getError()).toBeNull();
+    });
+});
