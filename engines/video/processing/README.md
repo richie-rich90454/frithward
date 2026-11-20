@@ -1,6 +1,6 @@
 # Video processing engine
 
-Chunked trim and container handling. The engine validates the time range and returns the resulting duration. The scaffold does not decode or re-encode video.
+Deterministic trim metadata computation. The engine validates the time range and computes duration, frame count, and a sampling plan from caller-supplied frame rate. No frames are decoded or re-encoded; if fps is absent, frame counts are reported as unavailable.
 
 ## Intended use
 
@@ -15,10 +15,10 @@ Chunked trim and container handling. The engine validates the time range and ret
 
 | Item            | Value                                                                  |
 | --------------- | ---------------------------------------------------------------------- |
-| Request         | `TrimRequest { video_id: str, start_ms: int = 0, end_ms: int = 1000 }` |
-| Response        | `TrimResult { video_id, duration_ms }`                                 |
-| Validation      | Non-empty video id; `end_ms > start_ms`                                |
-| Complexity      | O(d) in duration                                                       |
+| Request         | `TrimRequest { video_id: str, start_ms: int = 0, end_ms: int = 1000, fps: float \| None, sample_frames: int \| None }` |
+| Response        | `TrimResult { video_id, duration_ms, frame_count, sampled_frame_count, sample_stride, status, detail, limitations }` |
+| Validation      | Non-empty id; `end_ms > start_ms`; `fps` and `sample_frames` positive if supplied |
+| Complexity      | O(1) in supplied metadata                                              |
 | Streaming       | Chunked with bounded memory                                            |
 | Cancellation    | At chunk boundaries                                                    |
 | Model lifecycle | Deterministic processing needs no model                                |
@@ -33,5 +33,6 @@ None. This is deterministic media processing.
 
 ## Limitations
 
-- The scaffold does not trim or transcode.
+- No frames are trimmed or transcoded; only timing metadata is computed.
+- Frame counts require a caller-supplied fps and are rounded.
 - Keyframe alignment and container behavior must be documented by the caller.
