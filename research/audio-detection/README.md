@@ -10,8 +10,8 @@ AASIST and RawNet2. Both are documentation-only candidates with model cards unde
 
 ## Dataset candidates
 
-| Dataset | License status | Consent status |
-| --- | --- | --- |
+| Dataset  | License status  | Consent status  |
+| -------- | --------------- | --------------- |
 | ASVspoof | review required | review required |
 
 No dataset has been approved or downloaded in this repository. Only one synthetic smoke fixture exists under `research/results/`, and it is explicitly labelled and not an evaluation set.
