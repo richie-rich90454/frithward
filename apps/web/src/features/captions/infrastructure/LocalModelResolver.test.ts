@@ -46,9 +46,7 @@ describe("LocalModelResolver", () => {
     it("does not probe a user URL when none is supplied", async () => {
         const probe = probeFor([]);
 
-        await new LocalModelResolver({ probe })
-            .resolve()
-            .catch(() => undefined);
+        await new LocalModelResolver({ probe }).resolve().catch(() => undefined);
 
         expect(probe).toHaveBeenCalledTimes(1);
     });
