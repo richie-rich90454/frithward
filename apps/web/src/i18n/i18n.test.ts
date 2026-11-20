@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ALL_ERROR_CODES } from "@frithward/contracts";
 import { createI18n, LOCALES, persistLocale, readStoredLocale } from "./index.js";
 import { ar } from "../locales/ar.js";
 import { de } from "../locales/de.js";
@@ -76,6 +77,17 @@ describe("locale dictionaries", () => {
             expect(Object.keys(dictionaries[locale])).toEqual(expected);
             for (const key of expected) {
                 expect(dictionaries[locale][key]?.trim()).not.toBe("");
+            }
+        }
+    });
+
+    it("has a translation key for every error code in all eight locales", () => {
+        const dictionaries = { ar, de, en, es, fr, hi, ja, zh };
+        expect(ALL_ERROR_CODES.length).toBeGreaterThan(0);
+        for (const code of ALL_ERROR_CODES) {
+            const key = `error.${code}`;
+            for (const locale of LOCALES) {
+                expect(dictionaries[locale][key]?.trim(), `${locale} missing ${key}`).not.toBe("");
             }
         }
     });
