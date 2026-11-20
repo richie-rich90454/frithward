@@ -874,7 +874,8 @@ export const es: Record<string, string> = {
     "result.GUIDED_REVIEW_PLAIN": "{findings}",
     "result.GUIDED_REVIEW_NO_FINDINGS":
         "No encontramos señales evidentes de advertencia, pero eso no significa que el mensaje sea seguro.",
-    "result.GUIDED_REVIEW_ACTION": "Lee cada punto despacio. Puedes pedir a alguien que lo lea contigo.",
+    "result.GUIDED_REVIEW_ACTION":
+        "Lee cada punto despacio. Puedes pedir a alguien que lo lea contigo.",
     "result.GUIDED_CHECK_TITLE": "Consulta con alguien de confianza",
     "result.GUIDED_CHECK_PLAIN":
         "Llama a un familiar o amigo usando un número que ya conozcas. No uses un número del mensaje.",
@@ -882,7 +883,8 @@ export const es: Record<string, string> = {
     "result.GUIDED_PROTECT_TITLE": "Protege tus cuentas",
     "result.GUIDED_PROTECT_PLAIN":
         "Si introdujiste una contraseña o un código, cámbialo ahora en el sitio web o la aplicación oficial. No uses enlaces del mensaje.",
-    "result.GUIDED_PROTECT_ACTION": "Cambia las contraseñas y activa la seguridad adicional si se ofrece.",
+    "result.GUIDED_PROTECT_ACTION":
+        "Cambia las contraseñas y activa la seguridad adicional si se ofrece.",
     "result.GUIDED_REPORT_TITLE": "Repórtalo",
     "result.GUIDED_REPORT_PLAIN": "Conserva el mensaje y repórtalo.{reportLine}",
     "result.GUIDED_REPORT_ACTION": "Guarda el mensaje y todas las capturas de pantalla.",
@@ -896,30 +898,41 @@ export const es: Record<string, string> = {
         "La protección no está disponible para este archivo. Esto no demuestra que el contenido sea seguro para publicar.",
     "result.PROTECTION_LIMIT_EXPERIMENTAL":
         "La protección es experimental y no garantiza la prevención del uso indebido.",
-    "result.PROTECTION_NEXT_KEEP_ARTIFACTS": "Conserva juntos el original y los archivos protegidos.",
-    "result.PROTECTION_NEXT_REEVALUATE": "Reevalúa la protección tras cualquier actualización del modelo o la política.",
+    "result.PROTECTION_NEXT_KEEP_ARTIFACTS":
+        "Conserva juntos el original y los archivos protegidos.",
+    "result.PROTECTION_NEXT_REEVALUATE":
+        "Reevalúa la protección tras cualquier actualización del modelo o la política.",
     "result.DETECTION_SUMMARY_SIGNALS":
         "{n} señal(es) observadas para revisión. Esto no demuestra la autenticidad ni identifica a nadie.",
     "result.DETECTION_SUMMARY_NONE":
         "No se observaron señales de manipulación. La ausencia de señales no demuestra la autenticidad.",
     "result.DETECTION_NEXT_REVIEW_AUDIO":
         "Revisa los segmentos de audio marcados junto con la grabación original.",
-    "result.DETECTION_NEXT_PROVENANCE_AUDIO": "Compara la grabación con los registros de procedencia disponibles.",
-    "result.DETECTION_NEXT_REVIEW_IMAGE": "Revisa las regiones marcadas junto con la imagen original.",
-    "result.DETECTION_NEXT_PROVENANCE_IMAGE": "Compara la imagen con los registros de procedencia disponibles.",
-    "result.DETECTION_NEXT_REVIEW_VIDEO": "Revisa los fotogramas marcados junto con el vídeo original.",
-    "result.DETECTION_NEXT_PROVENANCE_VIDEO": "Compara el vídeo con los registros de procedencia disponibles.",
-    "result.DETECTION_NEXT_REVIEW_MULTIMODAL": "Revisa juntos los segmentos de audio y vídeo marcados.",
-    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL": "Compara el contenido con los registros de procedencia disponibles.",
+    "result.DETECTION_NEXT_PROVENANCE_AUDIO":
+        "Compara la grabación con los registros de procedencia disponibles.",
+    "result.DETECTION_NEXT_REVIEW_IMAGE":
+        "Revisa las regiones marcadas junto con la imagen original.",
+    "result.DETECTION_NEXT_PROVENANCE_IMAGE":
+        "Compara la imagen con los registros de procedencia disponibles.",
+    "result.DETECTION_NEXT_REVIEW_VIDEO":
+        "Revisa los fotogramas marcados junto con el vídeo original.",
+    "result.DETECTION_NEXT_PROVENANCE_VIDEO":
+        "Compara el vídeo con los registros de procedencia disponibles.",
+    "result.DETECTION_NEXT_REVIEW_MULTIMODAL":
+        "Revisa juntos los segmentos de audio y vídeo marcados.",
+    "result.DETECTION_NEXT_PROVENANCE_MULTIMODAL":
+        "Compara el contenido con los registros de procedencia disponibles.",
     "result.ANALYSIS_LIMIT_EVIDENCE":
         "Los resultados de detección son una prueba para revisar, no una prueba de autenticidad.",
     "result.ANALYSIS_LIMIT_MODEL_VARIATION":
         "El rendimiento del modelo varía según los conjuntos de datos, los idiomas y las condiciones de grabación.",
-    "result.ANALYSIS_LIMIT_HUMAN_REVIEW": "Las decisiones importantes requieren revisión humana independiente.",
+    "result.ANALYSIS_LIMIT_HUMAN_REVIEW":
+        "Las decisiones importantes requieren revisión humana independiente.",
     "result.ANALYSIS_LIMIT_AUDIO":
         "Las puntuaciones de un solo modelo de audio no demuestran síntesis ni conversión de voz.",
     "result.ANALYSIS_LIMIT_IMAGE": "Las puntuaciones por fotograma no demuestran manipulación.",
-    "result.ANALYSIS_LIMIT_VIDEO": "El muestreo de fotogramas puede pasar por alto manipulaciones breves.",
+    "result.ANALYSIS_LIMIT_VIDEO":
+        "El muestreo de fotogramas puede pasar por alto manipulaciones breves.",
     "result.ANALYSIS_LIMIT_MULTIMODAL":
         "Las señales de sincronización audio-vídeo son sensibles al idioma y a la calidad de la grabación.",
     "error.URL_REQUIRED": "Se requiere una URL.",
