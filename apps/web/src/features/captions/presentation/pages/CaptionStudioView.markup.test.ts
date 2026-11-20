@@ -24,6 +24,6 @@ describe("CaptionStudioView markup", () => {
     });
 
     it("shows the keyboard shortcut hint", () => {
-        expect(source).toContain("Ctrl/Cmd+Z undo / Ctrl/Cmd+Shift+Z redo");
+        expect(source).toContain('t("captions.shortcuts")');
     });
 });
