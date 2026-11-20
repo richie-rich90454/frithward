@@ -1,4 +1,6 @@
 import { FaceProtectionAdapter, VoiceProtectionAdapter } from "@frithward/media-core";
+import { english, type Translator } from "../../../../i18n/translate.js";
+import { resultList } from "../../../../i18n/results.js";
 import {
     FaceProtectionPolicy,
     ProtectFaceUseCase,
@@ -32,6 +34,7 @@ export interface MediaProtectionControllerOptions {
     voicePort?: VoiceProtectionPort;
     facePort?: FaceProtectionPort;
     exporter?: Pick<ProtectedMediaExporter, "export">;
+    translate?: Translator;
 }
 
 interface ProtectionInput {
@@ -40,24 +43,24 @@ interface ProtectionInput {
     byteSize: number;
 }
 
-function toView(result: ProtectionResult): ProtectionResultView {
+function toView(t: Translator, result: ProtectionResult): ProtectionResultView {
     return {
         assetId: result.assetId,
         status: result.status,
         method: result.method,
         artifactId: result.artifactId,
         summary: result.summary,
-        limitations: [...result.limitations],
+        limitations: resultList(t, result.limitations),
         nextSteps: [...result.nextSteps],
         experimental: result.experimental,
     };
 }
 
-function toExportView(result: ProtectedMediaExport): ProtectedExportView {
+function toExportView(t: Translator, result: ProtectedMediaExport): ProtectedExportView {
     return {
         assetId: result.assetId,
         manifest: result.manifest,
-        limitations: [...result.limitations],
+        limitations: resultList(t, result.limitations),
     };
 }
 
@@ -68,6 +71,7 @@ export class MediaProtectionController {
     private readonly voiceUseCase: ProtectVoiceUseCase;
     private readonly faceUseCase: ProtectFaceUseCase;
     private readonly listeners = new Set<() => void>();
+    private readonly translate: Translator;
     private voiceResult: ProtectionResultView | null = null;
     private faceResult: ProtectionResultView | null = null;
     private exportView: ProtectedExportView | null = null;
@@ -83,6 +87,7 @@ export class MediaProtectionController {
             protect: async (input) => ({ ...(await faceAdapter.protect(input)), models: [] }),
         };
         this.exporter = options.exporter ?? new ProtectedMediaExporter();
+        this.translate = options.translate ?? english;
         // Experimental opt-in is explicit; documented consent is still enforced by each use case.
         this.voiceUseCase = new ProtectVoiceUseCase(
             this.voicePort,
@@ -131,7 +136,7 @@ export class MediaProtectionController {
                 consentDocumented: input.consentDocumented,
                 signal: new AbortController().signal,
             });
-            this.voiceResult = toView(result);
+            this.voiceResult = toView(this.translate, result);
             this.recordExport(input, result);
             this.error = null;
         } catch (cause) {
@@ -153,7 +158,7 @@ export class MediaProtectionController {
                 ...(input.faceSizePx === undefined ? {} : { faceSizePx: input.faceSizePx }),
                 signal: new AbortController().signal,
             });
-            this.faceResult = toView(result);
+            this.faceResult = toView(this.translate, result);
             this.recordExport(input, result);
             this.error = null;
         } catch (cause) {
@@ -165,6 +170,7 @@ export class MediaProtectionController {
     private recordExport(input: ProtectionInput, result: ProtectionResult): void {
         if (result.status !== "applied" || !result.artifactId) return;
         this.exportView = toExportView(
+            this.translate,
             this.exporter.export({
                 assetId: input.assetId,
                 artifacts: [
