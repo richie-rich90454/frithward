@@ -2,25 +2,25 @@
     "name": "Frithward",
     "short_name": "Frithward",
     "description": "A local-first, open-source digital safety toolkit for captions, media checks, privacy inspection, and provenance.",
-    "start_url": "/",
+    "start_url": "./",
     "display": "standalone",
     "background_color": "#FFFFFF",
     "theme_color": "#A3481B",
     "icons": [
         {
-            "src": "/icon-192.png",
+            "src": "./icon-192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "/icon-512.png",
+            "src": "./icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "/symbol.svg",
+            "src": "./symbol.svg",
             "sizes": "any",
             "type": "image/svg+xml",
             "purpose": "any"
