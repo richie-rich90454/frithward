@@ -16,8 +16,8 @@ Experimental temporal and frame-level synthetic media detection. The engine vali
 
 | Item            | Value                                                        |
 | --------------- | ------------------------------------------------------------ |
-| Request         | `DetectionRequest { video_id: str, sample_frames: int = 8 }` |
-| Response        | `DetectionResult { video_id, indicators, limitations }`      |
+| Request         | `DetectionRequest { video_id, sample_frames = 8, video_path?, frame_base64? }` |
+| Response        | `DetectionResult { video_id, indicators, limitations, status, reason }` |
 | Validation      | Non-empty video id; positive sample count                    |
 | Complexity      | O(f·p) in sampled frames and pixels                          |
 | Streaming       | Sampled frames                                               |
@@ -34,6 +34,6 @@ Temporal and frame-level classifiers. Datasets require licensing and consent rev
 
 ## Limitations
 
-- The scaffold detects nothing.
+- No indicators are produced without a configured model.
 - Sampling may miss brief manipulations.
 - Performance varies with codec, resolution, and compression.
