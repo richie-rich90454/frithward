@@ -55,6 +55,7 @@ def test_fake_model_returns_real_predictions(tmp_path):
 
     assert result.model_name == "tiny-test"
     assert result.model_version == "0.0.1"
+    assert result.status == "ok"
     assert len(result.scores) == 2
     assert all(0.0 <= score <= 1.0 for score in result.scores)
     assert result.limitations
