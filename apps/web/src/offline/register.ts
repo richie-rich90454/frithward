@@ -22,8 +22,7 @@ export function registerOfflineSupport(): OfflineController {
     if (controller) return controller;
 
     const hasServiceWorker = typeof navigator !== "undefined" && "serviceWorker" in navigator;
-    const supported =
-        hasServiceWorker && typeof window !== "undefined" && window.isSecureContext;
+    const supported = hasServiceWorker && typeof window !== "undefined" && window.isSecureContext;
 
     const listeners = new Set<OfflineStatusListener>();
     let controlled = hasServiceWorker && Boolean(navigator.serviceWorker.controller);
