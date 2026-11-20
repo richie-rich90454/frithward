@@ -5,14 +5,14 @@ description: Implemented HTTP routes and in-process use cases.
 
 # API reference
 
-The API service is Hono-based and currently mounts three route groups: health, scam analysis, and an auth session probe. OpenAPI 3.1 is used for the public contract. Additional capabilities exist as in-process use cases and are listed at the end of this document; they are not HTTP routes yet.
+The API service is Hono-based. It mounts health, scam analysis, an auth session probe, module routes for privacy, provenance, captions, storage, and jobs, plus opt-in Case CRUD. OpenAPI 3.1 registers health, scam analysis, and the session probe; the Case endpoints and module routes are mounted but are not in `/api/openapi.json`. Additional capabilities exist as in-process use cases and are listed at the end of this document.
 
 ## Conventions
 
 - Request and response bodies are JSON.
 - Errors use `{ "code": ErrorCode, "message": string, "cause"?: string }`.
 - `ErrorCode` is one of `VALIDATION_FAILED`, `NOT_FOUND`, `CONFLICT`, `CANCELLED`, `PROCESSING_FAILED`, `EXTERNAL_UNAVAILABLE`, `UNAUTHORIZED`.
-- No authentication is enforced on the mounted routes. Deployments must place the service behind their own access control.
+- Health, scam analysis, jobs, and `/metrics` are unauthenticated. Privacy, provenance, captions, storage, and Case routes require a session via `requireSession`, which returns 401 (`UNAUTHORIZED`) when none is present. Deployments must place the remaining routes behind their own access control.
 
 ## Implemented routes
 
@@ -117,11 +117,125 @@ Reports whether an auth database is configured. The handler constructs `better-a
 
 `DATABASE_URL` has no default and is read only from the environment. `BETTER_AUTH_SECRET` is also read from the environment and is required when `NODE_ENV=production`; in development an ephemeral per-process secret is generated, so sessions do not survive a restart. There is no hardcoded secret or development DSN.
 
+### /api/cases (opt-in)
+
+Case CRUD is available only with `DATABASE_URL` configured (migration `0002_cases_and_reports.sql` creates the `cases` table). When it is absent, every Case route returns `503` with `code: EXTERNAL_UNAVAILABLE`. All Case routes are guarded by `requireSession`; a missing session returns `401` (`UNAUTHORIZED`). These routes are not registered in `/api/openapi.json`.
+
+| Method | Path | Success | Errors |
+| --- | --- | --- | --- |
+| `POST` | `/api/cases` | `201` with the created case | `400` invalid body, `401`, `503` |
+| `GET` | `/api/cases` | `200` with `{ "cases": [...] }`, newest first | `401`, `503` |
+| `GET` | `/api/cases/:id` | `200` with the case | `401`, `404` not found, `503` |
+| `PATCH` | `/api/cases/:id` | `200` with the updated case | `400`, `401`, `404`, `503` |
+| `DELETE` | `/api/cases/:id` | `204` with no body | `401`, `404`, `503` |
+
+```yaml
+/api/cases:
+    post:
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/CreateCaseInput"
+        responses:
+            "201":
+                description: Case created.
+            "400":
+                description: Validation failed.
+            "401":
+                description: Session required.
+            "503":
+                description: Case storage not configured.
+/api/cases/{id}:
+    get:
+        responses:
+            "200":
+                description: Case record.
+            "404":
+                description: Case not found.
+            "503":
+                description: Case storage not configured.
+```
+
+`Case` fields: `id` (UUID), `kind` (`message`, `url`, `qr`, `file`, `provenance`, `evidence`), `title`, `inputs` (object), `findings` (`{ label, severity, detail }[]`), `artifacts` (`{ kind, name, hash?, url? }[]`), `nextSteps`, `limitations`, `status` (`draft`, `active`, `archived`), `createdAt`, and `updatedAt` (ISO date-time). `CreateCaseInput` requires `kind`, `title`, and `inputs`; findings, artifacts, next steps, limitations, and status are optional and default to empty arrays / `draft`. `UpdateCaseInput` makes every field optional. IDs and timestamps are server-generated.
+
+### Other mounted module routes
+
+These are mounted but not in the OpenAPI document. All except jobs and metrics require a session: `POST /api/privacy/inspect` and `/api/privacy/redact`, `POST /api/provenance/inspect`, `POST /api/captions/export`, `POST|GET /api/storage/:key` (503 when Garage is not configured), `GET /api/jobs/:id` (404 when unknown), and `GET /metrics`.
+
 ## Component schemas
 
 ```yaml
 components:
     schemas:
+        CaseKind:
+            type: string
+            enum: [message, url, qr, file, provenance, evidence]
+        CaseStatus:
+            type: string
+            enum: [draft, active, archived]
+        Case:
+            type: object
+            required: [id, kind, title, inputs, findings, artifacts, nextSteps, limitations, status, createdAt, updatedAt]
+            properties:
+                id:
+                    type: string
+                    format: uuid
+                kind:
+                    $ref: "#/components/schemas/CaseKind"
+                title:
+                    type: string
+                inputs:
+                    type: object
+                findings:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            label: { type: string }
+                            severity: { type: string, enum: [low, medium, high] }
+                            detail: { type: string }
+                artifacts:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            kind: { type: string }
+                            name: { type: string }
+                            hash: { type: string }
+                            url: { type: string }
+                nextSteps:
+                    type: array
+                    items: { type: string }
+                limitations:
+                    type: array
+                    items: { type: string }
+                status:
+                    $ref: "#/components/schemas/CaseStatus"
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+        CreateCaseInput:
+            type: object
+            required: [kind, title, inputs]
+            properties:
+                kind:
+                    $ref: "#/components/schemas/CaseKind"
+                title: { type: string }
+                inputs: { type: object }
+                findings: { type: array }
+                artifacts: { type: array }
+                nextSteps: { type: array }
+                limitations: { type: array }
+                status:
+                    $ref: "#/components/schemas/CaseStatus"
+        UpdateCaseInput:
+            type: object
+            description: All fields optional; omitted fields keep their previous value.
         ScamIndicator:
             type: object
             properties:
@@ -155,7 +269,7 @@ components:
 
 ## In-process use cases (not routed)
 
-These operations are implemented and tested, but the API does not expose them over HTTP. Tools and application controllers call them directly. This is the accurate surface today; do not document them as deployed endpoints.
+These operations are implemented and tested in-process. Some are also exposed by the module routes listed above; the rest are called directly by tools and application controllers. Do not treat this table as a list of HTTP endpoints — the mounted routes are documented above.
 
 | Operation | Entry point | Input | Output |
 | --- | --- | --- | --- |
