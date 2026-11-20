@@ -1,3 +1,4 @@
+import { CodedError, ERROR_CODES } from "@frithward/contracts";
 import mermaid from "mermaid";
 import { readToken } from "../../../theme/tokens.js";
 
@@ -8,7 +9,10 @@ export interface DiagramRenderResult {
 export class DiagramRenderer {
     public async render(source: string): Promise<DiagramRenderResult> {
         if (source.trim() === "") {
-            throw new Error("Enter a Mermaid diagram first.");
+            throw new CodedError(
+                ERROR_CODES.DIAGRAM_SOURCE_REQUIRED,
+                "Enter a Mermaid diagram first.",
+            );
         }
         mermaid.initialize({
             startOnLoad: false,
@@ -30,9 +34,8 @@ export class DiagramRenderer {
             const { svg } = await mermaid.render(id, source);
             return { svg };
         } catch (cause) {
-            throw new Error(
-                cause instanceof Error ? cause.message : "Could not render the diagram.",
-            );
+            const detail = cause instanceof Error ? cause.message : "Could not render the diagram.";
+            throw new CodedError(ERROR_CODES.DIAGRAM_RENDER_FAILED, detail, { detail });
         }
     }
 }
