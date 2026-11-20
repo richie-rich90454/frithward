@@ -1,0 +1,86 @@
+{
+  "note": "Frithward does not distribute model weights. Entries with a null url are documentation-only candidates. The Whisper entry is verified public reference metadata only; Frithward never downloads automatically. The image-detection-smoke entry is a synthetic test artifact generated locally by scripts/export_onnx.py and is not committed.",
+  "models": [
+    {
+      "id": "aasist",
+      "url": null,
+      "sha256": null,
+      "sizeBytes": null,
+      "license": "not established in this repository",
+      "stage": "experimental",
+      "localPathHint": "models/aasist/model.onnx"
+    },
+    {
+      "id": "rawnet2",
+      "url": null,
+      "sha256": null,
+      "sizeBytes": null,
+      "license": "not established in this repository",
+      "stage": "experimental",
+      "localPathHint": "models/rawnet2/model.onnx"
+    },
+    {
+      "id": "xception",
+      "url": null,
+      "sha256": null,
+      "sizeBytes": null,
+      "license": "not established in this repository",
+      "stage": "experimental",
+      "localPathHint": "models/xception/model.onnx"
+    },
+    {
+      "id": "efficientnet",
+      "url": null,
+      "sha256": null,
+      "sizeBytes": null,
+      "license": "not established in this repository",
+      "stage": "experimental",
+      "localPathHint": "models/efficientnet/model.onnx"
+    },
+    {
+      "id": "vit",
+      "url": null,
+      "sha256": null,
+      "sizeBytes": null,
+      "license": "not established in this repository",
+      "stage": "experimental",
+      "localPathHint": "models/vit/model.onnx"
+    },
+    {
+      "id": "whisper",
+      "url": "https://huggingface.co/openai/whisper-tiny/resolve/main/pytorch_model.bin",
+      "sha256": "9607f98a2b22d9e229ae43c52ecea79dcede9e0c5cfae67e8da6eda86d8aac1d",
+      "sizeBytes": 151095027,
+      "license": "apache-2.0",
+      "stage": "experimental",
+      "localPathHint": "models/whisper/pytorch_model.bin"
+    },
+    {
+      "id": "text-classifier",
+      "url": null,
+      "sha256": null,
+      "sizeBytes": null,
+      "license": "not established in this repository",
+      "stage": "experimental",
+      "localPathHint": "models/text-classifier/model.onnx"
+    },
+    {
+      "id": "privacy-ocr-ner",
+      "url": null,
+      "sha256": null,
+      "sizeBytes": null,
+      "license": "not established in this repository",
+      "stage": "experimental",
+      "localPathHint": "models/privacy-ocr-ner/model.onnx"
+    },
+    {
+      "id": "image-detection-smoke",
+      "url": null,
+      "sha256": null,
+      "sizeBytes": null,
+      "license": "generated locally; synthetic test artifact, not distributed",
+      "stage": "experimental",
+      "localPathHint": "models/image-detection-smoke/model.onnx"
+    }
+  ]
+}
