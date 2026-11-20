@@ -24,11 +24,11 @@ The optional Hono services (API, orchestrator, media/inference workers, communit
 
 Whisper pthreads transcription needs `SharedArrayBuffer`, which browsers expose only on a cross-origin isolated page. That requires three response headers from the host:
 
-| Header | Value |
-| --- | --- |
-| `Cross-Origin-Opener-Policy` | `same-origin` |
+| Header                         | Value          |
+| ------------------------------ | -------------- |
+| `Cross-Origin-Opener-Policy`   | `same-origin`  |
 | `Cross-Origin-Embedder-Policy` | `require-corp` |
-| `Cross-Origin-Resource-Policy` | `same-origin` |
+| `Cross-Origin-Resource-Policy` | `same-origin`  |
 
 Only the host can set these response headers — a `<meta http-equiv>` tag or a service worker cannot. The build ships ready-to-use config for common static hosts:
 
