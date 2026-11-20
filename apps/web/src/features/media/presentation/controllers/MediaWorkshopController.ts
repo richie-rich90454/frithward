@@ -1,8 +1,14 @@
 import { CaptionProject, EditSubtitleUseCase, SubtitleSegment } from "@frithward/media-core";
 import { ImageRedactor } from "../../application/ImageRedactor.js";
+import { encodeWav } from "../../application/WavEncoder.js";
 import { WebCodecsTranscoder } from "../../../runtime/infrastructure/WebCodecsTranscoder.js";
 import type { TranscoderPort } from "../../../runtime/ports/TranscoderPort.js";
 import { LocalStorageCaptionRepository } from "../../../captions/infrastructure/LocalStorageCaptionRepository.js";
+
+export interface MediaArtifact {
+    blob: Blob;
+    fileName: string;
+}
 
 export interface MediaWorkshopSegment {
     id: string;
@@ -41,6 +47,29 @@ const defaultDecodeAudio: AudioDecodeFn = async (bytes) => {
     }
 };
 
+const WAVEFORM_BUCKETS = 256;
+
+/**
+ * Downsampled amplitude envelope: the max absolute sample per bucket, mixing
+ * channels by taking their peak. O(n) time for n total samples (one pass,
+ * constant work per sample) and O(WAVEFORM_BUCKETS) space.
+ */
+function amplitudeEnvelope(channels: readonly Float32Array[]): number[] {
+    const frames = channels[0]?.length ?? 0;
+    const envelope = new Array<number>(WAVEFORM_BUCKETS).fill(0);
+    if (frames === 0) return envelope;
+    for (let frame = 0; frame < frames; frame += 1) {
+        const bucket = Math.min(WAVEFORM_BUCKETS - 1, Math.floor((frame / frames) * WAVEFORM_BUCKETS));
+        let peak = 0;
+        for (const channel of channels) {
+            const value = Math.abs(channel[frame] ?? 0);
+            if (value > peak) peak = value;
+        }
+        if (peak > (envelope[bucket] ?? 0)) envelope[bucket] = peak;
+    }
+    return envelope;
+}
+
 export interface MediaWorkshopControllerOptions {
     transcoder?: TranscoderPort;
     redactor?: ImageRedactor;
@@ -59,6 +88,10 @@ export class MediaWorkshopController {
     private transcodeStatus: string | null = null;
     private redactionStatus: string | null = null;
     private previewUrl: string | null = null;
+    private decodedAudio: DecodedAudio | null = null;
+    private waveformData: readonly number[] | null = null;
+    private transcodedAudio: MediaArtifact | null = null;
+    private redactedImage: MediaArtifact | null = null;
 
     public constructor(options: MediaWorkshopControllerOptions = {}) {
         this.project = new CaptionProject({
@@ -106,6 +139,20 @@ export class MediaWorkshopController {
 
     public getPreviewUrl(): string | null {
         return this.previewUrl;
+    }
+
+    public getTranscodedAudio(): MediaArtifact | null {
+        return this.transcodedAudio;
+    }
+
+    public getRedactedImage(): MediaArtifact | null {
+        return this.redactedImage;
+    }
+
+    public getWaveformData(): readonly number[] | null {
+        if (!this.decodedAudio) return null;
+        if (!this.waveformData) this.waveformData = amplitudeEnvelope(this.decodedAudio.channels);
+        return this.waveformData;
     }
 
     public addSegment(input: { startMs: string; endMs: string; text: string }): void {
@@ -165,9 +212,13 @@ export class MediaWorkshopController {
 
     public async transcodeAudio(file: File): Promise<void> {
         this.transcodeStatus = "Decoding audio...";
+        this.transcodedAudio = null;
+        this.decodedAudio = null;
+        this.waveformData = null;
         this.notify();
         try {
             const decoded = await this.decodeAudio(await file.arrayBuffer());
+            this.decodedAudio = decoded;
             const length = decoded.channels[0]?.length ?? 0;
             const samples = new Float32Array(length * decoded.numberOfChannels);
             decoded.channels.forEach((channel, index) => {
@@ -192,6 +243,10 @@ export class MediaWorkshopController {
                 ],
                 signal: new AbortController().signal,
             });
+            this.transcodedAudio = {
+                blob: encodeWav(decoded.channels, decoded.sampleRate),
+                fileName: "transcoded-audio.wav",
+            };
             this.transcodeStatus = `Transcoded ${result.encodedChunks} chunk(s), ${result.encodedBytes} bytes (${result.decodedChunks} decoded).`;
             this.error = null;
         } catch (cause) {
@@ -209,6 +264,7 @@ export class MediaWorkshopController {
         height: string;
     }): Promise<void> {
         this.redactionStatus = "Redacting image...";
+        this.redactedImage = null;
         this.notify();
         try {
             const blob = await this.redactor.redact(await input.file.arrayBuffer(), {
@@ -219,6 +275,7 @@ export class MediaWorkshopController {
             });
             if (this.previewUrl) URL.revokeObjectURL(this.previewUrl);
             this.previewUrl = URL.createObjectURL(blob);
+            this.redactedImage = { blob, fileName: "redacted-image.png" };
             this.redactionStatus = "Redacted image ready.";
             this.error = null;
         } catch (cause) {
