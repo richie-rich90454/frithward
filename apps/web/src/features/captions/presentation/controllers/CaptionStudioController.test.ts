@@ -25,10 +25,12 @@ function fakeRecognizer(): CaptionGenerationRecognizer & {
     };
 }
 
-function stubResolver(result: LocalModelResult = {
-    url: "https://example.test/model.bin",
-    source: "user",
-}): ModelResolver & { resolve: ReturnType<typeof vi.fn> } {
+function stubResolver(
+    result: LocalModelResult = {
+        url: "https://example.test/model.bin",
+        source: "user",
+    },
+): ModelResolver & { resolve: ReturnType<typeof vi.fn> } {
     return { resolve: vi.fn().mockResolvedValue(result) };
 }
 
