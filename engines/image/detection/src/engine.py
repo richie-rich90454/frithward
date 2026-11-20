@@ -30,6 +30,7 @@ class DetectionResult(BaseModel):
     model_name: str
     model_version: str
     scores: list[float] = []
+    status: str = "ok"
     limitations: list[str] = []
 
 
@@ -79,5 +80,6 @@ def detect(request: DetectionRequest) -> DetectionResult:
         scores=scores,
         limitations=[
             "Raw model scores are evidence for review, not proof of manipulation.",
+            "Scores come from the caller-supplied model; this engine provides no model.",
         ],
     )
