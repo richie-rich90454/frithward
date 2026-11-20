@@ -20,6 +20,7 @@ Security is defense in depth with a minimal network surface. The project priorit
 | Network surface | One HTTP port per service, TLS terminated at Caddy. |
 | Isolation | Browser code cannot import `services/api`; enforced by `scripts/check-boundaries.mjs`. |
 | Media storage | S3-compatible Garage with validated bucket and object keys. |
+| Local case storage | Investigation cases stay in the browser's IndexedDB (`frithward-cases`); scam recent checks and incident export history stay in `localStorage`, and extension history in `browser.storage.local`. Nothing is uploaded from these paths. |
 | Monitoring | Prometheus, Loki, Grafana, and OpenTelemetry configurations under `infrastructure/monitoring/`. |
 
 ## Application security
@@ -32,9 +33,9 @@ Security is defense in depth with a minimal network surface. The project priorit
 
 ## Authentication
 
-`services/api` uses `better-auth` with the Drizzle Postgres adapter. The schema defines `user`, `session`, and `scam_analyses` tables. Today only `GET /api/auth/session` is mounted, and it reports whether a database is configured. The better-auth handlers are not yet exposed.
+`services/api` uses `better-auth` with the Drizzle Postgres adapter. The schema defines `user`, `session`, and `scam_analyses` tables. `GET /api/auth/session` reports whether a database is configured; the real better-auth handlers are mounted only when `DATABASE_URL` is set. Privacy, provenance, captions, storage, and the opt-in `/api/cases` CRUD routes use `requireSession` and return 401 (`UNAUTHORIZED`) without one; Case CRUD returns 503 (`EXTERNAL_UNAVAILABLE`) when no database is configured.
 
-`BETTER_AUTH_SECRET` must be set in production (`NODE_ENV=production`); there is no hardcoded fallback secret. In development, when it is unset, an ephemeral per-process secret is generated, so sessions do not survive a restart. `DATABASE_URL` also comes from the environment only — there is no built-in development DSN. Sessions are stored server-side in Postgres.
+`BETTER_AUTH_SECRET` must be set in production (`NODE_ENV=production`); there is no hardcoded fallback secret. In development, when it is unset, an ephemeral per-process secret is generated, so sessions do not survive a restart. `DATABASE_URL` also comes from the environment only — there is no built-in development DSN. Sessions are stored server-side in Postgres. The browser-local Case store is separate from this hosted store: it never leaves the device.
 
 ## Storage
 
@@ -58,7 +59,7 @@ Caddy terminates TLS. Worker ports expose `/health` only. Deployments must not p
 ## Known gaps
 
 - No rate limiting or bot management is implemented yet.
-- No authentication guards on the mounted API routes.
+- Health, scam analysis, jobs, and `/metrics` have no session guard; deployments must put them behind their own access control. The other mounted module routes and Case CRUD are session-guarded.
 - The hosted analysis adapter is not wired and returns `EXTERNAL_UNAVAILABLE`.
 - No automated secret scanning is configured in the repository today; use an external scanner in CI.
 - No SBOM is committed to the repository; generate one during release.
