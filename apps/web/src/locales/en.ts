@@ -600,4 +600,9 @@ export const en: Record<string, string> = {
     "share.noMetadata": "No metadata found",
     "share.couldNotRead": "Could not read file",
     "share.redactedDownloaded": "Redacted file downloaded",
+    "captions.untitled": "Untitled captions",
+    "charts.seriesName": "Reported value",
+    "runtime.storedFile": 'Stored "{name}" ({n} bytes).',
+    "runtime.notFound": 'No asset named "{name}" was found.',
+    "runtime.readAsset": 'Read "{name}".',
 };
