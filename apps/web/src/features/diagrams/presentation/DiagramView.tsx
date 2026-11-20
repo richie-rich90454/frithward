@@ -1,6 +1,9 @@
-import { Show, createEffect, createSignal, onCleanup } from "solid-js";
+import { Show, createEffect, createSignal, onCleanup, onMount, untrack } from "solid-js";
 import { CodeHighlighter } from "../application/CodeHighlighter";
 import { DiagramRenderer } from "../application/DiagramRenderer";
+import { DiagramDraftStore } from "../infrastructure/DiagramDraftStore";
+import { useThemeVersion } from "./useThemeVersion";
+import "./diagrams.css";
 
 interface DiagramViewProps {
     source: string;
@@ -9,6 +12,8 @@ interface DiagramViewProps {
     busy: boolean;
     onSourceChange: (value: string) => void;
     onRender: () => void;
+    draftSaved: boolean;
+    onClear: () => void;
 }
 
 const EXAMPLE =
@@ -34,8 +39,13 @@ export function DiagramView(props: DiagramViewProps) {
     });
 
     return (
-        <section>
+        <section class="diagram-workshop">
             <h1>Diagrams</h1>
+            <Show when={props.draftSaved}>
+                <p class="diagram-workshop__status" role="status" aria-live="polite">
+                    Draft saved
+                </p>
+            </Show>
             <label>
                 Mermaid source
                 <textarea
@@ -48,9 +58,14 @@ export function DiagramView(props: DiagramViewProps) {
             <Show when={highlighted()}>
                 {(html) => <div class="code-highlight" innerHTML={html()} />}
             </Show>
-            <button type="button" disabled={props.busy} onClick={props.onRender}>
-                Render
-            </button>
+            <div class="diagram-workshop__actions">
+                <button type="button" disabled={props.busy} onClick={props.onRender}>
+                    Render
+                </button>
+                <button type="button" disabled={props.busy} onClick={props.onClear}>
+                    Clear
+                </button>
+            </div>
             <Show when={props.error}>
                 <p role="alert">{props.error}</p>
             </Show>
@@ -68,13 +83,32 @@ export function DiagramView(props: DiagramViewProps) {
 
 export function DiagramPage() {
     const renderer = new DiagramRenderer();
+    const store = new DiagramDraftStore();
+    const themeVersion = useThemeVersion();
     const [source, setSource] = createSignal(EXAMPLE);
     const [svg, setSvg] = createSignal<string | null>(null);
     const [error, setError] = createSignal<string | null>(null);
     const [busy, setBusy] = createSignal(false);
+    const [draftSaved, setDraftSaved] = createSignal(false);
     let disposed = false;
     onCleanup(() => {
         disposed = true;
+        store.flush();
+    });
+    onMount(() => {
+        const draft = store.load();
+        if (draft === null || draft.source.trim() === "") return;
+        setSource(draft.source);
+        void render();
+    });
+    createEffect(() => {
+        if (source().trim() === "") {
+            store.clear();
+            setDraftSaved(false);
+            return;
+        }
+        store.saveSoon({ source: source() });
+        setDraftSaved(true);
     });
 
     const render = async (): Promise<void> => {
@@ -93,12 +127,29 @@ export function DiagramPage() {
         }
     };
 
+    createEffect(() => {
+        themeVersion();
+        untrack(() => {
+            if (svg() !== null) void render();
+        });
+    });
+
+    const clear = () => {
+        store.clear();
+        setSource("");
+        setSvg(null);
+        setError(null);
+        setDraftSaved(false);
+    };
+
     return (
         <DiagramView
             source={source()}
             svg={svg()}
             error={error()}
             busy={busy()}
+            draftSaved={draftSaved()}
+            onClear={clear}
             onSourceChange={(value) => setSource(value)}
             onRender={() => void render()}
         />
