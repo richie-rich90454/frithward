@@ -21,16 +21,72 @@ export interface EvidenceInput {
     collectedAt?: string;
 }
 
+export interface ReportHistoryEntry {
+    id: string;
+    createdAt: string;
+    summary: string;
+    sha256: string;
+}
+
+export interface HistoryStorage {
+    getItem(key: string): string | null;
+    setItem(key: string, value: string): void;
+}
+
+export interface IncidentTimelineControllerOptions {
+    storage?: HistoryStorage;
+}
+
+const HISTORY_KEY = "frithward.report-history";
+
+function isReportHistoryEntry(value: unknown): value is ReportHistoryEntry {
+    if (typeof value !== "object" || value === null) return false;
+    const entry = value as Record<string, unknown>;
+    return (
+        typeof entry["id"] === "string" &&
+        typeof entry["createdAt"] === "string" &&
+        typeof entry["summary"] === "string" &&
+        typeof entry["sha256"] === "string"
+    );
+}
+
+function readHistory(storage: HistoryStorage | null): ReportHistoryEntry[] {
+    if (!storage) return [];
+    try {
+        const raw = storage.getItem(HISTORY_KEY);
+        if (!raw) return [];
+        const parsed: unknown = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed.filter(isReportHistoryEntry) : [];
+    } catch {
+        return [];
+    }
+}
+
+function browserStorage(): HistoryStorage | null {
+    try {
+        return globalThis.localStorage ?? null;
+    } catch {
+        return null;
+    }
+}
+
 function toHex(buffer: ArrayBuffer): string {
     return [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 export class IncidentTimelineController {
     private readonly analyzer = new AnalyzeMessageUseCase();
+    private readonly storage: HistoryStorage | null;
     private readonly listeners = new Set<() => void>();
     private entries: IncidentTimelineEntry[] = [];
     private evidence: EvidenceItem[] = [];
+    private history: ReportHistoryEntry[];
     private error: string | null = null;
+
+    public constructor(options: IncidentTimelineControllerOptions = {}) {
+        this.storage = options.storage ?? browserStorage();
+        this.history = readHistory(this.storage);
+    }
 
     public subscribe(listener: () => void): () => void {
         this.listeners.add(listener);
@@ -45,6 +101,10 @@ export class IncidentTimelineController {
 
     public getEvidence(): readonly EvidenceItem[] {
         return this.evidence;
+    }
+
+    public getReportHistory(): readonly ReportHistoryEntry[] {
+        return this.history;
     }
 
     public getError(): string | null {
@@ -98,6 +158,28 @@ export class IncidentTimelineController {
 
     public buildEvidenceReport(): string {
         return JSON.stringify(this.evidence, null, 2);
+    }
+
+    public async exportReport(): Promise<string> {
+        if (this.evidence.length === 0) throw new Error("No evidence to export.");
+        const subtle = globalThis.crypto?.subtle;
+        if (!subtle) throw new Error("SHA-256 hashing is unavailable in this browser.");
+        const json = this.buildEvidenceReport();
+        const digest = await subtle.digest("SHA-256", new TextEncoder().encode(json));
+        const entry: ReportHistoryEntry = {
+            id: globalThis.crypto.randomUUID(),
+            createdAt: new Date().toISOString(),
+            summary: `${this.evidence.length} evidence item(s) recorded.`,
+            sha256: toHex(digest),
+        };
+        this.history = [...this.history, entry];
+        try {
+            this.storage?.setItem(HISTORY_KEY, JSON.stringify(this.history));
+        } catch {
+            this.error = "Report exported, but the local history could not be saved.";
+        }
+        this.notify();
+        return json;
     }
 
     public reset(): void {
