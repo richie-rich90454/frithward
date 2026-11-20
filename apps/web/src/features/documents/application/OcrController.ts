@@ -1,4 +1,4 @@
-import { CodedError, ERROR_CODES } from "@frithward/contracts";
+import { CodedError, ERROR_CODES, RESULT_CODES } from "@frithward/contracts";
 
 export interface OcrRequest {
     image: ArrayBuffer;
@@ -19,6 +19,7 @@ export interface OcrRecognition {
     text: string;
     confidence?: number;
     limitations: readonly string[];
+    limitationCodes?: readonly string[] | undefined;
 }
 
 export const OCR_LIMITATIONS: readonly string[] = [
@@ -52,6 +53,7 @@ export class OcrController {
             text: result.text,
             ...(Number.isFinite(result.confidence) ? { confidence: result.confidence } : {}),
             limitations: OCR_LIMITATIONS,
+            limitationCodes: [RESULT_CODES.OCR_LIMIT_ACCURACY, RESULT_CODES.OCR_LIMIT_LOCAL],
         };
     }
 }
