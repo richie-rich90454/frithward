@@ -24,10 +24,11 @@ describe("downsampleToPcm16", () => {
     });
 
     it("mixes interleaved channels down to mono", () => {
-        const pcm = downsampleToPcm16(interleaveChannels([
-            new Float32Array([1, 1]),
-            new Float32Array([-1, -1]),
-        ]), 16_000, 2);
+        const pcm = downsampleToPcm16(
+            interleaveChannels([new Float32Array([1, 1]), new Float32Array([-1, -1])]),
+            16_000,
+            2,
+        );
         expect(Array.from(pcm)).toEqual([0, 0]);
     });
 
