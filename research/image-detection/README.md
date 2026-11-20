@@ -10,11 +10,11 @@ Xception, EfficientNet, and ViT. Each has a documentation-only model card under 
 
 ## Dataset candidates
 
-| Dataset | License status | Consent status |
-| --- | --- | --- |
+| Dataset         | License status  | Consent status  |
+| --------------- | --------------- | --------------- |
 | FaceForensics++ | review required | review required |
-| DFDC | review required | review required |
-| Celeb-DF | review required | review required |
+| DFDC            | review required | review required |
+| Celeb-DF        | review required | review required |
 
 No dataset has been approved or downloaded in this repository.
 
