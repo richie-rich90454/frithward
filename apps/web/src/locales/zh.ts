@@ -768,7 +768,8 @@ export const zh: Record<string, string> = {
     "result.GUIDED_CHECK_PLAIN": "用你已知号码致电家人或朋友。不要使用消息中的号码。",
     "result.GUIDED_CHECK_ACTION": "在做其他事之前先打这个电话。",
     "result.GUIDED_PROTECT_TITLE": "保护你的账户",
-    "result.GUIDED_PROTECT_PLAIN": "如果你输入了密码或验证码，请立即在官方网站或应用上修改。不要使用消息中的链接。",
+    "result.GUIDED_PROTECT_PLAIN":
+        "如果你输入了密码或验证码，请立即在官方网站或应用上修改。不要使用消息中的链接。",
     "result.GUIDED_PROTECT_ACTION": "修改密码，并在提供时开启额外安全措施。",
     "result.GUIDED_REPORT_TITLE": "进行举报",
     "result.GUIDED_REPORT_PLAIN": "保留消息并进行举报。{reportLine}",
@@ -781,7 +782,8 @@ export const zh: Record<string, string> = {
     "result.PROTECTION_LIMIT_EXPERIMENTAL": "该保护属于实验性功能，不能保证防止滥用。",
     "result.PROTECTION_NEXT_KEEP_ARTIFACTS": "将原件和受保护的成果放在一起保存。",
     "result.PROTECTION_NEXT_REEVALUATE": "在模型或策略更新后重新评估保护效果。",
-    "result.DETECTION_SUMMARY_SIGNALS": "观察到 {n} 个信号供审核。这不证明真实性，也不识别任何个人。",
+    "result.DETECTION_SUMMARY_SIGNALS":
+        "观察到 {n} 个信号供审核。这不证明真实性，也不识别任何个人。",
     "result.DETECTION_SUMMARY_NONE": "未观察到操纵信号。没有信号并不证明内容真实。",
     "result.DETECTION_NEXT_REVIEW_AUDIO": "将标记的音频片段与原始录音一起检查。",
     "result.DETECTION_NEXT_PROVENANCE_AUDIO": "如有可能，将录音与来源记录进行比较。",
