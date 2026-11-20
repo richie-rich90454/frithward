@@ -58,7 +58,8 @@ export const de: Record<string, string> = {
     "protect.addField": "Weiteres Feld hinzufügen",
     "protect.inspectMetadata": "Metadaten prüfen",
     "protect.planExport": "Bereinigten Export planen",
-    "protect.planNote": "Dies ist nur ein Plan. Hier wird keine Datei umgeschrieben oder heruntergeladen.",
+    "protect.planNote":
+        "Dies ist nur ein Plan. Hier wird keine Datei umgeschrieben oder heruntergeladen.",
     "learn.title": "Lernen",
     "learn.intro":
         "Vier kurze Lektionen zum Prüfen von Informationen und zum sicheren Umgang. Jede Lektion endet mit einem fiktiven Beispiel; das anschließende Quiz prüft, was Sie mitgenommen haben.",
@@ -102,8 +103,10 @@ export const de: Record<string, string> = {
     "learn.quiz.q-sources.prompt":
         "Sie sehen ein dramatisches Foto in einer Gruppenchat ohne Datum und Ort. Was ist der hilfreichste erste Schritt?",
     "learn.quiz.q-sources.option.0": "Es teilen, damit andere ihre Freunde warnen",
-    "learn.quiz.q-sources.option.1": "Den ältesten Beitrag suchen und eine unabhängige Quelle prüfen",
-    "learn.quiz.q-sources.option.2": "Annehmen, dass es falsch ist, weil es keine Bildunterschrift gibt",
+    "learn.quiz.q-sources.option.1":
+        "Den ältesten Beitrag suchen und eine unabhängige Quelle prüfen",
+    "learn.quiz.q-sources.option.2":
+        "Annehmen, dass es falsch ist, weil es keine Bildunterschrift gibt",
     "learn.quiz.q-sources.explanation":
         "Der älteste Beitrag und eine unabhängige Quelle liefern Kontext. Erst zu teilen verbreitet ungeprüfte Behauptungen, und anzunehmen, dass es falsch ist, ist ebenso unbegründet.",
     "learn.quiz.q-pressure.prompt":
@@ -122,8 +125,10 @@ export const de: Record<string, string> = {
         "Identifizierender Text und Kennzeichen können Personen bloßstellen. Schneiden oder verwischen Sie sie; ein einfacher Hintergrund enthält deutlich weniger Informationen.",
     "learn.quiz.q-synthetic.prompt":
         "Ein Detektor stuft ein Video als „wahrscheinlich synthetisch“ ein. Was ist die ehrliche Schlussfolgerung?",
-    "learn.quiz.q-synthetic.option.0": "Es ist definitiv gefälscht und Sie sollten die Quelle beschuldigen",
-    "learn.quiz.q-synthetic.option.1": "Es ist ein Hinweis; ohne Bestätigung können Sie sich nicht sicher sein",
+    "learn.quiz.q-synthetic.option.0":
+        "Es ist definitiv gefälscht und Sie sollten die Quelle beschuldigen",
+    "learn.quiz.q-synthetic.option.1":
+        "Es ist ein Hinweis; ohne Bestätigung können Sie sich nicht sicher sein",
     "learn.quiz.q-synthetic.option.2": "Es muss echt sein, weil Detektoren oft irren",
     "learn.quiz.q-synthetic.explanation":
         "Detektoren können in beide Richtungen irren. Ohne unabhängige Bestätigung ist Ungewissheit die ehrliche Haltung.",
@@ -134,6 +139,7 @@ export const de: Record<string, string> = {
     "learn.quiz.answered": "Sie haben diese Frage bereits beantwortet.",
     "learn.quiz.next": "Nächste Frage",
     "learn.quiz.result": "Sie haben {score} von {total} richtig beantwortet.",
-    "learn.quiz.review": "Sehen Sie sich die obigen Lektionen an, falls eine Antwort Sie überrascht hat.",
+    "learn.quiz.review":
+        "Sehen Sie sich die obigen Lektionen an, falls eine Antwort Sie überrascht hat.",
     "learn.quiz.restart": "Neu beginnen",
 };
