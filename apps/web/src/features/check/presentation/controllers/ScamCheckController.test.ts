@@ -245,7 +245,7 @@ describe("ScamCheckController translated presentation", () => {
             urlInspector: { execute: (url) => new UrlInspectionUseCase().execute(url) },
             recentChecks: memoryRepository(),
         });
-        controller.checkUrl("https://paypa1.example.xyz");
+        controller.checkUrl("https://paypa1.xyz");
         const details = controller.getUrlView()?.findings.map((finding) => finding.detail) ?? [];
         expect(details).toContain("Dominio terminado en .xyz");
         expect(details).toContain('Parece "paypal" pero no es el sitio oficial.');
