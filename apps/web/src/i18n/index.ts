@@ -33,6 +33,25 @@ export const LANGUAGE_NAMES: Record<Locale, string> = {
 
 const dictionaries: Record<Locale, Record<string, string>> = { en, zh, es, fr, de, ar, hi, ja };
 
+const LOCALE_STORAGE_KEY = "frithward.locale";
+
+function browserStorage(): Storage | null {
+    try {
+        return globalThis.localStorage ?? null;
+    } catch {
+        return null;
+    }
+}
+
+export function readStoredLocale(): Locale {
+    const stored = browserStorage()?.getItem(LOCALE_STORAGE_KEY);
+    return stored && (LOCALES as readonly string[]).includes(stored) ? (stored as Locale) : "en";
+}
+
+export function persistLocale(locale: Locale): void {
+    browserStorage()?.setItem(LOCALE_STORAGE_KEY, locale);
+}
+
 export interface I18nContextValue {
     locale: Accessor<Locale>;
     setLocale: (locale: Locale) => void;
@@ -42,13 +61,15 @@ export interface I18nContextValue {
 export const I18nContext = createContext<I18nContextValue>();
 
 export function createI18n(): I18nContextValue {
-    const [locale, setLocale] = createSignal<Locale>("en");
+    const [locale, setLocale] = createSignal<Locale>(readStoredLocale());
     const dictionary = createMemo(() => dictionaries[locale()]);
     const t = translator(dictionary);
 
     createEffect(() => {
-        document.documentElement.lang = locale();
-        document.documentElement.dir = locale() === "ar" ? "rtl" : "ltr";
+        const current = locale();
+        document.documentElement.lang = current;
+        document.documentElement.dir = current === "ar" ? "rtl" : "ltr";
+        persistLocale(current);
     });
 
     return { locale, setLocale, t };
