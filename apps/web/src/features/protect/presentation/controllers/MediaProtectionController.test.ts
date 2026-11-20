@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { MediaProtectionController } from "./MediaProtectionController";
-import type { FaceProtectionPort, VoiceProtectionPort } from "../../infrastructure/mediaAnalysisBridge.js";
+import type {
+    FaceProtectionPort,
+    VoiceProtectionPort,
+} from "../../infrastructure/mediaAnalysisBridge.js";
 
 function bufferOf(text: string): ArrayBuffer {
     const bytes = new TextEncoder().encode(text);
@@ -50,9 +53,7 @@ describe("MediaProtectionController", () => {
         const port = voicePort();
         const exportMock = vi.fn(() => ({
             assetId: "clip-1",
-            artifacts: [
-                { id: "voice-artifact", byteSize: 5, method: "experimental-voice" },
-            ],
+            artifacts: [{ id: "voice-artifact", byteSize: 5, method: "experimental-voice" }],
             manifest: '{"experimental":true}',
             limitations: ["verification required"],
         }));
