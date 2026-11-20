@@ -62,10 +62,7 @@ export class ProtectionResult {
         ];
         this.nextStepCodes = input.nextSteps
             ? this.nextSteps.map(analysisLimitationCode)
-            : [
-                  PROTECTION_NEXT_STEP_CODES.KEEP_ARTIFACTS,
-                  PROTECTION_NEXT_STEP_CODES.REEVALUATE,
-              ];
+            : [PROTECTION_NEXT_STEP_CODES.KEEP_ARTIFACTS, PROTECTION_NEXT_STEP_CODES.REEVALUATE];
         this.experimental = input.experimental ?? true;
         const applied = this.status === "applied";
         this.summary = applied
