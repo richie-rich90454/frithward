@@ -57,7 +57,9 @@ export interface CaptionStudioControllerOptions {
         wasmUrl: string;
     }) => CaptionGenerationRecognizer;
     /** Default local WebGPU recognizer factory; injectable for tests. */
-    browserWhisperFactory?: (input: CaptionBrowserWhisperFactoryInput) => CaptionGenerationRecognizer;
+    browserWhisperFactory?: (
+        input: CaptionBrowserWhisperFactoryInput,
+    ) => CaptionGenerationRecognizer;
     repository?: CaptionRepository;
     modelResolver?: ModelResolver;
 }
