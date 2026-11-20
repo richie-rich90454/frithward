@@ -28,13 +28,19 @@ The minimum versions below are commonly cited baselines, **not** a browser matri
 
 | API | Gates | Minimum version | Notes |
 | --- | --- | --- | --- |
-| `SharedArrayBuffer` | whisper.cpp / threaded WASM transcription | Requires cross-origin isolation: `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` | Vite dev/preview and the shipped Caddyfile set these headers; an arbitrary static host may not |
+| `SharedArrayBuffer` | whisper.cpp / threaded WASM transcription | Requires cross-origin isolation: `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` | Vite dev/preview and the shipped Caddyfile set these headers; configs for Netlify/Cloudflare/Vercel are also shipped. See cross-origin isolation below |
 | OPFS (Origin Private File System) | local asset storage in the media runtime | Chrome 86, Firefox 111, Safari 15.2 | Storage is per-origin in the browser |
 | WebCodecs | local audio/video transcoding | Chrome 94, Safari 16.4 | Firefox support is not assumed |
 | WebGPU | optional GPU detection/acceleration | Chrome 113 | Optional; the app must remain usable without it |
 | WebAssembly SIMD | WASM-based media and inference libraries | Modern evergreen browsers | Older browsers without SIMD cannot run the local inference path |
 
 None of these gates requires a backend or a native install. There is no server-side fallback: where an API is missing, the affected local feature is unavailable.
+
+### Cross-origin isolation and static hosts
+
+`SharedArrayBuffer` is exposed only in a cross-origin isolated page, and COOP/COEP response headers can only be set by the host — no `<meta>` tag or service worker can. The build ships config for Netlify/Cloudflare Pages (`apps/web/public/_headers`, `apps/web/netlify.toml`), Vercel (`apps/web/vercel.json`), and self-hosted Caddy (`infrastructure/deployment/Caddyfile`); `apps/web/public/hosting-headers.json` lists the exact name/value pairs for any other host.
+
+A host that cannot set arbitrary response headers (for example GitHub Pages) still runs every non-`SharedArrayBuffer` feature normally; only Whisper pthreads transcription is unavailable. The browser-whisper/WebGPU transcription path does not need COOP/COEP. All runtime assets are same-origin, so `require-corp` blocks nothing and is kept over `credentialless` for broader browser support. `getIsolationStatus()` in `apps/web/src/offline/isolation.ts` exposes the check at runtime.
 
 ## Browser compatibility (local-first path)
 
