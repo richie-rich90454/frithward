@@ -5,6 +5,9 @@ description = "Image synthetic media detection engine."
 requires-python = ">=3.12"
 dependencies = ["pydantic", "torch", "onnx"]
 
+[dependency-groups]
+dev = ["pytest"]
+
 [tool.uv.sources]
 torch = [{ index = "pytorch-cpu" }]
 
