@@ -25,6 +25,7 @@ import {
     type RecentCheckChannel,
     type RecentCheckRepository,
 } from "../../infrastructure/LocalStorageRecentCheckRepository.js";
+import { english, type Translator } from "../../../../i18n/translate.js";
 
 export interface CheckFindingView {
     id: string;
@@ -57,6 +58,7 @@ export interface ScamCheckControllerOptions {
     qrInspector?: Pick<QrInspectionUseCase, "execute">;
     reportUseCase?: Pick<ScamReportUseCase, "execute">;
     recentChecks?: RecentCheckRepository;
+    translate?: Translator;
 }
 
 /** Self-contained snapshot a Case store can consume later. */
@@ -77,6 +79,7 @@ export class ScamCheckController {
     private readonly qrInspector: Pick<QrInspectionUseCase, "execute">;
     private readonly reportUseCase: Pick<ScamReportUseCase, "execute">;
     private readonly recentChecks: RecentCheckRepository;
+    private readonly translate: Translator;
     private readonly listeners = new Set<() => void>();
     private currentText = "";
     private analysis: ScamAnalysis | null = null;
@@ -92,6 +95,7 @@ export class ScamCheckController {
         this.qrInspector = options.qrInspector ?? new QrInspectionUseCase();
         this.reportUseCase = options.reportUseCase ?? new ScamReportUseCase();
         this.recentChecks = options.recentChecks ?? new LocalStorageRecentCheckRepository();
+        this.translate = options.translate ?? english;
     }
 
     public subscribe(listener: () => void): () => void {
@@ -141,7 +145,8 @@ export class ScamCheckController {
         } catch (cause) {
             this.analysis = null;
             this.reviewedFindings = [];
-            this.error = cause instanceof Error ? cause.message : "Analysis failed.";
+            this.error =
+                cause instanceof Error ? cause.message : this.translate("check.error.analysis");
         }
         this.notify();
     }
@@ -156,7 +161,8 @@ export class ScamCheckController {
         } catch (cause) {
             this.urlView = null;
             this.reviewedFindings = [];
-            this.error = cause instanceof Error ? cause.message : "Link check failed.";
+            this.error =
+                cause instanceof Error ? cause.message : this.translate("check.error.link");
         }
         this.notify();
     }
@@ -171,14 +177,14 @@ export class ScamCheckController {
         } catch (cause) {
             this.qrView = null;
             this.reviewedFindings = [];
-            this.error = cause instanceof Error ? cause.message : "QR check failed.";
+            this.error = cause instanceof Error ? cause.message : this.translate("check.error.qr");
         }
         this.notify();
     }
 
     public async generateReport(): Promise<ScamReport | null> {
         if (this.currentText.trim().length === 0) {
-            this.error = "Check a message before generating a report.";
+            this.error = this.translate("check.error.checkBeforeReport");
             this.notify();
             return null;
         }
@@ -192,7 +198,10 @@ export class ScamCheckController {
             this.notify();
             return report;
         } catch (cause) {
-            this.error = cause instanceof Error ? cause.message : "Could not generate a report.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("check.error.generateReport");
             this.notify();
             return null;
         }
