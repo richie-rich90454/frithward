@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
     ProvenanceController,
     sha256Hex,
@@ -107,6 +107,55 @@ describe("ProvenanceController file input", () => {
         expect(result?.summary).toContain("claims a valid signature");
         expect(result?.signer).toBe("Embedded Signer");
         expect(result?.limitations.at(-1)).toContain("not cryptographically verified");
+    });
+
+    it("verifies binary bytes with an injected C2PA SDK verifier", async () => {
+        const verify = vi.fn(async () => ({
+            signatureStatus: "invalid" as const,
+            signer: "C2PA Signer",
+            timestamp: "2024-08-06T21:53:37+00:00",
+            assertions: [{ label: "c2pa.actions.v2", present: true }],
+            validationFailures: [
+                { code: "signingCredential.untrusted", message: "signing certificate untrusted" },
+            ],
+            limitations: ["trust depends on the configured trust settings"],
+        }));
+        const controller = new ProvenanceController(undefined, { verify });
+        const bytes = new TextEncoder().encode("binary media");
+        await controller.verifyFile(fileOf("photo.jpg", bytes));
+
+        expect(verify).toHaveBeenCalledWith(bytes);
+        const result = controller.getResult();
+        expect(result?.signatureStatus).toBe("invalid");
+        expect(result?.signer).toBe("C2PA Signer");
+        expect(result?.timestamp).toBe("2024-08-06T21:53:37+00:00");
+        expect(result?.assertions.map((assertion) => assertion.label)).toEqual(["c2pa.actions.v2"]);
+        expect(result?.limitations).toContain("trust depends on the configured trust settings");
+        expect(result?.summary).toContain("C2PA SDK reported 1 validation failure");
+    });
+
+    it("never claims valid when the SDK verifier reports an error", async () => {
+        const controller = new ProvenanceController(undefined, {
+            async verify() {
+                return {
+                    signatureStatus: "unverified" as const,
+                    signer: null,
+                    timestamp: null,
+                    assertions: [],
+                    validationFailures: [
+                        { code: "sdk.error", message: "C2PA WASM SDK could not read this asset" },
+                    ],
+                    limitations: ["Signature was NOT verified"],
+                };
+            },
+        });
+        await controller.verifyFile(fileOf("clip.mp4", "video bytes"));
+
+        const result = controller.getResult();
+        expect(result?.signatureStatus).not.toBe("valid");
+        expect(result?.signatureStatus).toBe("unverified");
+        expect(result?.summary).toContain("not verified by the C2PA SDK");
+        expect(result?.limitations).toContain("Signature was NOT verified");
     });
 
     it("reports an unreadable file as an error", async () => {
