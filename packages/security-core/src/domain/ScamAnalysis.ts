@@ -4,6 +4,7 @@ export class ScamAnalysis {
     public readonly indicators: readonly ScamIndicator[];
     public readonly summary: string;
     public readonly nextSteps: readonly string[];
+    public readonly nextStepCodes: readonly string[];
     public readonly limitations: readonly string[];
     public readonly summaryCode: string;
     public readonly limitationCodes: readonly (string | undefined)[];
@@ -17,6 +18,11 @@ export class ScamAnalysis {
             "Contact the person through a known channel to confirm the request.",
             "Do not send money, codes, or credentials.",
             "Keep the original message as evidence.",
+        ];
+        this.nextStepCodes = [
+            "SCAM_NEXT_CONTACT_KNOWN",
+            "SCAM_NEXT_NO_SEND",
+            "SCAM_NEXT_KEEP_EVIDENCE",
         ];
         this.limitations = [
             "Text patterns alone cannot prove intent.",
