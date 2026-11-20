@@ -1,0 +1,12 @@
+{"synthetic": true, "truth": true, "score": 0.92, "dataset": "synthetic-a", "generator": "stub-high"}
+{"synthetic": true, "truth": true, "score": 0.81, "dataset": "synthetic-a", "generator": "stub-high"}
+{"synthetic": true, "truth": false, "score": 0.34, "dataset": "synthetic-a", "generator": "stub-low"}
+{"synthetic": true, "truth": false, "score": 0.18, "dataset": "synthetic-a", "generator": "stub-low"}
+{"synthetic": true, "truth": true, "score": 0.73, "dataset": "synthetic-a", "generator": "stub-high"}
+{"synthetic": true, "truth": false, "score": 0.61, "dataset": "synthetic-a", "generator": "stub-low"}
+{"synthetic": true, "truth": true, "score": 0.88, "dataset": "synthetic-b", "generator": "stub-high"}
+{"synthetic": true, "truth": false, "score": 0.22, "dataset": "synthetic-b", "generator": "stub-low"}
+{"synthetic": true, "truth": true, "score": 0.55, "dataset": "synthetic-b", "generator": "stub-high"}
+{"synthetic": true, "truth": false, "score": 0.44, "dataset": "synthetic-b", "generator": "stub-low"}
+{"synthetic": true, "truth": true, "score": 0.67, "dataset": "synthetic-b", "generator": "stub-high"}
+{"synthetic": true, "truth": false, "score": 0.29, "dataset": "synthetic-b", "generator": "stub-low"}
