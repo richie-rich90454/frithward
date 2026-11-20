@@ -107,4 +107,42 @@ describe("MediaProtectionController", () => {
         expect(controller.getFaceResult()?.artifactId).toBe("face-artifact");
         expect(controller.getExportView()?.manifest).toContain("face-artifact");
     });
+
+    it("keeps the English summary, limitations and next steps as fallback", async () => {
+        const controller = new MediaProtectionController({ voicePort: voicePort() });
+        await controller.protectVoice({
+            assetId: "clip-1",
+            audio: bufferOf("audio"),
+            byteSize: 5,
+            consentDocumented: true,
+        });
+        const result = controller.getVoiceResult();
+        expect(result?.summary).toContain("experimental-voice");
+        expect(result?.limitations).toEqual(["not independently evaluated"]);
+        expect(result?.nextSteps).toEqual([
+            "Keep the original and protected artifacts together.",
+            "Re-evaluate protection after any model or policy update.",
+        ]);
+    });
+
+    it("translates the summary and next steps by their result codes", async () => {
+        const t = (key: string) => {
+            const values: Record<string, string> = {
+                "result.PROTECTION_SUMMARY_APPLIED": "Protegido con {method}.",
+                "result.PROTECTION_NEXT_KEEP_ARTIFACTS": "Conserva ambos archivos.",
+                "result.PROTECTION_NEXT_REEVALUATE": "Reevalúa la protección.",
+            };
+            return values[key] ?? key;
+        };
+        const controller = new MediaProtectionController({ voicePort: voicePort(), translate: t });
+        await controller.protectVoice({
+            assetId: "clip-1",
+            audio: bufferOf("audio"),
+            byteSize: 5,
+            consentDocumented: true,
+        });
+        const result = controller.getVoiceResult();
+        expect(result?.summary).toBe("Protegido con experimental-voice.");
+        expect(result?.nextSteps).toEqual(["Conserva ambos archivos.", "Reevalúa la protección."]);
+    });
 });
