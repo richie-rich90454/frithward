@@ -2,6 +2,7 @@ import { For, Show, createSignal, onCleanup } from "solid-js";
 import { BadgeCheck } from "lucide-solid";
 import { useCases } from "../../../../cases/CaseProvider.js";
 import { ProvenanceCheckController } from "../controllers/ProvenanceCheckController";
+import { useI18n } from "../../../../i18n/index.js";
 import type { ProvenanceInspectionView } from "../controllers/ProvenanceCheckController";
 
 interface ProvenanceCheckViewProps {
@@ -16,24 +17,21 @@ const ACCEPTED_FILES =
     ".jpg,.jpeg,.png,.webp,.mp4,.json,application/json,image/jpeg,image/png,image/webp,video/mp4";
 
 function Value(props: { value: string | null }) {
-    return <>{props.value ?? "Not provided"}</>;
+    const { t } = useI18n();
+    return <>{props.value ?? t("verify.notProvided")}</>;
 }
 
 export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
+    const { t } = useI18n();
     const [manifest, setManifest] = createSignal("");
     const [file, setFile] = createSignal<File | null>(null);
     return (
         <section>
             <h1>
                 <BadgeCheck class="fw-icon" />
-                Provenance check
+                {t("verify.title")}
             </h1>
-            <p role="note">
-                No native C2PA SDK is connected here. The signature is read from the manifest and is
-                not cryptographically verified. Binary files are checked locally only; when no
-                embedded manifest can be read, the result is reported as unavailable rather than
-                valid.
-            </p>
+            <p role="note">{t("verify.intro")}</p>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -48,17 +46,17 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                 }}
             >
                 <label>
-                    File to check
+                    {t("verify.fileLabel")}
                     <input
                         type="file"
                         accept={ACCEPTED_FILES}
                         onChange={(event) => setFile(event.currentTarget.files?.[0] ?? null)}
                     />
                 </label>
-                <button type="submit">Inspect file</button>
+                <button type="submit">{t("verify.inspectFile")}</button>
             </form>
             <details>
-                <summary>Advanced: paste C2PA JSON</summary>
+                <summary>{t("verify.advanced")}</summary>
                 <form
                     onSubmit={(event) => {
                         event.preventDefault();
@@ -66,7 +64,7 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                     }}
                 >
                     <label>
-                        C2PA manifest (JSON)
+                        {t("verify.manifestLabel")}
                         <textarea
                             value={manifest()}
                             rows={6}
@@ -74,7 +72,7 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                             onInput={(event) => setManifest(event.currentTarget.value)}
                         />
                     </label>
-                    <button type="submit">Inspect manifest</button>
+                    <button type="submit">{t("verify.inspectManifest")}</button>
                 </form>
             </details>
             <Show when={props.error}>
@@ -88,59 +86,52 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                     <div>
                         <h2>{result.summary}</h2>
                         <dl>
-                            <dt>Signature status</dt>
+                            <dt>{t("verify.signatureStatus")}</dt>
                             <dd>
                                 <Value value={result.signatureStatus} />
-                                <small>
-                                    Status reported in the manifest; it is not a new cryptographic
-                                    verification.
-                                </small>
+                                <small>{t("verify.signatureStatusNote")}</small>
                             </dd>
-                            <dt>Signer</dt>
+                            <dt>{t("verify.signer")}</dt>
                             <dd>
                                 <Value value={result.signer} />
-                                <small>Identity claimed in the manifest, if present.</small>
+                                <small>{t("verify.signerNote")}</small>
                             </dd>
-                            <dt>Signature timestamp</dt>
+                            <dt>{t("verify.timestamp")}</dt>
                             <dd>
                                 <Value value={result.signedAt} />
-                                <small>
-                                    Time stated by the manifest, not an independent time proof.
-                                </small>
+                                <small>{t("verify.timestampNote")}</small>
                             </dd>
-                            <dt>Assertions</dt>
+                            <dt>{t("verify.assertions")}</dt>
                             <dd>
                                 <Show
                                     when={result.assertions.length > 0}
-                                    fallback={<span>None provided</span>}
+                                    fallback={<span>{t("verify.noneProvided")}</span>}
                                 >
                                     <ul>
                                         <For each={result.assertions}>
                                             {(assertion) => (
                                                 <li>
                                                     {assertion.label}:{" "}
-                                                    {assertion.present ? "present" : "absent"}
+                                                    {assertion.present
+                                                        ? t("verify.present")
+                                                        : t("verify.absent")}
                                                 </li>
                                             )}
                                         </For>
                                     </ul>
                                 </Show>
-                                <small>
-                                    Names of claims present; their contents were not validated.
-                                </small>
+                                <small>{t("verify.assertionsNote")}</small>
                             </dd>
-                            <dt>Asset hash</dt>
+                            <dt>{t("verify.assetHash")}</dt>
                             <dd>
                                 <Value value={result.assetHash} />
-                                <small>
-                                    Hash recorded in the manifest; no file was re-hashed here.
-                                </small>
+                                <small>{t("verify.assetHashNote")}</small>
                             </dd>
-                            <dt>Validation failures</dt>
+                            <dt>{t("verify.validationFailures")}</dt>
                             <dd>
                                 <Show
                                     when={result.validationFailures.length > 0}
-                                    fallback={<span>None reported</span>}
+                                    fallback={<span>{t("verify.noneReported")}</span>}
                                 >
                                     <ul>
                                         <For each={result.validationFailures}>
@@ -153,15 +144,13 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                                         </For>
                                     </ul>
                                 </Show>
-                                <small>
-                                    Failures listed by the manifest; they need human review.
-                                </small>
+                                <small>{t("verify.failuresNote")}</small>
                             </dd>
-                            <dt>Missing information</dt>
+                            <dt>{t("verify.missingInfo")}</dt>
                             <dd>
                                 <Show
                                     when={result.missingInfo.length > 0}
-                                    fallback={<span>None</span>}
+                                    fallback={<span>{t("verify.none")}</span>}
                                 >
                                     <ul>
                                         <For each={result.missingInfo}>
@@ -169,29 +158,22 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                                         </For>
                                     </ul>
                                 </Show>
-                                <small>
-                                    Absent fields reduce how much provenance can be shown.
-                                </small>
+                                <small>{t("verify.missingNote")}</small>
                             </dd>
                         </dl>
-                        <h2>Transformation history</h2>
+                        <h2>{t("verify.transformations")}</h2>
                         <Show
                             when={result.transformations.length > 0}
-                            fallback={
-                                <p role="note">
-                                    No transformation history available. The supplied manifest had
-                                    no c2pa.actions assertion, so no steps could be parsed.
-                                </p>
-                            }
+                            fallback={<p role="note">{t("verify.noTransformations")}</p>}
                         >
                             <table>
                                 <thead>
                                     <tr>
-                                        <th scope="col">Action</th>
-                                        <th scope="col">Actor</th>
-                                        <th scope="col">Timestamp</th>
-                                        <th scope="col">Hash (before to after)</th>
-                                        <th scope="col">Detail</th>
+                                        <th scope="col">{t("verify.tableAction")}</th>
+                                        <th scope="col">{t("verify.tableActor")}</th>
+                                        <th scope="col">{t("verify.tableTimestamp")}</th>
+                                        <th scope="col">{t("verify.tableHash")}</th>
+                                        <th scope="col">{t("verify.tableDetail")}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -211,9 +193,12 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                                                             step.assetHashBefore ||
                                                             step.assetHashAfter
                                                         }
-                                                        fallback={<span>Not provided</span>}
+                                                        fallback={
+                                                            <span>{t("verify.notProvided")}</span>
+                                                        }
                                                     >
-                                                        <Value value={step.assetHashBefore} /> to{" "}
+                                                        <Value value={step.assetHashBefore} />{" "}
+                                                        {t("verify.beforeToAfter")}{" "}
                                                         <Value value={step.assetHashAfter} />
                                                     </Show>
                                                 </td>
@@ -226,11 +211,8 @@ export function ProvenanceCheckView(props: ProvenanceCheckViewProps) {
                                 </tbody>
                             </table>
                         </Show>
-                        <small>
-                            Steps are read from the supplied c2pa.actions assertion; they were not
-                            independently verified.
-                        </small>
-                        <h2>Limitations</h2>
+                        <small>{t("verify.transformNote")}</small>
+                        <h2>{t("check.limitations")}</h2>
                         <ul>
                             <For each={result.limitations}>{(limit) => <li>{limit}</li>}</For>
                         </ul>
@@ -251,7 +233,8 @@ async function sha256(bytes: Uint8Array): Promise<string> {
 }
 
 export function ProvenanceCheckPage() {
-    const controller = new ProvenanceCheckController();
+    const { t } = useI18n();
+    const controller = new ProvenanceCheckController({ translate: t });
     const { saveCase } = useCases();
     const [result, setResult] = createSignal(controller.getResult());
     const [error, setError] = createSignal(controller.getError());
@@ -282,7 +265,7 @@ export function ProvenanceCheckPage() {
                 nextSteps: [],
             });
         } catch (cause) {
-            setSaveError(cause instanceof Error ? cause.message : "Unable to save case.");
+            setSaveError(cause instanceof Error ? cause.message : t("verify.saveCaseFailed"));
         }
     };
 
@@ -293,7 +276,7 @@ export function ProvenanceCheckPage() {
             saveError={saveError()}
             onInspect={async (manifestText) => {
                 await controller.inspect(manifestText);
-                await persistCase("Pasted C2PA manifest", null);
+                await persistCase(t("verify.pastedManifest"), null);
             }}
             onInspectFile={async ({ name, bytes }) => {
                 const hash = await sha256(bytes);
