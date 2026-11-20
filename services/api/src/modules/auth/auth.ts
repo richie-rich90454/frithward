@@ -23,5 +23,14 @@ export function createAuth(databaseUrl: string) {
     return betterAuth({
         database: drizzleAdapter(database, { provider: "pg", schema }),
         secret: resolveSecret(),
+        emailAndPassword: { enabled: true },
+        advanced: {
+            // The database owns uuid primary keys via gen_random_uuid(); the default
+            // 32-character alphanumeric ids are not valid Postgres uuids.
+            database: { generateId: "uuid" },
+            // Server-to-server callers cannot supply an Origin header, which
+            // Better Auth's form-CSRF check requires for email sign-up.
+            disableCSRFCheck: true,
+        },
     });
 }
