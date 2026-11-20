@@ -3,6 +3,7 @@ import {
     type C2paInspectionResult,
     type C2paSignatureStatus,
 } from "@frithward/provenance-core";
+import { english, type Translator } from "../../../../i18n/translate.js";
 
 export interface ProvenanceAssertionView {
     label: string;
@@ -52,11 +53,13 @@ export interface ProvenanceFileInput {
 export interface ProvenanceCheckControllerOptions {
     inspector?: C2paInspector;
     extractor?: C2paManifestExtractor;
+    translate?: Translator;
 }
 
 export class ProvenanceCheckController {
     private readonly inspector: C2paInspector;
     private readonly extractor: C2paManifestExtractor | null;
+    private readonly translate: Translator;
     private readonly listeners = new Set<() => void>();
     private result: ProvenanceInspectionView | null = null;
     private error: string | null = null;
@@ -64,6 +67,7 @@ export class ProvenanceCheckController {
     public constructor(options: ProvenanceCheckControllerOptions = {}) {
         this.inspector = options.inspector ?? new C2paInspectionUseCase();
         this.extractor = options.extractor ?? null;
+        this.translate = options.translate ?? english;
     }
 
     public subscribe(listener: () => void): () => void {
@@ -83,18 +87,22 @@ export class ProvenanceCheckController {
 
     public async inspect(manifestText: string): Promise<void> {
         try {
-            if (manifestText.trim().length === 0) throw new Error("Manifest required.");
+            if (manifestText.trim().length === 0)
+                throw new Error(this.translate("verify.error.manifestRequired"));
             let manifest: unknown;
             try {
                 manifest = JSON.parse(manifestText) as unknown;
             } catch {
-                throw new Error("Manifest must be valid JSON.");
+                throw new Error(this.translate("verify.error.manifestJson"));
             }
             this.result = toView(await this.inspector.execute({ manifest }));
             this.error = null;
         } catch (cause) {
             this.result = null;
-            this.error = cause instanceof Error ? cause.message : "Provenance inspection failed.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("verify.error.inspectionFailed");
         }
         this.notify();
     }
@@ -107,12 +115,12 @@ export class ProvenanceCheckController {
                 try {
                     manifest = JSON.parse(text) as unknown;
                 } catch {
-                    throw new Error("File must contain valid JSON.");
+                    throw new Error(this.translate("verify.error.fileJson"));
                 }
             } else {
                 manifest = this.extractor ? await this.extractor.extract(input.bytes) : null;
                 if (manifest === null) {
-                    this.result = unavailableView();
+                    this.result = unavailableView(this.translate);
                     this.error = null;
                     this.notify();
                     return;
@@ -122,7 +130,10 @@ export class ProvenanceCheckController {
             this.error = null;
         } catch (cause) {
             this.result = null;
-            this.error = cause instanceof Error ? cause.message : "Provenance inspection failed.";
+            this.error =
+                cause instanceof Error
+                    ? cause.message
+                    : this.translate("verify.error.inspectionFailed");
         }
         this.notify();
     }
@@ -167,7 +178,7 @@ function isJsonFile(input: ProvenanceFileInput): boolean {
 }
 
 /** Honest fallback when no local C2PA manifest can be read from a binary asset. */
-function unavailableView(): ProvenanceInspectionView {
+function unavailableView(translate: Translator): ProvenanceInspectionView {
     return {
         signatureStatus: "missing",
         signer: null,
@@ -177,17 +188,16 @@ function unavailableView(): ProvenanceInspectionView {
         transformations: [],
         validationFailures: [],
         missingInfo: [
-            "embedded C2PA manifest",
-            "signer",
-            "signature timestamp",
-            "assertions",
-            "asset hash",
+            translate("verify.unavailable.missing.0"),
+            translate("verify.unavailable.missing.1"),
+            translate("verify.unavailable.missing.2"),
+            translate("verify.unavailable.missing.3"),
+            translate("verify.unavailable.missing.4"),
         ],
-        summary:
-            "No embedded C2PA manifest could be extracted locally; provenance verification is unavailable.",
+        summary: translate("verify.unavailable.summary"),
         limitations: [
-            "Local C2PA manifest extraction from image or video files is not available in this browser.",
-            "No signature was verified. Do not treat this file as having valid provenance.",
+            translate("verify.unavailable.limitation.0"),
+            translate("verify.unavailable.limitation.1"),
         ],
     };
 }
