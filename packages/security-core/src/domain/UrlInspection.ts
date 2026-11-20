@@ -5,6 +5,8 @@ export interface UrlFinding {
     label: string;
     detail: string;
     severity: UrlRiskLevel;
+    labelCode?: string | undefined;
+    detailCode?: string | undefined;
 }
 
 export interface UrlInspectionResult {
@@ -15,4 +17,6 @@ export interface UrlInspectionResult {
     findings: readonly UrlFinding[];
     summary: string;
     limitations: readonly string[];
+    summaryCode?: string | undefined;
+    limitationCodes?: readonly (string | undefined)[] | undefined;
 }
