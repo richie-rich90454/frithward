@@ -52,6 +52,6 @@ No model has been selected, so no behavior is implied. This card exists to enfor
 
 ## Version history
 
-| Version | Date | Change |
-| --- | --- | --- |
+| Version  | Date       | Change                                       |
+| -------- | ---------- | -------------------------------------------- |
 | card-0.1 | 2026-11-20 | Initial documentation-only placeholder card. |
