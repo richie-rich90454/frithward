@@ -3,6 +3,7 @@ import type {
     C2paSignatureStatus,
     C2paValidationEntry,
     C2paValidationFailure,
+    TransformationStep,
 } from "../domain/C2paManifest.js";
 import type { ProvenanceRecord } from "../domain/ProvenanceRecord.js";
 import type { ProvenanceRecordRepository } from "../ports/ProvenanceRecordRepository.js";
@@ -95,6 +96,68 @@ function findAssetHash(manifest: Record<string, unknown>): string | null {
     return null;
 }
 
+function readActor(value: unknown): string | null {
+    if (typeof value === "string") return readString(value);
+    if (Array.isArray(value)) {
+        const names = value.map((item) => readActor(item)).filter((name): name is string => !!name);
+        return names.length > 0 ? names.join(", ") : null;
+    }
+    const record = asRecord(value);
+    if (!record) return null;
+    return readString(record.name) ?? readString(record.actor) ?? null;
+}
+
+function readTransformationHash(value: unknown, side: "before" | "after"): string | null {
+    const record = asRecord(value);
+    if (!record) return null;
+    const keys =
+        side === "before"
+            ? ["assetHashBefore", "hashBefore", "beforeHash", "before"]
+            : ["assetHashAfter", "hashAfter", "afterHash", "after"];
+    for (const key of keys) {
+        const hash = readString(record[key]);
+        if (hash) return hash;
+    }
+    return null;
+}
+
+/** Reads only steps actually present in c2pa.actions assertions; no history is inferred. */
+function parseTransformations(manifest: Record<string, unknown>): TransformationStep[] {
+    const assertions = Array.isArray(manifest.assertions) ? manifest.assertions : [];
+    const steps: TransformationStep[] = [];
+    for (const item of assertions) {
+        const assertion = asRecord(item);
+        const label = assertion ? (readString(assertion.label) ?? "") : "";
+        if (!label || !/^c2pa\.actions(?:\.|$)/i.test(label)) continue;
+        const data = asRecord(assertion?.data);
+        const actions = Array.isArray(data?.actions)
+            ? data.actions
+            : Array.isArray(assertion?.data)
+              ? assertion.data
+              : [];
+        for (const actionItem of actions) {
+            const action = asRecord(actionItem);
+            if (!action) continue;
+            const name = readString(action.action);
+            if (!name) continue;
+            const parameters = asRecord(action.parameters);
+            steps.push({
+                action: name,
+                actor: readActor(action.actors ?? action.actor),
+                timestamp: readString(action.when) ?? readString(action.timestamp),
+                assetHashBefore:
+                    readTransformationHash(action, "before") ??
+                    readTransformationHash(parameters, "before"),
+                assetHashAfter:
+                    readTransformationHash(action, "after") ??
+                    readTransformationHash(parameters, "after"),
+                detail: readString(action.description) ?? readString(action.detail),
+            });
+        }
+    }
+    return steps;
+}
+
 export class C2paInspectionUseCase {
     public constructor(
         private readonly repository?: ProvenanceRecordRepository,
@@ -105,7 +168,7 @@ export class C2paInspectionUseCase {
         if (this.verifier) return this.verifyWithSdk(input, this.verifier);
 
         const manifest = parseManifest(input.manifest);
-        const limitations = [
+        const limitations: string[] = [
             "Signature status is taken from the manifest and was not cryptographically re-verified.",
             "Timestamps come from the manifest and may not reflect real-world signing time.",
             "Assertions are reported as present but their contents were not validated.",
@@ -113,12 +176,16 @@ export class C2paInspectionUseCase {
         ];
 
         if (!manifest) {
+            limitations.push(
+                "No c2pa.actions assertion was available; no transformation history could be parsed.",
+            );
             const result: C2paInspectionResult = {
                 signatureStatus: "missing",
                 signer: null,
                 signedAt: null,
                 assertions: [],
                 assetHash: null,
+                transformations: [],
                 validationFailures: [],
                 missingInfo: [
                     "manifest",
@@ -158,6 +225,12 @@ export class C2paInspectionUseCase {
             null;
         const assertionLabels = asAssertionLabels(manifest.assertions);
         const assetHash = findAssetHash(manifest);
+        const transformations = parseTransformations(manifest);
+        if (transformations.length === 0) {
+            limitations.push(
+                "No c2pa.actions assertion was available; no transformation history could be parsed.",
+            );
+        }
 
         let signatureStatus: C2paSignatureStatus;
         if (!signature) signatureStatus = "missing";
@@ -185,6 +258,7 @@ export class C2paInspectionUseCase {
             signedAt,
             assertions: assertionLabels.map((label) => ({ label, present: true })),
             assetHash,
+            transformations,
             validationFailures,
             missingInfo,
             summary,
@@ -221,12 +295,22 @@ export class C2paInspectionUseCase {
         if (!verification.timestamp) missingInfo.push("signature timestamp");
         if (verification.assertions.length === 0) missingInfo.push("assertions");
 
+        const manifest = parseManifest(input.manifest);
+        const transformations = manifest ? parseTransformations(manifest) : [];
+        const limitations = [...verification.limitations];
+        if (transformations.length === 0) {
+            limitations.push(
+                "No c2pa.actions assertion was available; no transformation history could be parsed.",
+            );
+        }
+
         const result: C2paInspectionResult = {
             signatureStatus: verification.signatureStatus,
             signer: verification.signer,
             signedAt: verification.timestamp,
             assertions: verification.assertions,
-            assetHash: findAssetHash(parseManifest(input.manifest) ?? {}),
+            assetHash: findAssetHash(manifest ?? {}),
+            transformations,
             validationFailures: verification.validationFailures,
             missingInfo,
             summary: this.summarize(
@@ -236,7 +320,7 @@ export class C2paInspectionUseCase {
                 verification.validationFailures.length,
                 missingInfo.length,
             ),
-            limitations: verification.limitations,
+            limitations,
         };
         await this.persist(result, input.manifest, input.id);
         return result;
@@ -272,6 +356,7 @@ export class C2paInspectionUseCase {
             signer: result.signer,
             assetSha256: result.assetHash ?? "",
             manifest: typeof manifest === "string" ? manifest : JSON.stringify(manifest),
+            transformations: result.transformations,
         };
         await this.repository.save(record);
     }
