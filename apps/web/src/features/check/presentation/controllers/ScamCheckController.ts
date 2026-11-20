@@ -289,6 +289,11 @@ export class ScamCheckController {
 function translatedAnalysis(t: Translator, analysis: ScamAnalysis): ScamAnalysis {
     return {
         ...analysis,
+        indicators: analysis.indicators.map((indicator) => ({
+            ...indicator,
+            label: resultText(t, indicator.label, indicator.labelCode),
+            detail: resultText(t, indicator.detail, indicator.detailCode),
+        })),
         summary: resultText(t, analysis.summary, analysis.summaryCode),
         nextSteps: resultList(t, analysis.nextSteps, analysis.nextStepCodes),
         limitations: resultList(t, analysis.limitations, analysis.limitationCodes),
