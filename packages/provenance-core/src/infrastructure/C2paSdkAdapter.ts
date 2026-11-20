@@ -1,8 +1,12 @@
-import type { Reader } from "@contentauth/c2pa-node";
 import type {
     C2paVerificationPort,
     C2paVerificationResult,
 } from "../ports/C2paVerificationPort.js";
+
+/** The only SDK surface the adapter needs. Both the Node and WASM readers satisfy it. */
+export interface SdkManifestReader {
+    json(): unknown;
+}
 
 export type C2paSdkUnavailableReason = "package-missing" | "native-binary-missing" | "load-failed";
 
@@ -64,7 +68,7 @@ interface SdkManifestStore {
 }
 
 type SdkSource = { buffer: Uint8Array } | { path: string };
-type SdkLoader = (source: SdkSource) => Promise<Reader | null>;
+type SdkLoader = (source: SdkSource) => Promise<SdkManifestReader | null>;
 
 function nonEmptyString(value: unknown): string | null {
     return typeof value === "string" && value.trim().length > 0 ? value : null;
@@ -93,10 +97,13 @@ function toSdkAsset(source: SdkSource): unknown {
     return { buffer: bufferFactory ? bufferFactory.from(source.buffer) : source.buffer };
 }
 
-async function loadReader(source: SdkSource): Promise<Reader | null> {
+// Built at runtime so bundlers cannot inline the Node-only SDK into browser builds.
+const NODE_SDK_SPECIFIER = ["@contentauth", "c2pa-node"].join("/");
+
+async function loadReader(source: SdkSource): Promise<SdkManifestReader | null> {
     let sdk: typeof import("@contentauth/c2pa-node");
     try {
-        sdk = await import("@contentauth/c2pa-node");
+        sdk = (await import(/* @vite-ignore */ NODE_SDK_SPECIFIER)) as typeof import("@contentauth/c2pa-node");
     } catch (cause) {
         throw new C2paSdkUnavailableError(cause);
     }
@@ -130,7 +137,7 @@ export class C2paSdkAdapter implements C2paVerificationPort {
 
     public async verify(asset: unknown): Promise<C2paVerificationResult> {
         const source = toSourceAsset(asset);
-        let reader: Reader | null;
+        let reader: SdkManifestReader | null;
         try {
             reader = await this.loader(source);
             this.available = true;
@@ -190,7 +197,7 @@ export class C2paSdkAdapter implements C2paVerificationPort {
             assertions,
             validationFailures,
             limitations: [
-                "Signer and timestamp are reported by the C2PA SDK; trust depends on the configured trust settings.",
+                "The C2PA SDK verified claim-signature integrity, assertion and data hashes, and the timestamp where reported. Signer and timestamp come from the SDK; trust depends on the configured trust settings. An untrusted certificate is reported as a validation failure, and no server-side trust decision is made.",
             ],
         };
     }
