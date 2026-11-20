@@ -36,7 +36,8 @@ export const zh: Record<string, string> = {
     "check.qrLabel": "二维码内容（码里藏的文字）",
     "check.qrButton": "检查二维码内容",
     "check.simplified": "简化模式（一次只看一步）",
-    "check.heuristicNote": "这些检查只比较文字模式。它们不能证明链接或二维码安全，也不能认定存在诈骗。",
+    "check.heuristicNote":
+        "这些检查只比较文字模式。它们不能证明链接或二维码安全，也不能认定存在诈骗。",
     "check.guidedStep": "步骤",
     "check.guidedNext": "下一步",
     "check.guidedBack": "上一步",
@@ -56,7 +57,8 @@ export const zh: Record<string, string> = {
     "protect.planExport": "规划脱敏导出",
     "protect.planNote": "这里只给出方案。不会在您的设备上重写或下载任何文件。",
     "learn.title": "学习",
-    "learn.intro": "四节关于核实信息与保持安全的短课。每节以一个虚构的例子结尾；随后的小测验检验您的收获。",
+    "learn.intro":
+        "四节关于核实信息与保持安全的短课。每节以一个虚构的例子结尾；随后的小测验检验您的收获。",
     "learn.source.title": "核实来源",
     "learn.source.desc": "分享前确认媒体是谁创建的以及来自哪里。",
     "learn.pressure.title": "警惕施压",
