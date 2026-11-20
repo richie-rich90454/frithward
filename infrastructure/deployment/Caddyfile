@@ -14,6 +14,7 @@
 	header {
 		Cross-Origin-Opener-Policy same-origin
 		Cross-Origin-Embedder-Policy require-corp
+		Cross-Origin-Resource-Policy same-origin
 	}
 
 	reverse_proxy /api/* {$FRITHWARD_API:127.0.0.1:3000}
