@@ -2,17 +2,23 @@ import { For, Show, createSignal, onCleanup } from "solid-js";
 import { CalendarClock } from "lucide-solid";
 import { IncidentTimelineController } from "../controllers/IncidentTimelineController";
 import { useI18n } from "../../../../i18n/index.js";
+import { useCases } from "../../../../cases/CaseProvider.js";
+import { evidenceToCaseInput } from "../toCaseInput.js";
 import type {
     EvidenceItem,
     IncidentTimelineEntry,
     ReportHistoryEntry,
 } from "../controllers/IncidentTimelineController";
 
+const SAVED_MESSAGE = "Saved to cases";
+
 interface IncidentTimelineViewProps {
     entries: readonly IncidentTimelineEntry[];
     evidence: readonly EvidenceItem[];
     history: readonly ReportHistoryEntry[];
     error: string | null;
+    saveError: string | null;
+    saved: boolean;
     onAnalyze: (input: { text: string; receivedAt: string }) => void;
     onAddEvidence: (input: {
         fileName: string;
@@ -132,6 +138,12 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
             <Show when={props.error}>
                 <p role="alert">{props.error}</p>
             </Show>
+            <Show when={props.saveError}>
+                <p role="alert">{props.saveError}</p>
+            </Show>
+            <Show when={props.saved}>
+                <p role="status">{SAVED_MESSAGE}</p>
+            </Show>
             <Show when={props.entries.length > 0}>
                 <ol>
                     <For each={props.entries}>
@@ -250,10 +262,13 @@ export function IncidentTimelineView(props: IncidentTimelineViewProps) {
 export function IncidentTimelinePage() {
     const { t } = useI18n();
     const controller = new IncidentTimelineController({ translate: t });
+    const { saveCase } = useCases();
     const [entries, setEntries] = createSignal(controller.getEntries());
     const [evidence, setEvidence] = createSignal(controller.getEvidence());
     const [history, setHistory] = createSignal(controller.getReportHistory());
     const [error, setError] = createSignal(controller.getError());
+    const [saveError, setSaveError] = createSignal<string | null>(null);
+    const [saved, setSaved] = createSignal(false);
     onCleanup(
         controller.subscribe(() => {
             setEntries(controller.getEntries());
@@ -262,15 +277,36 @@ export function IncidentTimelinePage() {
             setError(controller.getError());
         }),
     );
+    const persist = async (item: EvidenceItem, report: unknown = null): Promise<void> => {
+        setSaveError(null);
+        setSaved(false);
+        try {
+            await saveCase(evidenceToCaseInput(item, report));
+            setSaved(true);
+        } catch (cause) {
+            setSaveError(cause instanceof Error ? cause.message : t("verify.saveCaseFailed"));
+        }
+    };
+
     return (
         <IncidentTimelineView
             entries={entries()}
             evidence={evidence()}
             history={history()}
             error={error()}
+            saveError={saveError()}
+            saved={saved()}
             onAnalyze={(input) => controller.analyze(input)}
-            onAddEvidence={(input) => controller.addEvidence(input)}
-            onImportReport={(input) => controller.importScamReport(input)}
+            onAddEvidence={async (input) => {
+                const item = await controller.addEvidence(input);
+                await persist(item);
+                return item;
+            }}
+            onImportReport={async (input) => {
+                const item = await controller.importScamReport(input);
+                await persist(item, input.report);
+                return item;
+            }}
             onExport={() => controller.exportReport()}
             onReset={() => controller.reset()}
         />
