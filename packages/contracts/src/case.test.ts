@@ -11,6 +11,11 @@ import {
     type ThemePreference as ThemePreferenceType,
 } from "./case.js";
 
+function expectDefined<T>(value: T | undefined, message: string): T {
+    if (value === undefined) throw new Error(message);
+    return value;
+}
+
 const validCase = {
     id: "123e4567-e89b-12d3-a456-426614174000",
     kind: "message",
@@ -110,8 +115,8 @@ describe("case type inference", () => {
         const parsed = Case.parse(validCase);
         const kind: CaseKindType = parsed.kind;
         const theme: ThemePreferenceType = "dark";
-        const finding: CaseFinding = parsed.findings[0]!;
-        const artifact: CaseArtifact = parsed.artifacts[0]!;
+        const finding: CaseFinding = expectDefined(parsed.findings[0], "Expected a finding");
+        const artifact: CaseArtifact = expectDefined(parsed.artifacts[0], "Expected an artifact");
         const create: CreateCaseInput = { kind, title: "QR", inputs: {} };
         const update: UpdateCaseInput = { title: "Updated" };
 
