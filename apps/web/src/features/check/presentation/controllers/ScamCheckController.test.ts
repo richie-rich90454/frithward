@@ -251,6 +251,31 @@ describe("ScamCheckController translated presentation", () => {
         expect(details).toContain('Parece "paypal" pero no es el sitio oficial.');
     });
 
+    it("translates indicator labels and details by their result codes", () => {
+        const t = (key: string) => {
+            const values: Record<string, string> = {
+                "result.SCAM_INDICATOR_URGENCY_LABEL": "Presión de urgencia",
+                "result.SCAM_INDICATOR_URGENCY_DETAIL": "El mensaje te presiona a actuar rápido.",
+                "result.SCAM_INDICATOR_CREDENTIAL_LABEL": "Solicitud de credenciales",
+                "result.SCAM_INDICATOR_CREDENTIAL_DETAIL": "El mensaje pide credenciales.",
+            };
+            return values[key] ?? key;
+        };
+        const controller = new ScamCheckController({
+            translate: t,
+            recentChecks: memoryRepository(),
+        });
+        controller.check("URGENT: send your password");
+        const labels =
+            controller.getAnalysis()?.indicators.map((indicator) => indicator.label) ?? [];
+        const details =
+            controller.getAnalysis()?.indicators.map((indicator) => indicator.detail) ?? [];
+        expect(labels).toContain("Presión de urgencia");
+        expect(labels).toContain("Solicitud de credenciales");
+        expect(details).toContain("El mensaje te presiona a actuar rápido.");
+        expect(details).toContain("El mensaje pide credenciales.");
+    });
+
     it("translates analysis next steps and guided step text", () => {
         const t = (key: string) => {
             const values: Record<string, string> = {
