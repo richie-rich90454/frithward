@@ -8,6 +8,7 @@ import { DocxReader } from "./DocxReader";
 import { OcrController } from "./OcrController";
 import { ZipController } from "./ZipController";
 import { english, interpolate, type Translator } from "../../../i18n/translate.js";
+import { translatedError } from "../../../i18n/errors.js";
 
 export type ExportFormat = "docx" | "pdf" | "xlsx" | "pptx";
 
@@ -90,10 +91,7 @@ export class DocumentGenerationController {
             this.state = {
                 ...this.state,
                 busy: false,
-                error:
-                    cause instanceof Error
-                        ? cause.message
-                        : this.translate("documents.error.readDocx"),
+                error: translatedError(cause, this.translate, "documents.error.readDocx"),
             };
         }
         this.notify();
@@ -131,10 +129,7 @@ export class DocumentGenerationController {
                 ...this.state,
                 busy: false,
                 ocrStatus: null,
-                error:
-                    cause instanceof Error
-                        ? cause.message
-                        : this.translate("documents.error.ocrFailed"),
+                error: translatedError(cause, this.translate, "documents.error.ocrFailed"),
             };
         }
         this.notify();
@@ -303,10 +298,7 @@ export class DocumentGenerationController {
             this.state = {
                 ...this.state,
                 busy: false,
-                error:
-                    cause instanceof Error
-                        ? cause.message
-                        : this.translate("documents.error.exportFailed"),
+                error: translatedError(cause, this.translate, "documents.error.exportFailed"),
             };
         }
         this.notify();
